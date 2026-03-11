@@ -47,9 +47,9 @@ $$
 
 Here:
 
-- \(f(x)\) is the input representation entering the layer,
-- \(W\) is the matrix of that layer,
-- \(g\) collects everything that happens after this layer.
+- $f(x)$ is the input representation entering the layer,
+- $W$ is the matrix of that layer,
+- $g$ collects everything that happens after this layer.
 
 This is the cleanest case, and it already reveals the whole mechanism.
 
@@ -65,9 +65,9 @@ $$
 
 where:
 
-- \(\mu\) is the learning rate,
-- \(\lambda\) is the weight decay coefficient,
-- \(\tilde S_t\) is the current mini-batch.
+- $\mu$ is the learning rate,
+- $\lambda$ is the weight decay coefficient,
+- $\tilde S_t$ is the current mini-batch.
 
 Equivalently,
 
@@ -83,8 +83,8 @@ $$
 
 This decomposition is already suggestive:
 
-- the factor \((1-2\mu\lambda)\) shrinks the current weight matrix,
-- the stochastic gradient \(G_t\) injects a new update.
+- the factor $(1-2\mu\lambda)$ shrinks the current weight matrix,
+- the stochastic gradient $G_t$ injects a new update.
 
 The key question is: **what structure does \(G_t\) have?**
 
