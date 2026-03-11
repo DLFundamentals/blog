@@ -13,47 +13,53 @@ tags:
 excerpt: "A geometric explanation for why ordinary supervised pretraining can transfer remarkably well to new classes with only a few labeled examples."
 ---
 
-Deep networks trained on ordinary classification tasks often transfer remarkably well to new classes.
+Deep networks trained on large classification benchmarks such as **ImageNet** often transfer remarkably well to new tasks.
 
-This is especially striking in the **few-shot** regime. We pretrain a model on many source classes, freeze its representation, and then fit a very simple classifier on top of only one or a few examples from each new class. Empirically, this works far better than one might expect.
+This is one of the most common recipes in modern machine learning. We train a classifier on a large source dataset, keep its learned representation, and then adapt it to a new set of classes using only a small amount of labeled data, often with nothing more than a simple linear head.
 
-Why?
+Practitioners use this all the time because it works.
 
-A common answer is that pretraining learns "good features." That is true, but it still leaves open the main question:
+But from a theoretical point of view, that only sharpens the puzzle.
 
-> **What property of the learned feature space makes few-shot transfer possible on classes the model has never seen before?**
+A classifier trained on ImageNet is trained to separate the ImageNet classes. Why should the same representation also make it easy to separate **new** classes that were never seen during training? And why should only a few labeled examples be enough to fit a simple classifier on top?
+
+A common answer is that pretraining learns "good features." That is certainly true, but it still leaves open the main question:
+
+> **What property of the learned feature space makes adaptation to new classes possible with so little data?**
 
 The main message of this post is the following:
 
 > <span style="color:#1e6bd6; font-weight:600;">
-> If supervised pretraining makes each class collapse into a tight cluster in feature space, while keeping different class means separated, then new classes can often be learned from only a few labeled examples.
+> If supervised pretraining makes each class form a tight cluster in feature space, while keeping different class means well separated, then new classes can often be learned from only a few labeled examples using a simple linear or nearest-center classifier.
 > </span>
 
-The key point is that this can be formalized and proved in a setting where the source classes and target classes are both drawn from a common population of possible classes.
+So the story is not just that ImageNet pretraining produces a useful representation. The deeper point is that, under the right conditions, it produces a representation with a very particular **geometry**: samples from the same class are concentrated, and different classes are separated at the level of their means.
 
-That is where the class-conditional setup comes in.
+That is the geometric reason few-shot adaptation can work.
+
+To formalize this, we need a setting in which the source classes and the target classes are not arbitrary unrelated labels, but are both drawn from a common population of possible classes. That is where the class-conditional setup comes in.
 
 <div style="margin: 2rem 0;">
   <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: stretch;">
 
     <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Sample source classes</strong><br>
-      Draw many training classes
+      <strong>Pretrain on a large source task</strong><br>
+      e.g. ImageNet classification
     </div>
 
     <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Pretrain a feature map</strong><br>
-      Learn $f$ on the source task
+      <strong>Learn a feature map</strong><br>
+      The network organizes classes geometrically
     </div>
 
     <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Sample target classes</strong><br>
-      Draw new unseen classes
+      <strong>Move to new classes</strong><br>
+      Draw unseen target classes from the same population
     </div>
 
     <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Adapt with few examples</strong><br>
-      Estimate class centers from small samples
+      <strong>Adapt with little data</strong><br>
+      Fit a simple head from a few examples
     </div>
 
   </div>
@@ -61,9 +67,127 @@ That is where the class-conditional setup comes in.
 
 <div style="margin-top: 1rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
   <strong>Figure 1.</strong>
-  <strong>The logic of the theory.</strong>
-  The source and target tasks are not treated as arbitrary unrelated classification problems. Instead, both are built by sampling class-conditionals from the same population of possible classes. This is what lets us ask whether geometry learned on the source classes generalizes to unseen target classes.
+  <strong>The motivating picture.</strong>
+  A classifier pretrained on a large source task such as ImageNet is often reused as a representation for new classes. The goal of the theory is to explain when this common practice should work, and why only a few labeled examples can already be enough.
 </div>
+
+% Requires:
+% \usepackage{tikz}
+% \usetikzlibrary{positioning,calc,fit,arrows.meta,decorations.pathreplacing}
+
+\newcommand{\lrupdate}[4]{%
+% #1 = x, #2 = y, #3 = opacity, #4 = label
+\begin{scope}[shift={(#1,#2)}]
+    \foreach \i in {0,...,3} {
+        \foreach \j in {0,...,3} {
+            \draw[gray!45, line width=0.3pt] (0.18*\j,0.18*\i) rectangle +(0.18,0.18);
+        }
+    }
+    % stylized low-rank pattern: one column + one row
+    \fill[blue!70!black, opacity=#3] (0.18,0.00) rectangle +(0.18,0.72);
+    \fill[blue!70!black, opacity=#3] (0.00,0.36) rectangle +(0.72,0.18);
+    \node[font=\scriptsize] at (0.36,-0.20) {$#4$};
+\end{scope}
+}
+
+\newcommand{\finalweight}[2]{%
+% #1 = x, #2 = y
+\begin{scope}[shift={(#1,#2)}]
+    \foreach \i in {0,...,5} {
+        \foreach \j in {0,...,5} {
+            \draw[gray!45, line width=0.3pt] (0.20*\j,0.20*\i) rectangle +(0.20,0.20);
+        }
+    }
+    % overlay a few recent low-rank corrections
+    \fill[blue!70!black, opacity=.70] (0.20,0.00) rectangle +(0.20,1.20);
+    \fill[blue!70!black, opacity=.70] (0.00,0.60) rectangle +(1.20,0.20);
+
+    \fill[blue!70!black, opacity=.40] (0.60,0.00) rectangle +(0.20,1.20);
+    \fill[blue!70!black, opacity=.40] (0.00,0.20) rectangle +(1.20,0.20);
+
+    \fill[blue!70!black, opacity=.22] (1.00,0.00) rectangle +(0.20,1.20);
+    \fill[blue!70!black, opacity=.22] (0.00,1.00) rectangle +(1.20,0.20);
+
+    \node[font=\small] at (0.60,-0.30) {$W_T$};
+\end{scope}
+}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+    >=Latex,
+    panel/.style={draw=black!70, rounded corners=4pt, fill=gray!3},
+    note/.style={font=\small, align=center},
+    title/.style={font=\bfseries},
+    every node/.style={inner sep=2pt}
+]
+
+% --- Panel boxes ---
+\draw[panel] (0,0) rectangle (5.9,4.7);
+\draw[panel] (6.3,0) rectangle (12.2,4.7);
+\draw[panel] (12.6,0) rectangle (19.3,4.7);
+
+% --- Panel titles ---
+\node[title] at (2.95,4.35) {(a) each step writes a low-rank update};
+\node[title] at (9.25,4.35) {(b) weight decay forgets the distant past};
+\node[title] at (15.95,4.35) {(c) recent low-rank updates dominate};
+
+% =========================
+% Panel (a)
+% =========================
+\begin{scope}[shift={(0.25,0.2)}]
+    \lrupdate{0.20}{2.10}{0.95}{G_{T-5}}
+    \lrupdate{1.20}{2.10}{0.95}{G_{T-4}}
+    \lrupdate{2.20}{2.10}{0.95}{G_{T-3}}
+    \lrupdate{3.20}{2.10}{0.95}{G_{T-2}}
+    \lrupdate{4.20}{2.10}{0.95}{G_{T-1}}
+
+    \draw[->, thick, black!70] (0.35,1.35) -- (4.95,1.35);
+    \node[note] at (2.65,0.90) {SGD writes only a few directions per step};
+    \node[note] at (2.65,0.35) {$\operatorname{rank}(G_t)\le B$};
+\end{scope}
+
+% =========================
+% Panel (b)
+% =========================
+\begin{scope}[shift={(6.55,0.2)}]
+    \node[note] at (2.80,3.75) {$\times(1-2\mu\lambda)^4$ \hspace{0.45cm} $\times(1-2\mu\lambda)^3$ \hspace{0.45cm} $\times(1-2\mu\lambda)^2$ \hspace{0.45cm} $\times(1-2\mu\lambda)$};
+
+    \lrupdate{0.20}{2.10}{0.18}{G_{T-5}}
+    \lrupdate{1.20}{2.10}{0.30}{G_{T-4}}
+    \lrupdate{2.20}{2.10}{0.45}{G_{T-3}}
+    \lrupdate{3.20}{2.10}{0.65}{G_{T-2}}
+    \lrupdate{4.20}{2.10}{0.95}{G_{T-1}}
+
+    \draw[decorate, decoration={brace, amplitude=6pt}, black!65] (0.15,1.25) -- (4.95,1.25);
+    \node[note] at (2.55,0.75) {older updates are exponentially suppressed};
+    \node[note] at (2.55,0.20) {$W_{t+1}=(1-2\mu\lambda)W_t-\mu G_t$};
+\end{scope}
+
+% =========================
+% Panel (c)
+% =========================
+\begin{scope}[shift={(12.85,0.15)}]
+    % recent weighted updates
+    \lrupdate{0.20}{2.55}{0.35}{(1-2\mu\lambda)^2G_{T-3}}
+    \lrupdate{0.20}{1.60}{0.62}{(1-2\mu\lambda)G_{T-2}}
+    \lrupdate{0.20}{0.65}{0.95}{G_{T-1}}
+
+    % arrows into final matrix
+    \draw[->, thick, black!70] (1.20,2.95) -- (2.55,2.45);
+    \draw[->, thick, black!70] (1.20,2.00) -- (2.55,2.05);
+    \draw[->, thick, black!70] (1.20,1.05) -- (2.55,1.65);
+
+    % final matrix
+    \finalweight{3.10}{1.15}
+
+    \node[note] at (3.25,0.25) {$W_T \approx -\mu\sum_{j=1}^{n}(1-2\mu\lambda)^{j-1}G_{T-j}$};
+\end{scope}
+
+\end{tikzpicture}
+\caption{\textbf{Why SGD with weight decay favors low-rank structure.} \textbf{(a)} Each stochastic gradient step adds a low-rank correction to the layer matrix. \textbf{(b)} Weight decay exponentially suppresses older updates, so the distant past contributes little to the current layer. \textbf{(c)} As a result, the current matrix is dominated by a short weighted history of low-rank corrections, which biases the layer toward low effective rank.}
+\label{fig:sgd_low_rank_mechanism}
+\end{figure}
 
 <br>
 
