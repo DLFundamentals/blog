@@ -34,17 +34,13 @@ $$
 For this layer, the mini-batch SGD update with weight decay is
 
 $$
-W_{t+1}
-=
-W_t - \mu \nabla_W L_{\tilde S_t}(W_t) - 2\mu\lambda W_t,
+W_{t+1} = W_t - \mu \nabla_W L_{\tilde S_t}(W_t) - 2\mu\lambda W_t,
 $$
 
 or equivalently,
 
 $$
-W_{t+1}
-=
-(1 - 2\mu\lambda) W_t - \mu G_t,
+W_{t+1} = (1 - 2\mu\lambda) W_t - \mu G_t,
 $$
 
 where $G_t := \nabla_W L_{\tilde S_t}(W_t)$ is the stochastic gradient on the current mini-batch.
@@ -54,9 +50,7 @@ where $G_t := \nabla_W L_{\tilde S_t}(W_t)$ is the stochastic gradient on the cu
 For a fully connected layer, the gradient for a single sample has the form
 
 $$
-\nabla_W \ell(h_W(x))
-=
-\delta(x) f(x)^\top,
+\nabla_W \ell(h_W(x)) = \delta(x) f(x)^\top,
 $$
 
 which is rank $1$.
@@ -74,19 +68,13 @@ So every SGD step adds a low-rank update, while weight decay forgets older updat
 Starting from
 
 $$
-W_{t+1}
-=
-(1 - 2\mu\lambda) W_t - \mu G_t,
+W_{t+1} = (1 - 2\mu\lambda) W_t - \mu G_t,
 $$
 
 unrolling for $n$ steps gives
 
 $$
-W_T
-=
-(1 - 2\mu\lambda)^n W_{T-n}
--
-\mu \sum_{j=1}^n (1 - 2\mu\lambda)^{j-1} G_{T-j}.
+W_T = (1 - 2\mu\lambda)^n W_{T-n} - \mu \sum_{j=1}^n (1 - 2\mu\lambda)^{j-1} G_{T-j}.
 $$
 
 The first term is an exponentially damped memory of the distant past. The second term is a sum of only recent low-rank gradients, so it is itself low rank.
@@ -100,9 +88,7 @@ $$
 and therefore an effective-rank bound of the form
 
 $$
-\textnormal{rank}_\varepsilon(W_T)
-\lesssim
-\frac{m_\ell B \log(1/\varepsilon)}{\mu\lambda}.
+\textnormal{rank}_\varepsilon(W_T) \lesssim \frac{m_\ell B \log(1/\varepsilon)}{\mu\lambda}.
 $$
 
 This explains why:
