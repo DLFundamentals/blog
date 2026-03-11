@@ -49,17 +49,17 @@ $$
 W_{t+1} = (1 - 2\mu\lambda) W_t - \mu G_t,
 $$
 
-where $G_t := \nabla_W L_{\tilde S_t}(W_t)$ is the stochastic gradient on the current mini-batch.
+where $G_t := \nabla_W L_{\tilde S_t}(W_t)$ is the stochastic gradient on the current mini-batch $\tilde S_t$.
 
 ## The key observation
 
 For such layer, the gradient for a single sample has the form
 
 $$
-\nabla_W \ell(h_W(x)) = \delta(x) f(x)^\top,
+\nabla_W \ell(h(x)) = (J_g(Wf(x))^\top \nabla_h \ell(h(x)))\, f(x)^\top.
 $$
 
-which is rank $1$.
+which is rank $1$ as the outer product of two vectors.
 
 For a mini-batch of size $B$, the stochastic gradient rank scales like
 
