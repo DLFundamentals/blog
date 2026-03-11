@@ -55,14 +55,11 @@ The main message of this post is the following:
   </div>
 </div>
 
-  </div>
-
   <div style="margin-top: 1rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
     <strong>Figure 1.</strong>
     <strong>Higher weight decay (\(\lambda\)) and learning rate (\(\mu\)), or smaller batch sizes (\(B\)), lead to a lower average rank across the network layers.</strong>
     We plot the average rank at the end of training for ResNet-18 trained on CIFAR-10 while varying a pair of hyperparameters.
   </div>
-</div>
 
 The mechanism is simple:
 
