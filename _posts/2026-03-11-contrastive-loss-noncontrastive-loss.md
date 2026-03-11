@@ -98,7 +98,6 @@ Suppose for simplicity that the dataset is balanced, with $C$ classes and exactl
 Fix an anchor. In DCL, the denominator includes all other samples. In NSCL, it excludes samples from the same class. Therefore:
 - the number of same-class terms that appear in DCL but not in NSCL is exactly $n-1$,
 - the number of different-class terms is exactly $N-n = n(C-1)$.
-\end{itemize}
 
 So when $C$ is large, the same-class terms form only a small fraction of the denominator. This already suggests that the two losses should be close.
 
