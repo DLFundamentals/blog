@@ -88,7 +88,7 @@ This decomposition is already suggestive:
 
 The key question is: **what structure does $G_t$ have?**
 
-## The key observation: one sample gives a rank-1 update
+## Key observation: one sample gives a rank-1 update
 
 Consider a single training example $x$. Since
 
@@ -214,7 +214,7 @@ So instead of accumulating an unrestricted full-rank history, the layer mostly r
 
 That is exactly the kind of mechanism that produces compressible matrices.
 
-## Why the local form \(h_W(x)=g(Wf(x))\) is natural
+## Why the local form $h_W(x)=g(Wf(x))$ is natural
 
 At first glance, writing the network as
 
@@ -344,7 +344,7 @@ Again, this is not rank 1, but it is still much smaller than the ambient matrix 
 
 The cleanest statement is this:
 
-> **A stochastic gradient update for a given matrix $W$ has rank at most the number of times that \(W\) is used across the current mini-batch.**
+> **A stochastic gradient update for a given matrix $W$ has rank at most the number of times that $W$ is used across the current mini-batch.**
 
 So if:
 
