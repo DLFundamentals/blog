@@ -29,7 +29,45 @@ The main message of this post is the following:
 > SGD with weight decay implicitly biases each layer toward low-rank structure, and this effect becomes stronger with smaller batch size, larger learning rate, and stronger weight decay.
 > </span>
 
-This is not a convergence theorem. The point is different. The goal is to explain, at a structural level, why low-rank layers naturally emerge during training.
+<div style="margin: 2rem 0;">
+  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-items: start;">
+
+    <div style="text-align: center;">
+      <img src="/assets/figures/low-rank-bias/contour_resnet_bs_8.png" alt="Average rank for batch size 8" style="width: 100%; max-width: 420px; height: auto;">
+      <div style="margin-top: 0.5rem; font-size: 1.05rem;">
+        <strong>(a)</strong> \(B = 8\)
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="/assets/figures/low-rank-bias/contour_resnet_bs_16.png" alt="Average rank for batch size 16" style="width: 100%; max-width: 420px; height: auto;">
+      <div style="margin-top: 0.5rem; font-size: 1.05rem;">
+        <strong>(b)</strong> \(B = 16\)
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="/assets/figures/low-rank-bias/contour_resnet_lr_5.png" alt="Average rank for learning rate 0.5" style="width: 100%; max-width: 420px; height: auto;">
+      <div style="margin-top: 0.5rem; font-size: 1.05rem;">
+        <strong>(c)</strong> \(\mu = 0.5\)
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="/assets/figures/low-rank-bias/contour_resnet_wd_6e-3.png" alt="Average rank for weight decay 6 times 10 to the minus 3" style="width: 100%; max-width: 420px; height: auto;">
+      <div style="margin-top: 0.5rem; font-size: 1.05rem;">
+        <strong>(d)</strong> \(\lambda = 6 \times 10^{-3}\)
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top: 1rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
+    <strong>Figure 1.</strong>
+    <strong>Higher weight decay (\(\lambda\)) and learning rate (\(\mu\)), or smaller batch sizes (\(B\)), lead to a lower average rank across the network layers.</strong>
+    We plot the average rank at the end of training for ResNet-18 trained on CIFAR-10 while varying a pair of hyperparameters.
+  </div>
+</div>
 
 The mechanism is simple:
 
