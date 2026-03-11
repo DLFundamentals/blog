@@ -7,16 +7,6 @@
   max-width: 860px;
 }
 
-.site-header {
-  border-top: 0;
-  border-bottom: 1px solid #e8e8e8;
-}
-
-.site-title {
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
 .page-content {
   padding-top: 36px;
 }
@@ -50,23 +40,6 @@
 .post-content h2,
 .post-content h3 {
   margin-top: 2rem;
-  letter-spacing: -0.01em;
-}
-
-.post-content ul,
-.post-content ol {
-  line-height: 1.8;
-}
-
-.post-content code {
-  background: #f6f8fa;
-  padding: 0.15em 0.35em;
-  border-radius: 6px;
-}
-
-.post-content pre code {
-  background: transparent;
-  padding: 0;
 }
 
 .MathJax {
