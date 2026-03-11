@@ -66,7 +66,7 @@ which is rank $1$.
 For a mini-batch of size $B$, the stochastic gradient rank scales like
 
 $$
-\operatorname{rank}(G_t) \lesssim B \cdot m_\ell.
+\textnormal{rank}(G_t) \lesssim B \cdot m_\ell.
 $$
 
 So every SGD step adds a low-rank update, while weight decay forgets older updates exponentially fast.
@@ -102,7 +102,7 @@ $$
 and therefore an effective-rank bound of the form
 
 $$
-\operatorname{rank}_\varepsilon(W_T)
+\textnormal{rank}_\varepsilon(W_T)
 \lesssim
 \frac{m_\ell B \log(1/\varepsilon)}{\mu\lambda}.
 $$
