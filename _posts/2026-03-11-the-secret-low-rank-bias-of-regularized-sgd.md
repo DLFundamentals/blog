@@ -409,7 +409,7 @@ It is worth being precise about the scope of the claim.
 
 This argument does **not** say that every trained layer must become exactly low rank. It does not prove a universal convergence theorem, nor does it rule out settings where optimization, architecture, normalization, or data geometry complicate the picture.
 
-What it does say is something structural and robust:
+What it does say is something structural:
 - the updates written by SGD are intrinsically low rank,
 - weight decay gives the layer a finite effective memory,
 - therefore low-rank structure is not mysterious or accidental.
