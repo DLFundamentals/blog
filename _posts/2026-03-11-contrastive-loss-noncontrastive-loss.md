@@ -93,32 +93,35 @@ So the only mismatch between the two comes from the fact that self-supervised co
 
 This difference looks important, but in many-class problems it is often quite mild.
 
-Suppose each class contains at most $n_{\max}$ samples. Then for a fixed anchor:
+Suppose for simplicity that the dataset is balanced, with $C$ classes and exactly $n$ samples per class, so $N = Cn$.
 
-- the number of extra same-class terms in DCL is at most $n_{\max}-1$,
-- the number of different-class terms is at least $N-n_{\max}$.
+Fix an anchor. In DCL, the denominator includes all other samples. In NSCL, it excludes samples from the same class. Therefore:
+- the number of same-class terms that appear in DCL but not in NSCL is exactly $n-1$,
+- the number of different-class terms is exactly $N-n = n(C-1)$.
+\end{itemize}
 
-So if the number of classes is large, same-class negatives form only a small fraction of the denominator. This already suggests that the two losses should be close.
+So when $C$ is large, the same-class terms form only a small fraction of the denominator. This already suggests that the two losses should be close.
 
 That intuition can be made precise. For any encoder $f$,
-
 $$
-\mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \log\left(1+\frac{n_{\max}e^2}{N-n_{\max}}\right).
-$$
-
-Using \(\log(1+x)\le x\), this gives the simpler bound
-
-$$
-\mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{n_{\max}e^2}{N-n_{\max}}.
+\mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \log\left(1+\frac{ne^2}{N-n}\right).
 $$
 
-In the balanced case, where the dataset has $C$ classes of equal size,
-
+Using $\log(1+x)\le x$, this gives the simpler bound
 $$
-\frac{n_{\max}}{N-n_{\max}} = \frac{1}{C-1},
+\mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{ne^2}{N-n}.
 $$
 
-so the gap shrinks like $O(1/C)$.
+Since $N = Cn$, we have
+$$
+\frac{n}{N-n} = \frac{1}{C-1},
+$$
+and therefore
+$$
+\mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{e^2}{C-1}.
+$$
+
+So in the balanced setting, the gap between DCL and NSCL shrinks like $O(1/C)$.
 
 This is the first structural point:
 
