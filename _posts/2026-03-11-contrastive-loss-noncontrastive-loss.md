@@ -102,6 +102,7 @@ Fix an anchor. In DCL, the denominator includes all other samples. In NSCL, it e
 So when $C$ is large, the same-class terms form only a small fraction of the denominator. This already suggests that the two losses should be close.
 
 That intuition can be made precise. For any encoder $f$,
+
 $$
 \mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \log\left(1+\frac{e^2}{C-1}\right) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{e^2}{C-1}.
 $$
