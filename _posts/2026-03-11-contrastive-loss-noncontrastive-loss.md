@@ -56,45 +56,29 @@ This gives a cleaner way to think about why contrastive learning so often behave
 
 Consider a labeled dataset
 
-$$
+\[
 S = \{(x_i,y_i)\}_{i=1}^N,
-$$
+\]
 
-but assume that during self-supervised training we only use the inputs $$x_i$$, not the labels $$y_i$$. For each sample $$x_i$$, we generate $$K$$ augmentations and map them through an encoder $$f$$:
+but assume that during self-supervised training we only use the inputs \(x_i\), not the labels \(y_i\). For each sample \(x_i\), we generate \(K\) augmentations and map them through an encoder \(f\):
 
-$$
+\[
 z_i^l = f(\alpha_l(x_i)).
-$$
+\]
 
 A standard decoupled contrastive loss (DCL) takes the form
 
-$$
-\mathcal{L}^{\mathrm{DCL}}(f)
-=
--\frac{1}{K^2N}
-\sum_{l_1,l_2=1}^K
-\sum_{i=1}^N
-\log\left(
-\frac{\exp(\mathrm{sim}(z_i^{l_1},z_i^{l_2}))}
-{\sum_{l_3=1}^K\sum_{j\neq i}\exp(\mathrm{sim}(z_i^{l_1},z_j^{l_3}))}
-\right).
-$$
+\[
+\mathcal{L}^{\mathrm{DCL}}(f) = -\frac{1}{K^2N}\sum_{l_1,l_2=1}^K\sum_{i=1}^N \log\left(\frac{\exp(\mathrm{sim}(z_i^{l_1},z_i^{l_2}))}{\sum_{l_3=1}^K\sum_{j\neq i}\exp(\mathrm{sim}(z_i^{l_1},z_j^{l_3}))}\right).
+\]
 
 This is a purely self-supervised objective. It rewards two views of the same sample for being similar and penalizes similarity to all other samples.
 
 Now compare it with a supervised variant that excludes same-class negatives from the denominator:
 
-$$
-\mathcal{L}^{\mathrm{NSCL}}(f)
-=
--\frac{1}{K^2N}
-\sum_{l_1,l_2=1}^K
-\sum_{i=1}^N
-\log\left(
-\frac{\exp(\mathrm{sim}(z_i^{l_1},z_i^{l_2}))}
-{\sum_{l_3=1}^K\sum_{j:y_j\neq y_i}\exp(\mathrm{sim}(z_i^{l_1},z_j^{l_3}))}
-\right).
-$$
+\[
+\mathcal{L}^{\mathrm{NSCL}}(f) = -\frac{1}{K^2N}\sum_{l_1,l_2=1}^K\sum_{i=1}^N \log\left(\frac{\exp(\mathrm{sim}(z_i^{l_1},z_i^{l_2}))}{\sum_{l_3=1}^K\sum_{j:y_j\neq y_i}\exp(\mathrm{sim}(z_i^{l_1},z_j^{l_3}))}\right).
+\]
 
 We call this objective **NSCL**, for **negatives-only supervised contrastive learning**.
 
@@ -109,46 +93,36 @@ So the only mismatch between the two comes from the fact that self-supervised co
 
 This difference looks important, but in many-class problems it is often quite mild.
 
-Suppose each class contains at most $$n_{\max}$$ samples. Then for a fixed anchor:
+Suppose each class contains at most \(n_{\max}\) samples. Then for a fixed anchor:
 
-- the number of extra same-class terms in DCL is at most $$n_{\max}-1$$,
-- the number of different-class terms is at least $$N-n_{\max}$$.
+- the number of extra same-class terms in DCL is at most \(n_{\max}-1\),
+- the number of different-class terms is at least \(N-n_{\max}\).
 
 So if the number of classes is large, same-class negatives form only a small fraction of the denominator. This already suggests that the two losses should be close.
 
-That intuition can be made precise. For any encoder $$f$$,
+That intuition can be made precise. For any encoder \(f\),
 
-$$
-\mathcal{L}^{\mathrm{NSCL}}(f)
-\le
-\mathcal{L}^{\mathrm{DCL}}(f)
-\le
-\mathcal{L}^{\mathrm{NSCL}}(f)
-+
-\log\left(1+\frac{n_{\max}e^2}{N-n_{\max}}\right).
-$$
+\[
+\mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \log\left(1+\frac{n_{\max}e^2}{N-n_{\max}}\right).
+\]
 
-Using $$\log(1+x)\le x$$, this gives the simpler bound
+Using \(\log(1+x)\le x\), this gives the simpler bound
 
-$$
-\mathcal{L}^{\mathrm{DCL}}(f)
-\le
-\mathcal{L}^{\mathrm{NSCL}}(f)
-+
-\frac{n_{\max}e^2}{N-n_{\max}}.
-$$
+\[
+\mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{n_{\max}e^2}{N-n_{\max}}.
+\]
 
-In the balanced case, where the dataset has $$C$$ classes of equal size,
+In the balanced case, where the dataset has \(C\) classes of equal size,
 
-$$
+\[
 \frac{n_{\max}}{N-n_{\max}} = \frac{1}{C-1},
-$$
+\]
 
 so the gap shrinks like
 
-$$
+\[
 \mathcal{O}\left(\frac{1}{C}\right).
-$$
+\]
 
 This is the first structural point:
 
@@ -174,11 +148,11 @@ To study this, consider training CL and NSCL under shared randomness:
 
 Then the only real difference between the two runs is the objective.
 
-To compare the learned representations, it is more useful to look at their similarity structure than at their raw parameters. If $$Z$$ denotes a collection of embeddings, define the similarity matrix
+To compare the learned representations, it is more useful to look at their similarity structure than at their raw parameters. If \(Z\) denotes a collection of embeddings, define the similarity matrix
 
-$$
+\[
 \Sigma(Z)_{ij} = \cos(z_i,z_j).
-$$
+\]
 
 This matrix captures the geometry of the representation space directly. From it one can compute standard alignment measures such as:
 
@@ -191,22 +165,16 @@ These are natural metrics for asking whether two models learn the same relationa
 
 Under a coupled training protocol, one can bound the difference between the CL and NSCL similarity matrices throughout training. A representative bound has the form
 
-$$
-\|\Sigma_T^{\mathrm{CL}}-\Sigma_T^{\mathrm{NS}}\|_F
-\le
-\exp\left(\frac{1}{2\tau^2 B}\sum_{t=0}^{T-1}\eta_t\right)
-\cdot
-\frac{1}{\tau\sqrt{B}}
-\left(\sum_{t=0}^{T-1}\eta_t\right)
-\Delta_{\pi,\delta}(B;\tau),
-$$
+\[
+\|\Sigma_T^{\mathrm{CL}}-\Sigma_T^{\mathrm{NS}}\|_F \le \exp\left(\frac{1}{2\tau^2 B}\sum_{t=0}^{T-1}\eta_t\right)\cdot\frac{1}{\tau\sqrt{B}}\left(\sum_{t=0}^{T-1}\eta_t\right)\Delta_{\pi,\delta}(B;\tau),
+\]
 
 where:
 
-- $$B$$ is the batch size,
-- $$\tau$$ is the temperature,
-- $$\eta_t$$ are the step sizes,
-- $$\Delta_{\pi,\delta}(B;\tau)$$ measures the batch-composition mismatch between CL and NSCL.
+- \(B\) is the batch size,
+- \(\tau\) is the temperature,
+- \(\eta_t\) are the step sizes,
+- \(\Delta_{\pi,\delta}(B;\tau)\) measures the batch-composition mismatch between CL and NSCL.
 
 The exact form matters less here than the scaling. The right-hand side gets smaller when:
 
@@ -225,13 +193,11 @@ This is the second structural point:
 
 Once the similarity matrices are close, one immediately gets lower bounds on standard representation-alignment metrics. In simplified form, these bounds look like
 
-$$
-\mathrm{CKA}_T \ge \frac{1-\rho_T}{1+\rho_T},
-\qquad
-\mathrm{RSA}_T \ge \frac{1-r_T}{1+r_T},
-$$
+\[
+\mathrm{CKA}_T \ge \frac{1-\rho_T}{1+\rho_T}, \qquad \mathrm{RSA}_T \ge \frac{1-r_T}{1+r_T},
+\]
 
-where $$\rho_T$$ and $$r_T$$ are normalized versions of the similarity-matrix discrepancy.
+where \(\rho_T\) and \(r_T\) are normalized versions of the similarity-matrix discrepancy.
 
 So the theory does not merely say that CL and NSCL have nearby objective values. It says that, under shared randomness, their internal geometry can remain meaningfully aligned throughout training.
 
@@ -243,14 +209,9 @@ At the same time, weight-space coupling is far less stable.
 
 A typical parameter-space bound takes the form
 
-$$
-\|w_T^{\mathrm{CL}}-w_T^{\mathrm{NS}}\|
-\lesssim
-\frac{G}{\beta\tau}\,\Delta_{\pi,\delta}(B;\tau)
-\left(
-\exp\left(\beta\sum_{t=0}^{T-1}\eta_t\right)-1
-\right),
-$$
+\[
+\|w_T^{\mathrm{CL}}-w_T^{\mathrm{NS}}\| \lesssim \frac{G}{\beta\tau}\,\Delta_{\pi,\delta}(B;\tau)\left(\exp\left(\beta\sum_{t=0}^{T-1}\eta_t\right)-1\right),
+\]
 
 which can grow exponentially with training time.
 
