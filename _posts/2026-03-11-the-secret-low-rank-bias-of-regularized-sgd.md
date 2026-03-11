@@ -102,10 +102,7 @@ $$
 W_{t+1} = W_t - \mu \nabla_W L_{\tilde S_t}(W_t) - 2\mu\lambda W_t,
 $$
 
-where:
-- $\mu$ is the learning rate,
-- $\lambda$ is the weight decay coefficient,
-- $\tilde S_t$ is the mini-batch at step $t$.
+where $\mu$ is the learning rate, $\lambda$ is the weight decay coefficient, and $\tilde S_t$ is the mini-batch at step $t$.
 
 Equivalently,
 
