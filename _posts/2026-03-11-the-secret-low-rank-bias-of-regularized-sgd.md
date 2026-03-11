@@ -309,7 +309,7 @@ $$
 Therefore,
 
 $$
-\operatorname{rank}\big(\nabla_W \ell(h_W(x))\big) \le R.
+\textnormal{rank}\big(\nabla_W \ell(h_W(x))\big) \le R.
 $$
 
 So the single-sample gradient is no longer necessarily rank \(1\), but it is still low rank: its rank is at most the number of local applications of \(W\) within that example.
@@ -327,7 +327,7 @@ $$
 so
 
 $$
-\operatorname{rank}\big(\nabla_W \ell(h_W(x))\big) \le R.
+\textnormal{rank}\big(\nabla_W \ell(h_W(x))\big) \le R.
 $$
 
 Here \(R\) is the number of spatial positions.
@@ -347,7 +347,7 @@ $$
 so
 
 $$
-\operatorname{rank}\big(\nabla_W \ell(h_W(x))\big) \le T,
+\textnormal{rank}\big(\nabla_W \ell(h_W(x))\big) \le T,
 $$
 
 where \(T\) is the sequence length.
@@ -368,7 +368,7 @@ So if:
 then
 
 $$
-\operatorname{rank}(G_t) \le BR.
+\textnormal{rank}(G_t) \le BR.
 $$
 
 The rest of the argument is unchanged.
