@@ -25,7 +25,9 @@ A lot of prior theory explains low-rank behavior only under restrictive assumpti
 
 The main message of this post is:
 
-> **SGD with weight decay implicitly biases each layer toward low-rank structure, and this effect becomes stronger with smaller batch size, larger learning rate, and stronger weight decay.**
+> <span style="color:#1e6bd6; font-weight:600;">
+> SGD with weight decay implicitly biases each layer toward low-rank structure, and this effect becomes stronger with smaller batch size, larger learning rate, and stronger weight decay.
+> </span>
 
 This is not a convergence theorem. It is a structural explanation for why low-rank layers naturally emerge during training.
 
