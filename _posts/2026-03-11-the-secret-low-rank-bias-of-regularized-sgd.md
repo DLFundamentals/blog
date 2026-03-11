@@ -220,7 +220,7 @@ $$
 \operatorname{rank}_\varepsilon(W_T) \lesssim \frac{B\log(1/\varepsilon)}{\mu\lambda}.
 $$
 
-Here $\operatorname{rank}_\varepsilon$ denotes the minimum rank of a matrix that approximates $\frac{W_T}{\|W_T\|}$ up to error $\varepsilon$.
+Here $\operatorname{rank}_\varepsilon$ denotes the minimum rank of a matrix that approximates $\frac{W_T}{\lVert W_T \rVert}$ up to error $\varepsilon$.
 
 This bound is not meant to be sharp. Its value is conceptual. It captures the correct qualitative dependencies:
 - smaller batch size $\Rightarrow$ lower effective rank,
