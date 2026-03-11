@@ -88,7 +88,7 @@ $$
 and therefore an effective-rank bound of the form
 
 $$
-\textnormal{rank}_\varepsilon(W_T) \lesssim \frac{B \log(1/\varepsilon)}{\mu\lambda}.
+\textnormal{rank}_\varepsilon(W_T) \leq \frac{B \log(1/\varepsilon)}{\mu\lambda}.
 $$
 
 This explains why:
