@@ -1,6 +1,3 @@
 title: Theory/Simplified
 theme: minima
-markdown: kramdown
-
-minima:
-  nav_pages: []
+header_pages: []
