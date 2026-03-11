@@ -127,8 +127,6 @@ So a **single-example gradient is rank 1**.
 
 This is the key observation. The gradient of the loss with respect to a layer matrix is not an arbitrary full-rank matrix. For one example, it has the simplest possible structure: one left direction times one right direction.
 
-That is already enough to explain why low rank should appear.
-
 ## Step 2: a mini-batch still gives a low-rank update
 
 Now suppose the mini-batch size is $B$. The stochastic gradient is the average of $B$ single-example gradients:
