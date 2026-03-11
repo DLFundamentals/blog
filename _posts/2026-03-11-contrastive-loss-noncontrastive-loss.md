@@ -102,9 +102,9 @@ So if the number of classes is large, same-class negatives form only a small fra
 
 That intuition can be made precise. For any encoder \(f\),
 
-\[
+$$
 \mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \log\left(1+\frac{n_{\max}e^2}{N-n_{\max}}\right).
-\]
+$$
 
 Using \(\log(1+x)\le x\), this gives the simpler bound
 
