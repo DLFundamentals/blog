@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Secret Low-Rank Bias of Regularized SGD"
+title: "SGD's Universal Bias Towards Low-Rank Networks"
 date: 2026-03-11
 author: Tomer Galanti
 tags: [deep learning, optimization, SGD, weight decay, theory, low-rank]
