@@ -99,7 +99,7 @@ $$
 the chain rule gives
 
 $$
-\nabla_W \ell(h_W(x)) = \Big(J_g(Wf(x))^\top \nabla_h \ell(h_W(x))\Big)\, f(x)^\top.
+\nabla_W \ell(h_W(x)) = \Big(J_g(Wf(x))^\top \nabla_h \ell(h_W(x))\Big) \cdot f(x)^\top.
 $$
 
 Define
