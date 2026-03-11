@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "SGD's Universal Bias Towards Low-Rank Networks"
+title: "Why SGD Prefers Low-Rank Neural Networks"
 date: 2026-03-11
 author: Tomer Galanti
 tags: [deep learning, optimization, SGD, weight decay, theory, low-rank]
