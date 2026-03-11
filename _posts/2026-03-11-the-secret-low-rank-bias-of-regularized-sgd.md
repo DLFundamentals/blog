@@ -57,7 +57,7 @@ This is the cleanest case, and it already reveals the whole mechanism.
 
 Later we will return to residual blocks, convolutions, and self-attention, where the same matrix may be reused several times within one example.
 
-### The SGD update
+#### The SGD update
 
 For this layer, mini-batch SGD with weight decay takes the form
 
