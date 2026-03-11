@@ -151,7 +151,7 @@ These are natural metrics for asking whether two models learn the same relationa
 Under a coupled training protocol, one can bound the difference between the CL and NSCL similarity matrices throughout training. A representative bound has the form
 
 $$
-\|\Sigma_T^{\mathrm{CL}}-\Sigma_T^{\mathrm{NS}}\|_F \le \exp\left(\frac{1}{2\tau^2 B}\sum_{t=0}^{T-1}\eta_t\right)\cdot\frac{1}{\tau\sqrt{B}}\left(\sum_{t=0}^{T-1}\eta_t\right)\Delta_{\pi,\delta}(B;\tau),
+\|\Sigma_T^{\mathrm{CL}}-\Sigma_T^{\mathrm{NS}}\|_F \lesssim \frac{e^{2/\tau}}{\tau C \sqrt{B}} \cdot \exp\left(\frac{1}{2\tau^2 B}\sum_{t=0}^{T-1}\eta_t\right)\cdot \left(\sum_{t=0}^{T-1}\eta_t\right),
 $$
 
 where:
@@ -182,7 +182,7 @@ Once the similarity matrices are close, one immediately gets lower bounds on sta
 \mathrm{CKA}_T \ge \frac{1-\rho_T}{1+\rho_T}, \qquad \mathrm{RSA}_T \ge \frac{1-r_T}{1+r_T},
 \]
 
-where \(\rho_T\) and \(r_T\) are normalized versions of the similarity-matrix discrepancy.
+where $\rho_T$ and $r_T$ are normalized versions of the similarity-matrix discrepancy.
 
 So the theory does not merely say that CL and NSCL have nearby objective values. It says that, under shared randomness, their internal geometry can remain meaningfully aligned throughout training.
 
