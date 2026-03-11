@@ -1,5 +1,14 @@
 title: Theory/Simplified
 theme: minima
-header_pages: XXX
+
+markdown: kramdown
+
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge
+  
+header_pages: []
 minima:
-  nav_pages: YYY
+  nav_pages: []
+head_scripts:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
