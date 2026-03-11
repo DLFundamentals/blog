@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "The Secret Low-Rank Bias of Regularized SGD"
 date: 2026-03-11
 author: Tomer Galanti
