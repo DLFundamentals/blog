@@ -291,9 +291,7 @@ where $\Delta(x)$ collects the backpropagated error vectors for those $R$ uses o
 Equivalently,
 
 $$
-\nabla_W \ell(h_W(x))
-=
-\sum_{r=1}^R \delta_r(x) f_r(x)^\top.
+\nabla_W \ell(h_W(x)) = \sum_{r=1}^R \delta_r(x) f_r(x)^\top.
 $$
 
 Therefore,
