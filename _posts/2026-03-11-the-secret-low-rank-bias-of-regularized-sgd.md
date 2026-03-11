@@ -29,7 +29,7 @@ The main message of this post is:
 
 This is not a convergence theorem. It is a structural explanation for why low-rank layers naturally emerge during training.
 
-## The setup
+### The setup
 
 We train a network by minimizing the regularized empirical loss
 
@@ -55,7 +55,7 @@ This is the cleanest case, and it already reveals the whole mechanism.
 
 Later we will return to residual blocks, convolutions, and self-attention, where the same matrix may be reused several times within one example.
 
-## The SGD update
+### The SGD update
 
 For this layer, mini-batch SGD with weight decay takes the form
 
@@ -88,7 +88,7 @@ This decomposition is already suggestive:
 
 The key question is: **what structure does $G_t$ have?**
 
-## Key observation: one sample gives a rank-1 update
+### Key observation: one sample gives a rank-1 update
 
 Consider a single training example $x$. Since
 
@@ -124,7 +124,7 @@ So a **single-sample gradient is rank 1**.
 
 That is the basic reason low rank appears.
 
-## From one sample to a mini-batch
+### From one sample to a mini-batch
 
 If the mini-batch has size $B$, then the stochastic gradient is the average of $B$ such outer products:
 
@@ -176,7 +176,7 @@ So, after enough time, the current weight matrix is well approximated by a sum o
 
 That is why SGD with weight decay tends to produce low-rank structure.
 
-## An effective-rank bound
+### An effective-rank bound
 
 Suppose we choose $n$ large enough so that the old-memory term is at most $\varepsilon$ in norm:
 
@@ -204,7 +204,7 @@ This bound is not meant to be sharp. Its value is conceptual. It shows the corre
 - larger learning rate $\Rightarrow$ shorter memory $\Rightarrow$ lower effective rank,
 - larger weight decay $\Rightarrow$ shorter memory $\Rightarrow$ lower effective rank.
 
-## What this means intuitively
+### What this means intuitively
 
 Each stochastic gradient step writes only a few directions into the matrix.
 
@@ -214,7 +214,7 @@ So instead of accumulating an unrestricted full-rank history, the layer mostly r
 
 That is exactly the kind of mechanism that produces compressible matrices.
 
-## Why the local form $h_W(x)=g(Wf(x))$ is natural
+### Why the network decomposition is natural
 
 At first glance, writing the network as
 
@@ -254,7 +254,7 @@ $$
 
 So the simple one-use model already covers dense layers and matrices inside residual architectures.
 
-## Extension: when the same matrix is used many times
+### Extension: when the same matrix is used many times
 
 The only place where the rank-1 statement needs to be modified is when the same matrix $W$ is reused multiple times within a single example.
 
@@ -302,7 +302,7 @@ $$
 
 So the single-sample gradient is no longer necessarily rank $1$, but it is still low rank: its rank is at most the number of local applications of $W$ within that example.
 
-### Convolution
+#### Convolution
 
 For a convolutional kernel reshaped as a matrix $W$, the same kernel is applied at many spatial locations. If the extracted local patches are $f_1(x),\dots,f_R(x)$, then
 
@@ -318,7 +318,7 @@ $$
 
 Here $R$ is the number of spatial positions.
 
-### Self-attention projections
+#### Self-attention projections
 
 For a transformer projection matrix such as $W_Q$, $W_K$, or $W_V$, the same matrix is applied to every token.
 
@@ -338,7 +338,7 @@ where $T$ is the sequence length.
 
 Again, this is not rank 1, but it is still much smaller than the ambient matrix dimension in many modern models.
 
-## The general principle
+### The general principle
 
 The cleanest statement is this:
 
@@ -359,7 +359,7 @@ The rest of the argument is unchanged.
 
 Weight decay still exponentially forgets old updates, so the current matrix remains close to a sum of only recent low-rank gradients. The one-use case $R=1$ is simply the sharpest and cleanest special case.
 
-## Takeaway
+### Takeaway
 
 SGD with weight decay does more than optimize the loss.
 
