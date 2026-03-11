@@ -30,25 +30,25 @@ The main message of this post is the following:
 > </span>
 
 <div style="margin: 2rem 0;">
-  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-items: start;">
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: start;">
 
     <div style="text-align: center;">
-      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_bs_8.png' | relative_url }}" style="width:100%; max-width:420px;">
+      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_bs_8.png' | relative_url }}" style="width:100%; max-width:220px;">
       <div><strong>(a)</strong> \(B = 8\)</div>
     </div>
 
     <div style="text-align: center;">
-      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_bs_16.png' | relative_url }}" style="width:100%; max-width:420px;">
+      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_bs_16.png' | relative_url }}" style="width:100%; max-width:220px;">
       <div><strong>(b)</strong> \(B = 16\)</div>
     </div>
 
     <div style="text-align: center;">
-      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_lr_5.png' | relative_url }}" style="width:100%; max-width:420px;">
+      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_lr_5.png' | relative_url }}" style="width:100%; max-width:220px;">
       <div><strong>(c)</strong> \(\mu = 0.5\)</div>
     </div>
 
     <div style="text-align: center;">
-      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_wd_6e-3.png' | relative_url }}" style="width:100%; max-width:420px;">
+      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_wd_6e-3.png' | relative_url }}" style="width:100%; max-width:220px;">
       <div><strong>(d)</strong> \(\lambda = 6 \times 10^{-3}\)</div>
     </div>
 
