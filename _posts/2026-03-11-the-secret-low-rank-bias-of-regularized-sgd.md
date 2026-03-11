@@ -61,6 +61,8 @@ The main message of this post is the following:
     We plot the average rank at the end of training for ResNet-18 trained on CIFAR-10 while varying a pair of hyperparameters.
   </div>
 
+<br>
+
 The mechanism is simple:
 
 1. each stochastic gradient step adds only a low-rank update,
