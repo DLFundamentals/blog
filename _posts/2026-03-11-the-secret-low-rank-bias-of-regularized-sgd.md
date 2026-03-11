@@ -119,7 +119,7 @@ $$
 This is the outer product of two vectors. Therefore,
 
 $$
-\operatorname{rank}\big(\nabla_W \ell(h_W(x))\big) \le 1.
+\textnormal{rank}\big(\nabla_W \ell(h_W(x))\big) \le 1.
 $$
 
 So a **single-sample gradient is rank 1**.
@@ -137,7 +137,7 @@ $$
 A sum of \(B\) rank-1 matrices has rank at most \(B\), so
 
 $$
-\operatorname{rank}(G_t) \le B.
+\textnormal{rank}(G_t) \le B.
 $$
 
 Thus, every SGD step adds a matrix of rank at most the batch size.
@@ -199,12 +199,12 @@ $$
 Now the second term is a sum of \(n\) mini-batch gradients, each of rank at most \(B\). Therefore its rank is at most \(nB\). This gives the heuristic effective-rank bound
 
 $$
-\operatorname{rank}_\varepsilon(W_T)
+\textnormal{rank}_\varepsilon(W_T)
 \;\lesssim\;
 \frac{B \log(1/\varepsilon)}{\mu\lambda}.
 $$
 
-The notation \(\operatorname{rank}_\varepsilon\) means the minimum rank of a matrix that approximates \(W_T\) up to error \(\varepsilon\).
+The notation \(\textnormal{rank}_\varepsilon\) means the minimum rank of a matrix that approximates \(W_T\) up to error \(\varepsilon\).
 
 This bound is not meant to be sharp. Its value is conceptual. It shows the correct qualitative dependencies:
 
@@ -234,9 +234,9 @@ may look restrictive. But it is actually the correct local view for a very broad
 
 The idea is simple: fix all parameters except one matrix \(W\), and isolate the place in the computation where \(W\) acts.
 
-- \(f(x)\) is whatever enters that linear map,
-- \(Wf(x)\) is the output of that map,
-- \(g\) absorbs everything downstream.
+- $f(x)$ is whatever enters that linear map,
+- $Wf(x)$ is the output of that map,
+- $g$ absorbs everything downstream.
 
 For a standard fully connected layer, this is immediate.
 
