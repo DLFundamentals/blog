@@ -99,9 +99,7 @@ $$
 the chain rule gives
 
 $$
-\nabla_W \ell(h_W(x))
-=
-\Big(J_g(Wf(x))^\top \nabla_h \ell(h_W(x))\Big)\, f(x)^\top.
+\nabla_W \ell(h_W(x)) = \Big(J_g(Wf(x))^\top \nabla_h \ell(h_W(x))\Big)\, f(x)^\top.
 $$
 
 Define
@@ -160,11 +158,7 @@ $$
 we can unroll the recursion for \(n\) steps:
 
 $$
-W_T
-=
-(1-2\mu\lambda)^n W_{T-n}
--
-\mu \sum_{j=1}^n (1-2\mu\lambda)^{j-1} G_{T-j}.
+W_T = (1-2\mu\lambda)^n W_{T-n} - \mu \sum_{j=1}^n (1-2\mu\lambda)^{j-1} G_{T-j}.
 $$
 
 This identity is the heart of the argument.
@@ -199,9 +193,7 @@ $$
 Now the second term is a sum of \(n\) mini-batch gradients, each of rank at most \(B\). Therefore its rank is at most \(nB\). This gives the heuristic effective-rank bound
 
 $$
-\textnormal{rank}_\varepsilon(W_T)
-\;\lesssim\;
-\frac{B \log(1/\varepsilon)}{\mu\lambda}.
+\textnormal{rank}_\varepsilon(W_T) \;\lesssim\; \frac{B \log(1/\varepsilon)}{\mu\lambda}.
 $$
 
 The notation \(\textnormal{rank}_\varepsilon\) means the minimum rank of a matrix that approximates \(W_T\) up to error \(\varepsilon\).
@@ -291,9 +283,7 @@ $$
 Now the chain rule gives
 
 $$
-\nabla_W \ell(h_W(x))
-=
-\Delta(x) F(x)^\top,
+\nabla_W \ell(h_W(x)) = \Delta(x) F(x)^\top,
 $$
 
 where \(\Delta(x)\) collects the backpropagated error vectors for those \(R\) uses of the matrix.
@@ -316,12 +306,10 @@ So the single-sample gradient is no longer necessarily rank \(1\), but it is sti
 
 ### Convolution
 
-For a convolutional kernel reshaped as a matrix \(W\), the same kernel is applied at many spatial locations. If the extracted local patches are \(f_1(x),\dots,f_R(x)\), then
+For a convolutional kernel reshaped as a matrix \(W\), the same kernel is applied at many spatial locations. If the extracted local patches are $f_1(x),\dots,f_R(x)$, then
 
 $$
-\nabla_W \ell(h_W(x))
-=
-\sum_{r=1}^R \delta_r(x) f_r(x)^\top,
+\nabla_W \ell(h_W(x)) = \sum_{r=1}^R \delta_r(x) f_r(x)^\top,
 $$
 
 so
@@ -339,9 +327,7 @@ For a transformer projection matrix such as \(W_Q\), \(W_K\), or \(W_V\), the sa
 If the token representations are \(f_1(x),\dots,f_T(x)\), then
 
 $$
-\nabla_W \ell(h_W(x))
-=
-\sum_{t=1}^T \delta_t(x) f_t(x)^\top,
+\nabla_W \ell(h_W(x)) = \sum_{t=1}^T \delta_t(x) f_t(x)^\top,
 $$
 
 so
@@ -362,8 +348,8 @@ The cleanest statement is this:
 
 So if:
 
-- \(B\) is the batch size,
-- \(R\) is the number of local uses of \(W\) per example,
+- $B$ is the batch size,
+- $R$ is the number of local uses of \(W\) per example,
 
 then
 
