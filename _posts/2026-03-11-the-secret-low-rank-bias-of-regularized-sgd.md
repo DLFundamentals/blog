@@ -3,8 +3,14 @@ layout: post
 title: "Why SGD Prefers Low-Rank Neural Networks"
 date: 2026-03-11
 author: Tomer Galanti
-tags: [deep learning, optimization, SGD, weight decay, theory, low-rank]
-excerpt: "A simple view of why mini-batch SGD with weight decay implicitly pushes neural networks toward low-rank weight matrices."
+tags:
+  - deep-learning
+  - optimization
+  - stochastic-gradient-descent
+  - weight-decay
+  - theory
+  - low-rank
+excerpt: "Why mini-batch SGD with weight decay implicitly pushes neural networks toward low-rank weight matrices."
 ---
 
 Deep networks are often massively overparameterized, yet the solutions found in practice are far from arbitrary. Even when a model has enough capacity to memorize the data in many different ways, stochastic gradient descent tends to land on solutions with structure.
