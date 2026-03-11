@@ -104,21 +104,7 @@ So when $C$ is large, the same-class terms form only a small fraction of the den
 
 That intuition can be made precise. For any encoder $f$,
 $$
-\mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \log\left(1+\frac{ne^2}{N-n}\right).
-$$
-
-Using $\log(1+x)\le x$, this gives the simpler bound
-$$
-\mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{ne^2}{N-n}.
-$$
-
-Since $N = Cn$, we have
-$$
-\frac{n}{N-n} = \frac{1}{C-1},
-$$
-and therefore
-$$
-\mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{e^2}{C-1}.
+\mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \log\left(1+\frac{e^2}{C-1}\right) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{e^2}{C-1}.
 $$
 
 So in the balanced setting, the gap between DCL and NSCL shrinks like $O(1/C)$.
