@@ -248,31 +248,12 @@ This is why collapse is not just an aesthetic geometric property. It directly su
 
 ## The high-level theorem
 
-The full paper proves bounds on the transfer error $\mathcal L_{\mathcal D}(f)$.
+The full paper proves upper bounds on the transfer error $\mathcal L_{\mathcal D}(f)$ of the pretrained feature map $f$.
 
-At a high level, they take the form
-
-$$
-\text{transfer error}
-\;\lesssim\;
-\text{collapse on source classes}
-+
-\text{sample generalization term}
-+
-\text{class generalization term}.
-$$
-
-A more concrete version looks like
+At a high level, the result has the form
 
 $$
-\mathcal L_{\mathcal D}(f)
-\;\lesssim\;
-(k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j)
-+
-\frac{k\,\mathrm{complexity}(f)}{\Lambda}
-\left(
-\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{l}}
-\right),
+\mathcal L_{\mathcal D}(f) \;\lesssim\; (k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j) + \frac{k\,\mathrm{complexity}(f)}{\min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|} \left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{l}}\right),
 $$
 
 up to logarithmic factors.
@@ -280,17 +261,47 @@ up to logarithmic factors.
 Here:
 
 - $l$ is the number of source classes,
-- $m$ is the number of source samples per class,
-- $n$ is the number of target samples per class,
-- $\Lambda$ is the minimum distance between source class means.
+- $m$ is the number of source samples per source class,
+- $n$ is the number of target samples per target class,
+- $k$ is the number of target classes,
+- $\mu_f(\tilde S_i)$ is the empirical mean of source class $i$ in feature space.
 
-The point is not the exact constants. The point is the structure.
+This bound is worth unpacking carefully.
 
-The bound says that transfer becomes good when:
+The first term,
 
-1. source classes collapse in feature space,
-2. their class means remain separated,
-3. we train on many source samples and many source classes.
+$$
+(k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j),
+$$
+
+is the geometric term. It is small when the source classes are tightly clustered relative to the distances between their feature means. This is exactly the kind of class-wise organization that neural collapse predicts. So this term says that if pretraining produces strong class collapse on the source task, then few-shot transfer should become easier.
+
+The second part is the generalization error. Its structure is also very natural. It becomes smaller when:
+
+- $m$ is large, meaning we have many samples from each source class, and
+- $l$ is large, meaning we train on many different source classes.
+
+These two roles are different.
+
+The $1/\sqrt{m}$ term is a standard sample effect: with more examples from each source class, we can estimate the geometry of that class more accurately.
+
+The $1/\sqrt{l}$ term is more interesting. It reflects generalization to **new classes**. Since the target classes are not seen during pretraining, the representation must generalize not only across new examples, but across new class-conditionals. So having many source classes is essential in its own right.
+
+The denominator
+
+$$
+\min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|
+$$
+
+is equally important. It measures the minimal separation between source class means in feature space. If two source class centers are extremely close, then even small within-class fluctuations may cause confusion, and the transfer guarantee deteriorates. By contrast, if all class means stay well separated, then the same amount of within-class variance is much less harmful.
+
+So the bound is expressing a very simple principle:
+
+> Few-shot transfer is good when the pretrained representation makes classes tight, keeps their means apart, and is learned from many samples and many source classes.
+
+There is also an important conceptual point here. The guarantee remains meaningful in the true few-shot regime, where $n$ is small and may even stay fixed while $m$ and $l$ grow. This is exactly the setting we care about. The goal is not to say that transfer works because eventually we get lots of target data. The goal is to explain why transfer can already work when the target task has only a handful of labeled examples.
+
+The bound above does exactly that. It says that the burden of learning is shifted to pretraining: if the source task is rich enough and the learned feature geometry is sufficiently collapsed and separated, then the downstream target task can be solved from very little data.
 
 ## Why the number of source classes matters
 
