@@ -1,6 +1,4 @@
 ---
 layout: home
-title: Blog
+title: Theory/Simplified
 ---
-
-Welcome to the DLFundamentals blog.
