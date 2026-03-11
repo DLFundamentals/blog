@@ -56,9 +56,9 @@ This gives a cleaner way to think about why contrastive learning so often behave
 
 Consider a labeled dataset
 
-\[
+$$
 S = \{(x_i,y_i)\}_{i=1}^N,
-\]
+$$
 
 but assume that during self-supervised training we only use the inputs \(x_i\), not the labels \(y_i\). For each sample \(x_i\), we generate \(K\) augmentations and map them through an encoder \(f\):
 
