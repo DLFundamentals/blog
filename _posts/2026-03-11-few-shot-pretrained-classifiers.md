@@ -15,41 +15,45 @@ excerpt: "A geometric explanation for why ordinary supervised pretraining can tr
 
 Deep networks trained on ordinary classification tasks often transfer remarkably well to new classes.
 
-This is especially striking in the **few-shot** regime. We pretrain a model on many source classes, freeze its representation, and then fit a very simple classifier on top of only one or a few examples from each new class. Empirically, this often works much better than one might expect.
+This is especially striking in the **few-shot** regime. We pretrain a model on many source classes, freeze its representation, and then fit a very simple classifier on top of only one or a few examples from each new class. Empirically, this works far better than one might expect.
 
 Why?
 
-A common answer is that pretraining learns "good features." That is true, but it does not yet explain what geometric property of the feature space makes few-shot transfer possible.
+A common answer is that pretraining learns "good features." That is true, but it still leaves open the main question:
+
+> **What property of the learned feature space makes few-shot transfer possible on classes the model has never seen before?**
 
 The main message of this post is the following:
 
 > <span style="color:#1e6bd6; font-weight:600;">
-> Supervised pretraining can organize the feature space so that each class becomes a tight cluster around its mean, while different classes stay far apart. Once this happens, a new class can often be learned from only a few labeled examples.
+> If supervised pretraining makes each class collapse into a tight cluster in feature space, while keeping different class means separated, then new classes can often be learned from only a few labeled examples.
 > </span>
 
-This is closely tied to a central part of **neural collapse**.
+The key point is that this can be formalized and proved in a setting where the source classes and target classes are both drawn from a common population of possible classes.
+
+That is where the class-conditional setup comes in.
 
 <div style="margin: 2rem 0;">
   <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: stretch;">
 
     <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Pretraining</strong><br>
-      Learn a feature map on many source classes
+      <strong>Sample source classes</strong><br>
+      Draw many training classes
     </div>
 
     <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Geometry</strong><br>
-      Same-class features collapse around their mean
+      <strong>Pretrain a feature map</strong><br>
+      Learn $f$ on the source task
     </div>
 
     <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Transfer</strong><br>
-      Unseen classes inherit a similar geometry
+      <strong>Sample target classes</strong><br>
+      Draw new unseen classes
     </div>
 
     <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Few-shot adaptation</strong><br>
-      A few samples are enough to estimate each new class center
+      <strong>Adapt with few examples</strong><br>
+      Estimate class centers from small samples
     </div>
 
   </div>
@@ -57,66 +61,196 @@ This is closely tied to a central part of **neural collapse**.
 
 <div style="margin-top: 1rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
   <strong>Figure 1.</strong>
-  <strong>The basic picture.</strong>
-  The source task shapes the feature space. If each class forms a tight cluster relative to the distance between class means, then simple classifiers built from only a few target examples can already work well.
+  <strong>The logic of the theory.</strong>
+  The source and target tasks are not treated as arbitrary unrelated classification problems. Instead, both are built by sampling class-conditionals from the same population of possible classes. This is what lets us ask whether geometry learned on the source classes generalizes to unseen target classes.
 </div>
 
 <br>
 
-## The setup
+## The right setting: classes are random objects
 
-Let $f(x)$ be the pretrained feature map. On a new few-shot task, the simplest thing we can do is estimate the mean feature vector of each class from the few labeled examples we have, and classify by nearest center.
+To talk about transfer to **new classes**, we need a model in which classes themselves are random.
 
-That gives the classifier
+The setup is this.
+
+There is an unknown distribution $\mathcal D$ over a set $\mathcal E$ of class-conditional distributions. Each element of $\mathcal E$ is one possible class. So instead of saying "the model trains on one fixed dataset and then tests on another," we say:
+
+- a **class** is itself a distribution over inputs,
+- source classes are sampled from $\mathcal D$,
+- target classes are also sampled from $\mathcal D$.
+
+Concretely, the source task is built from class-conditionals
 
 $$
-h(x) = \arg\min_c \|f(x)-\mu_f(S_c)\|,
+\tilde P_1,\dots,\tilde P_l \sim \mathcal D
 $$
 
-where $S_c$ is the small labeled sample from target class $c$, and $\mu_f(S_c)$ is the empirical feature mean of that class.
+and the target task is built from new class-conditionals
 
-This rule is almost embarrassingly simple.
+$$
+P_1,\dots,P_k \sim \mathcal D,
+$$
 
-So the real question is:
+independently of the source draw.
 
-> **When should nearest-class-center classification work well on unseen classes?**
+This is the key modeling move.
 
-## The key geometric quantity
+It formalizes the intended use of pretrained representations: we train on many source classes that are representative of some broader family, and then we want to transfer to new classes from the same family.
+
+## Source and target classification problems
+
+Once the classes are sampled, they induce balanced classification problems.
+
+The source task is the balanced $l$-class distribution
+
+$$
+\tilde P(x,y)
+\quad\text{with}\quad
+\tilde P(y=c)=\frac{1}{l},
+\qquad
+x \mid y=c \sim \tilde P_c.
+$$
+
+The target task is the balanced $k$-class distribution
+
+$$
+P(x,y)
+\quad\text{with}\quad
+P(y=c)=\frac{1}{k},
+\qquad
+x \mid y=c \sim P_c.
+$$
+
+From these class-conditionals we draw data.
+
+For the source task, we observe many labeled samples per class:
+
+$$
+\tilde S_c=\{\tilde x_{c1},\dots,\tilde x_{cm}\},
+\qquad
+\tilde x_{ci} \sim \tilde P_c.
+$$
+
+For the target task, we only get a few labeled samples per class:
+
+$$
+S_c=\{x_{c1},\dots,x_{cn}\},
+\qquad
+x_{ci} \sim P_c.
+$$
+
+Here $m$ is large, while $n$ is small. That is the few-shot regime.
+
+## What the pretrained model is supposed to learn
+
+We train a classifier on the source task, but the real object we care about is the feature map
+
+$$
+f:\mathcal X \to \mathbb R^p.
+$$
+
+This is the pretrained representation, usually the penultimate layer of a neural network.
+
+Once $f$ is learned, we freeze it and solve the target problem using only the few target samples. The simplest classifier is the nearest-class-center rule
+
+$$
+h(x)=\arg\min_{c\in[k]} \|f(x)-\mu_f(S_c)\|,
+$$
+
+where
+
+$$
+\mu_f(S_c)=\frac{1}{n}\sum_{i=1}^n f(x_{ci})
+$$
+
+is the empirical feature mean of class $c$.
+
+So the target task becomes:
+
+> Use a few examples from each new class to estimate its center in feature space, then classify by whichever center is closest.
+
+This is simple enough that if it works well, the explanation must lie in the geometry of the feature map itself.
+
+## What does it mean for a feature map to transfer well?
+
+Since the target classes are random, the right object is not the error on one fixed target task, but the **expected few-shot transfer error** over new target classes and their few-shot samples.
+
+That is,
+
+$$
+\mathcal L_{\mathcal D}(f)
+=
+\mathbb E_{P_1,\dots,P_k \sim \mathcal D}
+\;
+\mathbb E_{S_c \sim P_c^n}
+\left[
+L_P(h)
+\right],
+$$
+
+where $h$ is the nearest-class-center classifier built on top of $f$.
+
+So $\mathcal L_{\mathcal D}(f)$ asks a clean question:
+
+> If I draw a fresh target task from the same population of classes, and only get $n$ examples per class, how well does the pretrained representation perform on average?
+
+That is the quantity the theory controls.
+
+## The geometric quantity that matters
 
 For two classes $Q_i$ and $Q_j$, define
 
 $$
-V_f(Q_i,Q_j) = \frac{\operatorname{Var}_f(Q_i)}{\|\mu_f(Q_i)-\mu_f(Q_j)\|^2}.
+V_f(Q_i,Q_j)
+=
+\frac{\operatorname{Var}_f(Q_i)}{\|\mu_f(Q_i)-\mu_f(Q_j)\|^2}.
 $$
 
-This quantity compares two things:
+Here
 
-- how spread out class $i$ is in feature space,
-- how far its mean is from the mean of class $j$.
+$$
+\mu_f(Q)=\mathbb E_{x\sim Q}[f(x)]
+$$
 
-If $V_f(Q_i,Q_j)$ is small, then class $i$ is tight relative to the distance between the two class centers.
+is the class mean in feature space, and
 
-This is exactly the geometry we want. Small within-class variation and large between-class separation make the class structure stable.
+$$
+\operatorname{Var}_f(Q)
+=
+\mathbb E_{x\sim Q}\|f(x)-\mu_f(Q)\|^2
+$$
 
-In the language of neural collapse, this is a form of **class-feature variability collapse**.
+is the within-class variance.
 
-## Why a few examples can be enough
+So $V_f(Q_i,Q_j)$ compares:
 
-Suppose a new target class really does form a compact cluster in feature space.
+- how spread out class $i$ is,
+- how far apart the two class means are.
 
-Then even if we only observe a few examples from that class, their empirical mean is already a decent estimate of the true class center. The classifier does not need to learn a complicated decision boundary from scratch. It mostly needs to locate where each new class sits.
+If this quantity is small, then class $i$ is tightly clustered relative to its separation from class $j$.
 
-That is why few-shot transfer becomes plausible.
+This is the basic form of **class-feature variability collapse**.
 
-The hard part is not the small classifier fitted on top. The hard part is learning a representation where classes already look like tight, separated clouds.
+## Why this quantity is exactly the right one
 
-Once that geometry is in place, the downstream task becomes much easier.
+If a new target class is very diffuse in feature space, then a few labeled samples are not enough to locate it reliably.
 
-## The main theoretical point
+But if the feature map makes each class form a tight cluster, then even a few samples already give a decent estimate of the class center.
 
-The theory studies a setting where source classes and target classes are both drawn from a broader population of classes. Under that model, one can define the transfer error of the feature map $f$ as the expected few-shot classification error on a new target task.
+So small $V_f(Q_i,Q_j)$ means:
 
-The high-level result is that this transfer error can be bounded by three ingredients:
+- low within-class noise,
+- stable class centers,
+- easier few-shot estimation,
+- more reliable nearest-center classification.
+
+This is why collapse is not just an aesthetic geometric property. It directly supports few-shot transfer.
+
+## The high-level theorem
+
+The full paper proves bounds on the transfer error $\mathcal L_{\mathcal D}(f)$.
+
+At a high level, they take the form
 
 $$
 \text{transfer error}
@@ -128,114 +262,110 @@ $$
 \text{class generalization term}.
 $$
 
-Very roughly:
-
-- the first term measures how clustered the source classes are in feature space,
-- the second term shrinks as the number of source samples per class grows,
-- the third term shrinks as the number of source classes grows.
-
-So the picture is:
-
-1. many source samples stabilize the geometry within each source class,
-2. many source classes make that geometry generalize to unseen classes,
-3. collapse is what turns the pretrained representation into a good few-shot feature map.
-
-## A slightly more concrete version
-
-The full paper proves bounds of the form
+A more concrete version looks like
 
 $$
-\mathcal{L}_{\mathcal D}(f)
+\mathcal L_{\mathcal D}(f)
 \;\lesssim\;
 (k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j)
 +
-\frac{k\,\mathrm{complexity}(f)}{\Lambda}\left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{l}}\right),
+\frac{k\,\mathrm{complexity}(f)}{\Lambda}
+\left(
+\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{l}}
+\right),
 $$
 
 up to logarithmic factors.
 
 Here:
 
-- $\mathcal{L}_{\mathcal D}(f)$ is the expected few-shot transfer error,
 - $l$ is the number of source classes,
 - $m$ is the number of source samples per class,
 - $n$ is the number of target samples per class,
-- $\Lambda$ is the minimum distance between source class means in feature space.
+- $\Lambda$ is the minimum distance between source class means.
 
-Do not focus too much on the constants. The important part is the structure.
+The point is not the exact constants. The point is the structure.
 
 The bound says that transfer becomes good when:
 
-- the source classes collapse,
-- the class means remain separated,
-- the pretrained representation is learned from many classes and many samples.
+1. source classes collapse in feature space,
+2. their class means remain separated,
+3. we train on many source samples and many source classes.
 
-Most importantly, the guarantee is meaningful even in the few-shot regime where $n$ stays small.
+## Why the number of source classes matters
 
-## Why this is nontrivial
+One subtle point in the theory is that there are **two** kinds of generalization happening.
 
-A lot of classical theory becomes informative only when the downstream task itself has many samples.
+The first is standard sample generalization: with more samples per source class, the empirical geometry of each source class better reflects its true geometry.
 
-That is not the regime we care about here.
+The second is more interesting: **generalization across classes**.
 
-In few-shot learning, the target task may have only one or five examples per class. So we need a different explanation. The theory here says that the target task can still be easy, not because we have enough target data, but because pretraining has already built the right geometry into the feature space.
+Even if every source class is well learned, that alone does not guarantee transfer to unseen target classes. To get that, we need many source classes sampled from the population $\mathcal D$.
 
-That is the central idea.
+That is why the bound has a term of order $1/\sqrt{l}$.
 
-## Why nearest-center appears naturally
+This is not an artifact. If we want to generalize to new classes, the number of training classes matters in its own right.
 
-If classes collapse around their means, then nearest-center classification is no longer an arbitrary choice. It becomes the natural rule.
+## Why nearest-class-center appears naturally
 
-Indeed, once the representation is well clustered, the exact shape of a complicated classifier matters less. The main information is already contained in the class means.
+Once classes collapse around their means, nearest-center classification is no longer an arbitrary rule. It becomes the natural one.
 
-This also explains why simple top-layer methods such as nearest-center, ridge regression, or logistic regression on frozen features often perform surprisingly well.
+The downstream learner does not need to discover a complicated separator from a tiny amount of data. It mainly needs to estimate where each new class center lies.
 
-They are not doing the heavy lifting.
+That is why simple top-layer methods such as nearest-center, ridge regression, or logistic regression on frozen features often work so well in practice. The difficult part has already been done by the representation.
 
-The geometry is.
+The geometry is doing the real work.
 
-## What the experiments support
+## What the experiments show
 
-Empirically, the same pattern appears across standard few-shot benchmarks:
+Empirically, the same story appears across standard few-shot benchmarks.
 
-- during supervised training on source classes, the collapse quantity decreases,
-- the same geometry generalizes to held-out examples from the source classes,
-- as the number of source classes grows, the target geometry improves too,
-- and few-shot target accuracy rises along with it.
+As source training proceeds:
 
-So the collapse is not just a training artifact. It tracks actual transfer performance on unseen classes.
+- the collapse quantity decreases on the source training classes,
+- similar geometry appears on held-out samples from the same classes,
+- and, importantly, geometry on new target classes improves as well.
 
-That is exactly what one would want from a useful explanation.
+At the same time, few-shot target accuracy rises.
 
-## What this does and does not say
+So collapse is not merely a source-training artifact. It tracks actual transfer performance on unseen classes.
 
-This does **not** say that every pretrained classifier will transfer well to every target task.
+That is what makes it a compelling explanation.
 
-It does **not** say that exact neural collapse must literally occur.
+## What this does and does not claim
 
-And it does **not** remove the need for the source and target classes to come from a related family.
+This theory does **not** say that every pretrained classifier transfers well to every target task.
+
+It does **not** say that exact neural collapse must hold perfectly.
+
+And it does **not** remove the need for source and target classes to come from a related population.
 
 What it does say is more precise:
 
-- there is a concrete geometric property of learned representations,
-- that property emerges during ordinary supervised training,
-- and that property is enough to explain why few-shot transfer can work.
+- there is a clear probabilistic model for transfer to unseen classes,
+- there is a concrete geometric quantity that can be measured,
+- and that quantity explains why supervised pretraining can make few-shot adaptation easy.
 
-So this is not just a vague story about "good representations." It is a specific mechanism.
+So this is not just a vague claim about "good features." It is a specific mechanism with a clean mathematical setting behind it.
 
 ## Takeaway
 
-The success of few-shot transfer is not magic.
+The right way to think about few-shot transfer is not that pretraining somehow memorizes every future task.
 
-A pretrained classifier can work well on new classes because supervised training organizes the feature space in a highly favorable way:
+It is that pretraining learns a feature space with the right geometry.
 
-1. each source class becomes concentrated around its mean,
-2. different classes stay well separated,
-3. this geometry generalizes to new classes,
-4. so a few target examples are enough to estimate the new class centers.
+In the formal setting:
 
-In other words, pretraining does not need to solve the future task in advance.
+- source classes $\tilde P_1,\dots,\tilde P_l$ are sampled from a distribution $\mathcal D$ over class-conditionals,
+- target classes $P_1,\dots,P_k$ are new draws from the same $\mathcal D$,
+- the pretrained feature map $f$ is evaluated by the expected few-shot transfer error $\mathcal L_{\mathcal D}(f)$,
+- and this transfer error is small when class-feature variability collapse happens on the source classes and generalizes across classes.
 
-It only needs to create a feature space where new classes are already easy to place.
+In simple words:
+
+1. each class becomes concentrated around its mean,
+2. different classes stay far apart,
+3. this geometry extends to new classes,
+4. so a few labeled examples are enough to estimate the new centers.
 
 That is why ordinary supervised pretraining can be such a strong few-shot learner.
