@@ -194,7 +194,7 @@ At the same time, weight-space coupling is far less stable.
 A typical parameter-space bound takes the form
 
 $$
-\|w_T^{\mathrm{CL}}-w_T^{\mathrm{NS}}\| \lesssim \frac{G}{\beta\tau}\,\Delta_{\pi,\delta}(B;\tau)\left(\exp\left(\beta\sum_{t=0}^{T-1}\eta_t\right)-1\right),
+\|w_T^{\mathrm{CL}}-w_T^{\mathrm{NS}}\| \lesssim \frac{G e^{2/\tau}}{\beta\tau C} \cdot \left(\exp\left(\beta\sum_{t=0}^{T-1}\eta_t\right)-1\right),
 $$
 
 which can grow exponentially with training time.
