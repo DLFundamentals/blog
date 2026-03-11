@@ -33,32 +33,27 @@ The main message of this post is the following:
   <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-items: start;">
 
     <div style="text-align: center;">
-      <img src="/assets/figures/low-rank-bias/contour_resnet_bs_8.png" alt="Average rank for batch size 8" style="width: 100%; max-width: 420px; height: auto;">
-      <div style="margin-top: 0.5rem; font-size: 1.05rem;">
-        <strong>(a)</strong> \(B = 8\)
-      </div>
+      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_bs_8.png' | relative_url }}" style="width:100%; max-width:420px;">
+      <div><strong>(a)</strong> \(B = 8\)</div>
     </div>
 
     <div style="text-align: center;">
-      <img src="/assets/figures/low-rank-bias/contour_resnet_bs_16.png" alt="Average rank for batch size 16" style="width: 100%; max-width: 420px; height: auto;">
-      <div style="margin-top: 0.5rem; font-size: 1.05rem;">
-        <strong>(b)</strong> \(B = 16\)
-      </div>
+      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_bs_16.png' | relative_url }}" style="width:100%; max-width:420px;">
+      <div><strong>(b)</strong> \(B = 16\)</div>
     </div>
 
     <div style="text-align: center;">
-      <img src="/assets/figures/low-rank-bias/contour_resnet_lr_5.png" alt="Average rank for learning rate 0.5" style="width: 100%; max-width: 420px; height: auto;">
-      <div style="margin-top: 0.5rem; font-size: 1.05rem;">
-        <strong>(c)</strong> \(\mu = 0.5\)
-      </div>
+      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_lr_5.png' | relative_url }}" style="width:100%; max-width:420px;">
+      <div><strong>(c)</strong> \(\mu = 0.5\)</div>
     </div>
 
     <div style="text-align: center;">
-      <img src="/assets/figures/low-rank-bias/contour_resnet_wd_6e-3.png" alt="Average rank for weight decay 6 times 10 to the minus 3" style="width: 100%; max-width: 420px; height: auto;">
-      <div style="margin-top: 0.5rem; font-size: 1.05rem;">
-        <strong>(d)</strong> \(\lambda = 6 \times 10^{-3}\)
-      </div>
+      <img src="{{ '/assets/figures/low-rank-bias/contour_resnet_wd_6e-3.png' | relative_url }}" style="width:100%; max-width:420px;">
+      <div><strong>(d)</strong> \(\lambda = 6 \times 10^{-3}\)</div>
     </div>
+
+  </div>
+</div>
 
   </div>
 
