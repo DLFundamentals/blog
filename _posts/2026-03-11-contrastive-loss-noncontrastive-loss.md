@@ -133,7 +133,7 @@ To study this, consider training CL and NSCL under shared randomness:
 
 Then the only real difference between the two runs is the objective.
 
-To compare the learned representations, it is more useful to look at their similarity structure than at their raw parameters. If \(Z\) denotes a collection of embeddings, define the similarity matrix
+To compare the learned representations, it is more useful to look at their similarity structure than at their raw parameters. If $Z$ denotes a collection of embeddings, define the similarity matrix
 
 $$
 \Sigma(Z)_{ij} = \cos(z_i,z_j).
@@ -158,8 +158,7 @@ where:
 
 - $B$ is the batch size,
 - $\tau$ is the temperature,
-- $\eta_t$ are the step sizes,
-- $\Delta_{\pi,\delta}(B;\tau)$ measures the batch-composition mismatch between CL and NSCL.
+- $\eta_t$ are the step sizes.
 
 The exact form matters less here than the scaling. The right-hand side gets smaller when:
 
@@ -178,9 +177,9 @@ This is the second structural point:
 
 Once the similarity matrices are close, one immediately gets lower bounds on standard representation-alignment metrics. In simplified form, these bounds look like
 
-\[
+$$
 \mathrm{CKA}_T \ge \frac{1-\rho_T}{1+\rho_T}, \qquad \mathrm{RSA}_T \ge \frac{1-r_T}{1+r_T},
-\]
+$$
 
 where $\rho_T$ and $r_T$ are normalized versions of the similarity-matrix discrepancy.
 
@@ -194,9 +193,9 @@ At the same time, weight-space coupling is far less stable.
 
 A typical parameter-space bound takes the form
 
-\[
+$$
 \|w_T^{\mathrm{CL}}-w_T^{\mathrm{NS}}\| \lesssim \frac{G}{\beta\tau}\,\Delta_{\pi,\delta}(B;\tau)\left(\exp\left(\beta\sum_{t=0}^{T-1}\eta_t\right)-1\right),
-\]
+$$
 
 which can grow exponentially with training time.
 
