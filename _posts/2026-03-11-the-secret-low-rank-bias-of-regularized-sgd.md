@@ -22,9 +22,7 @@ A lot of prior theory has tried to explain low-rank behavior in neural networks,
 We train a neural network by minimizing the regularized empirical loss
 
 $$
-L_S^\lambda(W)
-=
-\frac{1}{m}\sum_{i=1}^m \ell_i(h_W(x_i)) + \lambda \|W\|_F^2.
+L_S^\lambda(W) = \frac{1}{m}\sum_{i=1}^m \ell_i(h_W(x_i)) + \lambda \|W\|_F^2
 $$
 
 To focus on one layer, write the network locally as
