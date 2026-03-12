@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Why Contrastive Learning Is More Supervised Than It Looks"
+title: "What is the Relationship Between Supervised and Self-Supervised Learning?"
 date: 2026-03-11
 author: Tomer Galanti
 tags:
