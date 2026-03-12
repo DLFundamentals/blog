@@ -144,14 +144,7 @@ Since the target classes are random, the relevant quantity is not the error on o
 Formally, we define
 
 $$
-\mathcal L_{\mathcal D}(f)
-=
-\mathbb E_{P_1,\dots,P_k \sim \mathcal D}
-\;
-\mathbb E_{S_c \sim P_c^n}
-\left[
-L_P(h)
-\right],
+\mathcal L_{\mathcal D}(f) = \mathbb E_{P_1,\dots,P_k \sim \mathcal D} \; \mathbb E_{S_c \sim P_c^n} \left[L_P(h)\right],
 $$
 
 where $h$ is the nearest-class-center classifier built on top of $f$.
@@ -167,9 +160,7 @@ This is the quantity the theory aims to control.
 For two classes $Q_i$ and $Q_j$, define
 
 $$
-V_f(Q_i,Q_j)
-=
-\frac{\operatorname{Var}_f(Q_i)}{\|\mu_f(Q_i)-\mu_f(Q_j)\|^2}.
+V_f(Q_i,Q_j) = \frac{\operatorname{Var}_f(Q_i)}{\|\mu_f(Q_i)-\mu_f(Q_j)\|^2}.
 $$
 
 Here
@@ -181,9 +172,7 @@ $$
 is the class mean in feature space, and
 
 $$
-\operatorname{Var}_f(Q)
-=
-\mathbb E_{x\sim Q}\|f(x)-\mu_f(Q)\|^2
+\operatorname{Var}_f(Q) = \mathbb E_{x\sim Q}\|f(x)-\mu_f(Q)\|^2
 $$
 
 is the within-class variance.
