@@ -273,7 +273,7 @@ The rank-$1$ statement changes only when the same matrix $W$ is reused multiple 
 This happens in several important settings:
 
 - convolutions, where the same kernel is applied at many spatial locations,
-- self-attention projections such as $W_Q$, $W_K$, and $W_V$, where the same matrix is applied to many tokens,
+- self-attention projections ($W_Q$, $W_K$, and $W_V$), where the same matrix is applied to many tokens,
 - more generally, any shared linear operator.
 
 In that case, the right local description is
@@ -328,19 +328,19 @@ The one-use setting $R = 1$ is simply the cleanest case.
 
 ## What this explanation does and does not say
 
-It is worth being precise about the scope of the claim.
+It is worth being clear about what has and has not been shown.
 
-This argument does **not** say that every trained layer must become exactly low rank. It does not prove a universal convergence theorem, and it does not rule out complications coming from architecture, normalization, data geometry, or optimization dynamics.
+This argument does **not** imply that every trained layer must be exactly low rank. It is not a universal convergence theorem, and it does not bypass the influence of architecture, normalization, data geometry, or other aspects of optimization.
 
-What it does provide is a broad structural explanation:
+What it *does* give is a broad structural reason that low-rank behavior should often appear in practice:
 
 - SGD writes low-rank updates,
-- weight decay gives the layer a finite effective memory,
-- therefore approximate low-rank structure is a natural outcome of training.
+- weight decay gives the layer only finite effective memory,
+- so the current matrix is governed primarily by a short window of low-rank corrections.
 
-So low rank is not mysterious, and it is not merely an artifact discovered after the fact by compression methods. In many settings, it is already being built into the model during training.
+Seen this way, low rank is not an accident, and it is not merely a pattern discovered afterward by compression. It is often already being built into the model during training.
 
-This perspective also suggests why low-rank compression often works so well after training: compression is frequently recovering structure that SGD and weight decay had already encouraged.
+This perspective also clarifies why post-training low-rank compression is so effective: in many cases, it is not inventing structure, but extracting structure that the training dynamics had already encouraged.
 
 ## Takeaway
 
