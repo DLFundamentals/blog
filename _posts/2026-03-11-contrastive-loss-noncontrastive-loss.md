@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "What is the Relationship Between Supervised and Self-Supervised Learning?"
+title: "Self-Supervised (Contrastive) Learning $\approx$ Supervised (Contrastive) Learning"
 date: 2026-03-11
 author: Tomer Galanti
 tags:
