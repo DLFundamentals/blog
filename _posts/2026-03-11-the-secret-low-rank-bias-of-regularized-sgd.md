@@ -344,9 +344,7 @@ This perspective also suggests why low-rank compression often works so well afte
 
 ## Takeaway
 
-SGD with weight decay does more than optimize the loss.
-
-It quietly pushes layers toward low-rank structure.
+SGD with weight decay does more than optimize the loss. It quietly pushes layers toward low-rank structure.
 
 The mechanism is simple and very general:
 
