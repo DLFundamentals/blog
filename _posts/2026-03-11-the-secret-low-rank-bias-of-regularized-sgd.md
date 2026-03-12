@@ -19,9 +19,7 @@ One especially striking form of structure is **low rank**.
 
 Across architectures, trained weight matrices are often far more compressible than their ambient dimension would suggest. This phenomenon shows up in pruning, distillation, and post-hoc low-rank approximations of trained networks. Empirically, low-rank structure is everywhere. But why should training produce it in the first place?
 
-A good deal of prior theory explains low-rank behavior only in settings much cleaner than modern practice: linear models, very special losses, exact symmetries, or global optimality conditions. What is still missing is a simple structural explanation for the regime practitioners actually use every day:
-
-> **mini-batch SGD with weight decay.**
+A good deal of prior theory explains low-rank behavior only in settings much cleaner than modern practice: linear models, very special losses, exact symmetries, or global optimality conditions. What is still missing is a simple structural explanation for the regime practitioners actually use every day: **mini-batch SGD with weight decay.**
 
 The main message of this post is the following:
 
