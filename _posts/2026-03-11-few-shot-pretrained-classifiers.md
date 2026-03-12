@@ -39,7 +39,7 @@ That geometry is what makes few-shot adaptation possible.
 
 To formalize this idea, we need a setting in which the source classes and the target classes are not treated as arbitrary unrelated labels, but instead are both drawn from a common population of possible classes. This is exactly the role of the class-conditional setup.
 
-## The right setting: classes are random objects
+## Classes as random objects
 
 Transfer learning should not be expected to work equally well for every possible downstream task. If we want to reason about transfer to **new classes**, we need a model that relates the source task and the target task. Here, we use a framework in which the classes themselves are random objects.
 
