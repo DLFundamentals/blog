@@ -63,6 +63,78 @@ $$
 
 independently of the source draw.
 
+<style>
+.task-block {
+  margin: 2rem 0;
+}
+.task-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 1.2rem 0 0.6rem 0;
+}
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 1.2rem;
+}
+.task-grid figure {
+  margin: 0;
+  text-align: center;
+}
+.task-grid img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+.task-grid figcaption {
+  margin-top: 0.45rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+@media (max-width: 700px) {
+  .task-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<div class="task-block">
+  <div class="task-title">Source task</div>
+  <div class="task-grid">
+    <figure>
+      <img src="{{ '/assets/figures/pretrained_classifiers/1_red_panda.png' | relative_url }}" alt="Source class 1">
+      <figcaption>\(\tilde P_1\)</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ '/assets/figures/pretrained_classifiers/2_golden_retriever.png' | relative_url }}" alt="Source class 2">
+      <figcaption>\(\tilde P_2\)</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ '/assets/figures/pretrained_classifiers/3_tiger.png' | relative_url }}" alt="Source class 3">
+      <figcaption>\(\tilde P_3\)</figcaption>
+    </figure>
+  </div>
+
+  <div class="task-title">Target task</div>
+  <div class="task-grid">
+    <figure>
+      <img src="{{ '/assets/figures/pretrained_classifiers/7_elephant.png' | relative_url }}" alt="Target class 1">
+      <figcaption>\(P_1\)</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ '/assets/figures/pretrained_classifiers/4_raccoon.png' | relative_url }}" alt="Target class 2">
+      <figcaption>\(P_2\)</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ '/assets/figures/pretrained_classifiers/9_lion.png' | relative_url }}" alt="Target class 3">
+      <figcaption>\(P_3\)</figcaption>
+    </figure>
+  </div>
+</div>
+
 This captures the intended use of pretrained representations. We train on many source classes that are meant to represent a broader population, and then ask whether the learned representation transfers to new classes drawn from that same population.
 
 ## Source and target classification problems
