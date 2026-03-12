@@ -219,8 +219,8 @@ Another way to say it is this:
 
 The matrix therefore behaves less like a full memory of the entire training trajectory, and more like a short moving window of recent low-rank corrections.
 
-<div style="text-align:center;">
-  <img src="{{ '/assets/figures/low-rank/sgd_low_rank_mechanism.png' | relative_url }}" style="width:100%; max-width:950px;">
+<div style="text-align:center; margin: 2rem 0;">
+  <img src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_mechanism.png' | relative_url }}" style="width:100%; max-width:950px;">
 </div>
 
 ## An effective-rank interpretation
