@@ -67,6 +67,8 @@ The mechanism is simple:
 2. weight decay prevents the layer from remembering too much of the distant past,
 3. so the current matrix is dominated by a relatively short history of low-rank corrections.
 
+<a href="{{ '/assets/figures/low-rank/sgd_low_rank_mechanism.pdf' | relative_url }}">View figure as PDF</a>
+
 That is the whole story. Everything below just makes this precise.
 
 ## The local view of one layer
