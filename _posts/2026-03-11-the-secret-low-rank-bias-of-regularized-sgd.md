@@ -281,24 +281,10 @@ This happens in several important settings:
 In that case, the right local description is
 
 $$
-h_W(x) = g(WF(x)),
+h_W(x) = g(Wf_1(x), \dots, Wf_{R}(x)).
 $$
-
-where
-
-$$
-F(x) = [f_1(x), \dots, f_R(x)]
-$$
-
-collects all $R$ local inputs on which the same matrix acts.
 
 The chain rule then gives
-
-$$
-\nabla_W \ell(h_W(x)) = \Delta(x) F(x)^\top,
-$$
-
-or equivalently,
 
 $$
 \nabla_W \ell(h_W(x)) = \sum_{r=1}^R \delta_r(x) f_r(x)^\top.
