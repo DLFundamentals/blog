@@ -230,17 +230,7 @@ $$
 \|(1 - 2\mu\lambda)^n W_{T-n}\| \le \varepsilon \|W_T\|.
 $$
 
-Since
-
-$$
-(1 - 2\mu\lambda)^n \approx e^{-2\mu\lambda n},
-$$
-
-this happens for
-
-$$
-n \approx \frac{\log(1/\varepsilon)}{\mu\lambda}.
-$$
+Since $(1 - 2\mu\lambda)^n \approx e^{-2\mu\lambda n}$, this happens for $n \approx \frac{\log(1/\varepsilon)}{\mu\lambda}$.
 
 Now the recent-history term is a sum of $n$ gradients, each with rank at most $B$. Therefore its rank is at most $nB$. This suggests the heuristic bound
 
