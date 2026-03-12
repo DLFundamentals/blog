@@ -74,7 +74,7 @@ independently of the source draw.
 }
 .task-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 1.2rem;
 }
@@ -105,15 +105,15 @@ independently of the source draw.
   <div class="task-title">Source task</div>
   <div class="task-grid">
     <figure>
-      <img src="{{ '/assets/figures/pretrained-classifiers/1_red_panda.png' | relative_url }}" alt="Source class 1">
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/1_red_panda.png" alt="Source class 1">
       <figcaption>\(\tilde P_1\)</figcaption>
     </figure>
     <figure>
-      <img src="{{ '/assets/figures/pretrained-classifiers/2_golden_retriever.png' | relative_url }}" alt="Source class 2">
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/2_golden_retriever.png" alt="Source class 2">
       <figcaption>\(\tilde P_2\)</figcaption>
     </figure>
     <figure>
-      <img src="{{ '/assets/figures/pretrained-classifiers/3_tiger.png' | relative_url }}" alt="Source class 3">
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/3_tiger.png" alt="Source class 3">
       <figcaption>\(\tilde P_3\)</figcaption>
     </figure>
   </div>
@@ -121,15 +121,15 @@ independently of the source draw.
   <div class="task-title">Target task</div>
   <div class="task-grid">
     <figure>
-      <img src="{{ '/assets/figures/pretrained-classifiers/7_elephant.png' | relative_url }}" alt="Target class 1">
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/7_elephant.png" alt="Target class 1">
       <figcaption>\(P_1\)</figcaption>
     </figure>
     <figure>
-      <img src="{{ '/assets/figures/pretrained-classifiers/4_raccoon.png' | relative_url }}" alt="Target class 2">
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/4_raccoon.png" alt="Target class 2">
       <figcaption>\(P_2\)</figcaption>
     </figure>
     <figure>
-      <img src="{{ '/assets/figures/pretrained-classifiers/9_lion.png' | relative_url }}" alt="Target class 3">
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/9_lion.png" alt="Target class 3">
       <figcaption>\(P_3\)</figcaption>
     </figure>
   </div>
