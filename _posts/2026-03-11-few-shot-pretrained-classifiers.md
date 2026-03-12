@@ -13,17 +13,17 @@ tags:
 excerpt: "A geometric explanation for why ordinary supervised pretraining can transfer remarkably well to new classes with only a few labeled examples."
 ---
 
-Deep networks trained on large classification benchmarks such as **ImageNet** often transfer remarkably well to new tasks.
+Deep networks trained on large classification benchmarks such as **ImageNet** often transfer surprisingly well to new tasks.
 
-This is one of the most common recipes in modern machine learning. We train a classifier on a large source dataset, keep its learned representation, and then adapt it to a new set of classes using only a small amount of labeled data, often with nothing more than a simple linear head.
+This has become one of the standard recipes in modern machine learning. We train a classifier on a large source dataset, keep the learned representation, and then adapt it to a new set of classes using only a small amount of labeled data, often with nothing more than a simple linear head.
 
-Practitioners use this all the time because it works.
+Practitioners rely on this approach all the time because it works extremely well.
 
-But from a theoretical point of view, that only sharpens the puzzle.
+But from a theoretical perspective, that only makes the phenomenon more intriguing.
 
-A classifier trained on ImageNet is trained to separate the ImageNet classes. Why should the same representation also make it easy to separate **new** classes that were never seen during training? And why should only a few labeled examples be enough to fit a simple classifier on top?
+A classifier trained on ImageNet is optimized to separate the ImageNet classes. Why should the same representation also make it easy to separate **new** classes that never appeared during training? And why should only a handful of labeled examples be enough to fit a simple classifier on top of it?
 
-A common answer is that pretraining learns "good features." That is certainly true, but it still leaves open the main question:
+A common answer is that pretraining learns "good features." That is certainly part of the story, but it still leaves the main question unresolved:
 
 > **What property of the learned feature space makes adaptation to new classes possible with so little data?**
 
@@ -33,53 +33,17 @@ The main message of this post is the following:
 > If supervised pretraining makes each class form a tight cluster in feature space, while keeping different class means well separated, then new classes can often be learned from only a few labeled examples using a simple linear or nearest-center classifier.
 > </span>
 
-So the story is not just that ImageNet pretraining produces a useful representation. The deeper point is that, under the right conditions, it produces a representation with a very particular **geometry**: samples from the same class are concentrated, and different classes are separated at the level of their means.
+So the point is not only that ImageNet pretraining yields a useful representation. The deeper point is that, under the right conditions, it yields a representation with a very specific **geometry**: samples from the same class are tightly concentrated, while different classes are separated at the level of their means.
 
-That is the geometric reason few-shot adaptation can work.
+That geometry is what makes few-shot adaptation possible.
 
-To formalize this, we need a setting in which the source classes and the target classes are not arbitrary unrelated labels, but are both drawn from a common population of possible classes. That is where the class-conditional setup comes in.
-
-<div style="margin: 2rem 0;">
-  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: stretch;">
-
-    <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Pretrain on a large source task</strong><br>
-      e.g. ImageNet classification
-    </div>
-
-    <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Learn a feature map</strong><br>
-      The network organizes classes geometrically
-    </div>
-
-    <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Move to new classes</strong><br>
-      Draw unseen target classes from the same population
-    </div>
-
-    <div style="padding: 14px; border: 1px solid #d8e2f1; border-radius: 12px; background: #f8fbff; text-align: center;">
-      <strong>Adapt with little data</strong><br>
-      Fit a simple head from a few examples
-    </div>
-
-  </div>
-</div>
-
-<div style="margin-top: 1rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
-  <strong>Figure 1.</strong>
-  <strong>The motivating picture.</strong>
-  A classifier pretrained on a large source task such as ImageNet is often reused as a representation for new classes. The goal of the theory is to explain when this common practice should work, and why only a few labeled examples can already be enough.
-</div>
-
-<br>
+To formalize this idea, we need a setting in which the source classes and the target classes are not treated as arbitrary unrelated labels, but instead are both drawn from a common population of possible classes. This is exactly the role of the class-conditional setup.
 
 ## The right setting: classes are random objects
 
-To talk about transfer to **new classes**, we need a model in which classes themselves are random.
+Transfer learning should not be expected to work equally well for every possible downstream task. If we want to reason about transfer to **new classes**, we need a model that relates the source task and the target task. Here, we use a framework in which the classes themselves are random objects.
 
-The setup is this.
-
-There is an unknown distribution $\mathcal D$ over a set $\mathcal E$ of class-conditional distributions. Each element of $\mathcal E$ is one possible class. So instead of saying "the model trains on one fixed dataset and then tests on another," we say:
+The setup is as follows. There is an unknown distribution $\mathcal D$ over a collection $\mathcal E$ of class-conditional distributions. Each element of $\mathcal E$ represents one possible class. Thus, rather than saying that the model trains on one fixed dataset and is later tested on another, we assume that
 
 - a **class** is itself a distribution over inputs,
 - source classes are sampled from $\mathcal D$,
@@ -88,7 +52,7 @@ There is an unknown distribution $\mathcal D$ over a set $\mathcal E$ of class-c
 Concretely, the source task is built from class-conditionals
 
 $$
-\tilde P_1,\dots,\tilde P_l \sim \mathcal D
+\tilde P_1,\dots,\tilde P_\ell \sim \mathcal D,
 $$
 
 and the target task is built from new class-conditionals
@@ -99,20 +63,18 @@ $$
 
 independently of the source draw.
 
-This is the key modeling move.
-
-It formalizes the intended use of pretrained representations: we train on many source classes that are representative of some broader family, and then we want to transfer to new classes from the same family.
+This captures the intended use of pretrained representations. We train on many source classes that are meant to represent a broader population, and then ask whether the learned representation transfers to new classes drawn from that same population.
 
 ## Source and target classification problems
 
-Once the classes are sampled, they induce balanced classification problems.
+Once the classes are sampled, they define balanced classification problems.
 
-The source task is the balanced $l$-class distribution
+The source task is the balanced $\ell$-class distribution
 
 $$
 \tilde P(x,y)
 \quad\text{with}\quad
-\tilde P(y=c)=\frac{1}{l},
+\tilde P(y=c)=\frac{1}{\ell},
 \qquad
 x \mid y=c \sim \tilde P_c.
 $$
@@ -127,9 +89,9 @@ P(y=c)=\frac{1}{k},
 x \mid y=c \sim P_c.
 $$
 
-From these class-conditionals we draw data.
+We then draw labeled samples from these class-conditionals.
 
-For the source task, we observe many labeled samples per class:
+For the source task, we observe many samples per class:
 
 $$
 \tilde S_c=\{\tilde x_{c1},\dots,\tilde x_{cm}\},
@@ -137,7 +99,7 @@ $$
 \tilde x_{ci} \sim \tilde P_c.
 $$
 
-For the target task, we only get a few labeled samples per class:
+For the target task, we observe only a few samples per class:
 
 $$
 S_c=\{x_{c1},\dots,x_{cn}\},
@@ -145,19 +107,19 @@ S_c=\{x_{c1},\dots,x_{cn}\},
 x_{ci} \sim P_c.
 $$
 
-Here $m$ is large, while $n$ is small. That is the few-shot regime.
+Here $m$ is large and $n$ is small. This is the few-shot regime.
 
-## What the pretrained model is supposed to learn
+## What the pretrained model should learn
 
-We train a classifier on the source task, but the real object we care about is the feature map
+We train on the source task, but the object we ultimately care about is the feature map
 
 $$
 f:\mathcal X \to \mathbb R^p.
 $$
 
-This is the pretrained representation, usually the penultimate layer of a neural network.
+This is the pretrained representation, typically the penultimate layer of a neural network.
 
-Once $f$ is learned, we freeze it and solve the target problem using only the few target samples. The simplest classifier is the nearest-class-center rule
+After learning $f$, we freeze it and solve the target task using only the few target samples. A natural classifier is the nearest-class-center rule
 
 $$
 h(x)=\arg\min_{c\in[k]} \|f(x)-\mu_f(S_c)\|,
@@ -171,17 +133,15 @@ $$
 
 is the empirical feature mean of class $c$.
 
-So the target task becomes:
+So the downstream procedure is simple: estimate one center for each new class in feature space, then classify by nearest center.
 
-> Use a few examples from each new class to estimate its center in feature space, then classify by whichever center is closest.
-
-This is simple enough that if it works well, the explanation must lie in the geometry of the feature map itself.
+If this works well, the explanation must come from the geometry of the representation itself.
 
 ## What does it mean for a feature map to transfer well?
 
-Since the target classes are random, the right object is not the error on one fixed target task, but the **expected few-shot transfer error** over new target classes and their few-shot samples.
+Since the target classes are random, the relevant quantity is not the error on one fixed target task, but the **expected few-shot transfer error** over newly sampled target classes and their few-shot samples.
 
-That is,
+Formally, we define
 
 $$
 \mathcal L_{\mathcal D}(f)
@@ -196,11 +156,11 @@ $$
 
 where $h$ is the nearest-class-center classifier built on top of $f$.
 
-So $\mathcal L_{\mathcal D}(f)$ asks a clean question:
+In words, $\mathcal L_{\mathcal D}(f)$ asks:
 
-> If I draw a fresh target task from the same population of classes, and only get $n$ examples per class, how well does the pretrained representation perform on average?
+> If we draw a fresh target task from the same population of classes, and observe only $n$ examples per class, how well does the pretrained representation perform on average?
 
-That is the quantity the theory controls.
+This is the quantity the theory aims to control.
 
 ## The geometric quantity that matters
 
