@@ -13,6 +13,8 @@ tags:
 excerpt: "Why mini-batch SGD with weight decay naturally pushes neural networks toward low-rank structure."
 ---
 
+*This post is based on: T. Galanti, Z. Siegel, A. Gupte, T. Poggio. "SGD and Weight Decay Secretly Minimize the Rank of Your Neural Network", CPAL 2025.*
+
 Deep networks are heavily overparameterized, yet the solutions found in practice are far from arbitrary. Even when many parameter settings can fit the training data, stochastic gradient methods often converge to highly structured models.
 
 One particularly striking form of structure is **low rank**.
