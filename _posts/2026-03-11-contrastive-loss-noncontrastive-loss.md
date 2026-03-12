@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Self-Supervised (Contrastive) Learning $\approx$ Supervised (Contrastive) Learning"
+title: "Self-Supervised Learning ≈ Supervised Learning"
 date: 2026-03-11
 author: Tomer Galanti
 tags:
