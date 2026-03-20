@@ -136,7 +136,7 @@ $$
 where $\delta(x) := J_g(Wf(x))^\top \nabla_h \ell(h(x))$. This is an outer product of two vectors, so
 
 $$
-\operatorname{rank}\big(\nabla_W \ell(h(x))\big) \le 1.
+\textnormal{rank}\big(\nabla_W \ell(h(x))\big) \le 1.
 $$
 
 A single-example gradient is not an arbitrary full-rank matrix. It has the simplest possible form: one left direction times one right direction.
@@ -148,7 +148,7 @@ The mini-batch gradient is the average of $B$ rank-1 terms:
 $$
 G_t = \frac{1}{B}\sum_{i=1}^B \delta_i f_i^\top,
 \qquad
-\operatorname{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, B).
+\textnormal{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, B).
 $$
 
 So every SGD step writes only a low-rank correction. Smaller batch sizes make this restriction stronger; larger batch sizes relax it.
@@ -195,7 +195,7 @@ The recent term is a sum of $n$ gradients of rank at most $B$, so
 
 <div class="math-block">
 \[
-\operatorname{rank}_\varepsilon(W_T) \lesssim \frac{B \log(1/\varepsilon)}{\mu\lambda}.
+\textnormal{rank}_\varepsilon(W_T) \lesssim \frac{B \log(1/\varepsilon)}{\mu\lambda}.
 \]
 </div>
 
@@ -218,12 +218,12 @@ $$
 =
 \sum_{r=1}^R \delta_r(x) f_r(x)^\top,
 \qquad
-\operatorname{rank}\big(\nabla_W \ell(h(x))\big) \le R.
+\textnormal{rank}\big(\nabla_W \ell(h(x))\big) \le R.
 $$
 
 For a mini-batch,
 \[
-\operatorname{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, BR).
+\textnormal{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, BR).
 \]
 
 The rest of the argument is unchanged: weight decay still exponentially suppresses old updates, so the current matrix remains close to a weighted sum of recent low-rank gradients. The one-use setting $R = 1$ is simply the cleanest case.
