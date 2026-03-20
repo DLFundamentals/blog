@@ -15,3 +15,27 @@ layout: default
 <article>
 {{ content }}
 </article>
+
+<!-- Comments -->
+{% unless page.comments == false %}
+<div class="col" style="margin-top: 3rem;">
+  <hr class="section-rule">
+  <h2 style="font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.2rem; color: #0a1628; margin-top: 2rem; margin-bottom: 1.5rem; border: none; padding: 0;">Comments</h2>
+  <script src="https://giscus.app/client.js"
+    data-repo="DLFundamentals/blog"
+    data-repo-id=""
+    data-category="Blog Comments"
+    data-category-id=""
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="light"
+    data-lang="en"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async>
+  </script>
+</div>
+{% endunless %}
