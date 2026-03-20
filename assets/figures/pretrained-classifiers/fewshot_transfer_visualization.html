@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0;padding:0;overflow:hidden;height:100%}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#374151;background:#fff}
+.wrap{padding:8px 14px}
+.ctrl{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ctrl label{font-size:12px;color:#6b7280;min-width:50px}
+.ctrl input[type=range]{flex:1;height:4px;-webkit-appearance:none;appearance:none;background:#e5e7eb;border-radius:2px;outline:none}
+.ctrl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#2563eb;cursor:pointer}
+.ctrl span{font-size:12px;font-weight:500;min-width:60px;font-family:monospace}
+.panels{display:flex;gap:10px}
+.panel{flex:1;min-width:0}
+.panel-title{font-size:11px;color:#6b7280;margin-bottom:4px;text-align:center}
+canvas{display:block;width:100%;border-radius:6px;border:1px solid #e5e7eb;background:#fafafa}
+.legend{font-size:10px;color:#9ca3af;display:flex;gap:10px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:3px}
+.legend .sq{width:8px;height:8px;border-radius:50%;display:inline-block}
+.stats{display:flex;gap:6px;margin-top:6px}
+.stat{background:#f8f9fb;border-radius:6px;padding:5px 8px;flex:1;min-width:0}
+.stat-l{font-size:9px;color:#6b7280}
+.stat-v{font-size:14px;font-weight:500;margin-top:1px;color:#1d2939}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="ctrl">
+  <label>Epoch</label>
+  <input type="range" min="0" max="200" value="0" step="1" id="epoch" oninput="update()">
+  <span id="v-epoch">0 / 200</span>
+</div>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-title">Source classes (train)</div>
+    <canvas id="cv-src" height="220"></canvas>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Target classes (unseen, few-shot)</div>
+    <canvas id="cv-tgt" height="220"></canvas>
+  </div>
+</div>
+
+<div class="legend">
+  <span><span class="sq" style="background:#534AB7"></span> class 1</span>
+  <span><span class="sq" style="background:#1D9E75"></span> class 2</span>
+  <span><span class="sq" style="background:#D85A30"></span> class 3</span>
+  <span><span class="sq" style="background:#378ADD"></span> class 4 (source only)</span>
+  <span><span class="sq" style="background:#D4537E"></span> class 5 (target only)</span>
+  <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border:2px solid #374151;border-radius:50%;display:inline-block"></span> class mean</span>
+  <span style="display:flex;align-items:center;gap:3px"><span style="width:12px;height:2px;background:#E24B4A;display:inline-block"></span> NCC boundary</span>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-l">Source CDNV</div><div class="stat-v" id="s-cdnv">-</div></div>
+  <div class="stat"><div class="stat-l">Target CDNV</div><div class="stat-v" id="t-cdnv">-</div></div>
+  <div class="stat"><div class="stat-l">NCC accuracy</div><div class="stat-v" id="s-acc">-</div></div>
+  <div class="stat"><div class="stat-l">Stage</div><div class="stat-v" id="s-stage" style="font-size:11px">Pre-training</div></div>
+</div>
+
+</div>
+
+<script>
+const srcColors = ['#534AB7','#1D9E75','#D85A30','#378ADD'];
+const tgtColors = ['#534AB7','#1D9E75','#D85A30','#D4537E'];
+const N = 20;
+
+let sd = 7;
+function rn(){sd=(sd*1664525+1013904223)>>>0;return sd/4294967296}
+function gs(s){sd=s;return Math.sqrt(-2*Math.log(rn()+1e-15))*Math.cos(6.2832*rn())}
+
+const srcCentersInit = [[0.2,0.7],[0.8,0.75],[0.3,0.25],[0.75,0.3]];
+const srcCentersFinal = [[0.18,0.82],[0.82,0.82],[0.18,0.18],[0.82,0.18]];
+const tgtCentersInit = [[0.25,0.65],[0.7,0.7],[0.35,0.3],[0.6,0.25]];
+const tgtCentersFinal = [[0.18,0.82],[0.82,0.82],[0.18,0.18],[0.72,0.28]];
+
+function makePoints(centers,nPerClass,seed){
+  const pts=[];
+  for(let c=0;c<centers.length;c++){
+    for(let i=0;i<nPerClass;i++){
+      const s=seed+c*1000+i;
+      pts.push({c,sx:gs(s)*0.15+centers[c][0],sy:gs(s+99)*0.15+centers[c][1]});
+    }
+  }
+  return pts;
+}
+
+const srcPts = makePoints(srcCentersInit,N,42);
+const tgtPts = makePoints(tgtCentersInit,5,999);
+
+function ease(t){return t*t*(3-2*t)}
+
+function lerpPts(pts,centersInit,centersFinal,t,spreadFactor){
+  const e=ease(Math.min(1,t));
+  return pts.map(p=>{
+    const ci=centersInit[p.c];
+    const cf=centersFinal[p.c];
+    const cx=ci[0]+(cf[0]-ci[0])*e;
+    const cy=ci[1]+(cf[1]-ci[1])*e;
+    const dx=p.sx-ci[0];
+    const dy=p.sy-ci[1];
+    const spread=1-e*(1-spreadFactor);
+    return {c:p.c, x:cx+dx*spread, y:cy+dy*spread};
+  });
+}
+
+function computeMeans(pts,nClasses){
+  const means=[];
+  for(let c=0;c<nClasses;c++){
+    let sx=0,sy=0,n=0;
+    pts.forEach(p=>{if(p.c===c){sx+=p.x;sy+=p.y;n++}});
+    means.push({x:sx/n,y:sy/n});
+  }
+  return means;
+}
+
+function computeCDNV(pts,means){
+  let totalVar=0,minDist=Infinity,pairs=0;
+  for(let c=0;c<means.length;c++){
+    let v=0,n=0;
+    pts.forEach(p=>{if(p.c===c){v+=(p.x-means[c].x)**2+(p.y-means[c].y)**2;n++}});
+    if(n>0) totalVar+=v/n;
+  }
+  totalVar/=means.length;
+  for(let i=0;i<means.length;i++)for(let j=i+1;j<means.length;j++){
+    const d=(means[i].x-means[j].x)**2+(means[i].y-means[j].y)**2;
+    if(d<minDist)minDist=d;
+    pairs++;
+  }
+  return minDist>1e-10?totalVar/minDist:99;
+}
+
+function drawScene(canvasId,pts,means,colors,t,showBoundary){
+  const cv=document.getElementById(canvasId);
+  const W=cv.width,H=cv.height;
+  const cx=cv.getContext('2d');
+  cx.clearRect(0,0,W,H);
+
+  const pad=20;
+  const toX=v=>pad+(W-2*pad)*v;
+  const toY=v=>H-pad-(H-2*pad)*v;
+
+  if(showBoundary && t>0.6){
+    const alpha=Math.min(1,(t-0.6)/0.3)*0.5;
+    cx.strokeStyle=`rgba(226,75,74,${alpha})`;
+    cx.lineWidth=1.5;
+    cx.setLineDash([4,3]);
+    for(let i=0;i<means.length;i++){
+      for(let j=i+1;j<means.length;j++){
+        const mx=(means[i].x+means[j].x)/2;
+        const my=(means[i].y+means[j].y)/2;
+        const dx=means[j].x-means[i].x;
+        const dy=means[j].y-means[i].y;
+        const len=Math.sqrt(dx*dx+dy*dy);
+        if(len<1e-6)continue;
+        const nx=-dy/len*0.4;
+        const ny=dx/len*0.4;
+        cx.beginPath();
+        cx.moveTo(toX(mx-nx),toY(my-ny));
+        cx.lineTo(toX(mx+nx),toY(my+ny));
+        cx.stroke();
+      }
+    }
+    cx.setLineDash([]);
+  }
+
+  pts.forEach(p=>{
+    cx.beginPath();
+    cx.arc(toX(p.x),toY(p.y),3.5,0,Math.PI*2);
+    cx.fillStyle=colors[p.c];
+    cx.globalAlpha=0.7;
+    cx.fill();
+    cx.globalAlpha=1;
+  });
+
+  const meanAlpha=Math.min(1,t*3);
+  means.forEach((m,i)=>{
+    if(i>=colors.length)return;
+    cx.beginPath();
+    cx.arc(toX(m.x),toY(m.y),6,0,Math.PI*2);
+    cx.strokeStyle=colors[i];
+    cx.lineWidth=2;
+    cx.globalAlpha=meanAlpha;
+    cx.stroke();
+    cx.beginPath();
+    cx.arc(toX(m.x),toY(m.y),2,0,Math.PI*2);
+    cx.fillStyle=colors[i];
+    cx.fill();
+    cx.globalAlpha=1;
+  });
+}
+
+function nccAccuracy(pts,means,colors){
+  let correct=0;
+  pts.forEach(p=>{
+    let bestD=Infinity,bestC=-1;
+    means.forEach((m,i)=>{
+      const d=(p.x-m.x)**2+(p.y-m.y)**2;
+      if(d<bestD){bestD=d;bestC=i}
+    });
+    if(bestC===p.c)correct++;
+  });
+  return Math.round(correct/pts.length*100);
+}
+
+function update(){
+  const epoch=+document.getElementById('epoch').value;
+  const t=epoch/200;
+  document.getElementById('v-epoch').textContent=epoch+' / 200';
+
+  const srcSpread=0.08;
+  const tgtSpread=0.15+0.1*(1-ease(t));
+  const srcNow=lerpPts(srcPts,srcCentersInit,srcCentersFinal,t,srcSpread);
+  const tgtNow=lerpPts(tgtPts,tgtCentersInit,tgtCentersFinal,t*0.85,tgtSpread);
+
+  const srcMeans=computeMeans(srcNow,4);
+  const tgtMeans=computeMeans(tgtNow,4);
+
+  const cvSrc=document.getElementById('cv-src');
+  const cvTgt=document.getElementById('cv-tgt');
+  cvSrc.width=cvSrc.clientWidth*2;cvSrc.height=cvSrc.clientHeight*2;
+  cvTgt.width=cvTgt.clientWidth*2;cvTgt.height=cvTgt.clientHeight*2;
+  cvSrc.getContext('2d').scale(2,2);
+  cvTgt.getContext('2d').scale(2,2);
+  cvSrc.style.height=cvSrc.clientHeight+'px';
+  cvTgt.style.height=cvTgt.clientHeight+'px';
+
+  drawScene('cv-src',srcNow,srcMeans,srcColors,t,t>0.7);
+  drawScene('cv-tgt',tgtNow,tgtMeans,tgtColors,t,t>0.8);
+
+  const srcCDNV=computeCDNV(srcNow,srcMeans);
+  const tgtCDNV=computeCDNV(tgtNow,tgtMeans);
+  document.getElementById('s-cdnv').textContent=srcCDNV.toFixed(3);
+  document.getElementById('t-cdnv').textContent=tgtCDNV.toFixed(3);
+
+  const acc=nccAccuracy(tgtNow,tgtMeans,tgtColors);
+  document.getElementById('s-acc').textContent=t>0.3?acc+'%':'-';
+
+  let stage='Pre-training';
+  if(t>0.05&&t<=0.3)stage='Training: clusters forming';
+  else if(t>0.3&&t<=0.6)stage='NC1: within-class collapse';
+  else if(t>0.6&&t<=0.85)stage='NC2: means separating';
+  else if(t>0.85)stage='Few-shot: NCC classifies';
+  document.getElementById('s-stage').textContent=stage;
+}
+
+update();
+</script>
+</body>
+</html>
