@@ -13,7 +13,7 @@ tags:
 excerpt: "A geometric explanation for why ordinary supervised pretraining can transfer remarkably well to new classes with only a few labeled examples."
 ---
 
-*Based on: T. Galanti, A. Gyorgy, M. Hutter. ["Generalization Bounds for Few-Shot Transfer Learning with Pretrained Classifiers"](https://arxiv.org/abs/2212.12532), arXiv 2022.*
+*Based on: T. Galanti, A. György, M. Hutter. ["Generalization Bounds for Few-Shot Transfer Learning with Pretrained Classifiers"](https://arxiv.org/abs/2212.12532), arXiv 2022.*
 
 ---
 
