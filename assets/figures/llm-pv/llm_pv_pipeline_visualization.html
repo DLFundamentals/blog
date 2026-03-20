@@ -1,0 +1,373 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
+  @keyframes typing { from { width: 0; } to { width: 100%; } }
+  @keyframes blink { 50% { border-color: transparent; } }
+  @keyframes checkPop { 0% { transform: scale(0); } 60% { transform: scale(1.3); } 100% { transform: scale(1); } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes scoreReveal { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: scale(1); } }
+  @keyframes crownDrop { 0% { opacity: 0; transform: translateY(-10px) scale(.5); } 60% { transform: translateY(2px) scale(1.1); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+
+  body { font-family: var(--font-sans, 'Anthropic Sans', system-ui, sans-serif); }
+
+  .controls { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .controls button {
+    padding: 7px 18px; border-radius: var(--border-radius-md, 8px); font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: all .15s;
+  }
+  .btn-primary { background: var(--color-text-info, #185FA5); color: #fff; border: none; }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-primary:disabled { opacity: .45; cursor: default; filter: none; }
+  .btn-secondary { background: transparent; color: var(--color-text-secondary, #666); border: 0.5px solid var(--color-border-secondary, #ccc); }
+  .btn-secondary:hover { background: var(--color-background-secondary, #f5f5f5); }
+
+  .task-pill {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
+    background: var(--color-background-info, #E6F1FB); color: var(--color-text-info, #185FA5);
+    border-radius: var(--border-radius-md, 8px); font-size: 12px; font-weight: 500;
+  }
+
+  .pipeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+
+  .stage {
+    display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px;
+    border-radius: var(--border-radius-lg, 12px); position: relative;
+    opacity: .3; transition: opacity .4s, background .3s;
+    background: transparent;
+  }
+  .stage.active { opacity: 1; background: var(--color-background-secondary, #f8f8f6); }
+  .stage.done { opacity: .7; }
+  .stage.done .stage-indicator { background: var(--color-background-success, #EAF3DE); color: var(--color-text-success, #3B6D11); }
+
+  .stage-indicator {
+    width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 500; flex-shrink: 0;
+    background: var(--color-background-secondary, #f0f0ee); color: var(--color-text-secondary, #888);
+    transition: all .3s;
+  }
+  .stage.active .stage-indicator { background: var(--color-text-info, #185FA5); color: #fff; }
+
+  .stage-content { flex: 1; min-width: 0; }
+  .stage-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary, #222); margin-bottom: 3px; }
+  .stage-desc { font-size: 12px; color: var(--color-text-secondary, #888); line-height: 1.5; }
+
+  .connector { width: 0.5px; height: 16px; background: var(--color-border-tertiary, #ddd); margin-left: 29px; }
+
+  .candidates {
+    display: flex; flex-direction: column; gap: 6px; margin-top: 10px;
+  }
+  .candidate {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    background: var(--color-background-primary, #fff);
+    border: 0.5px solid var(--color-border-tertiary, #e0e0e0);
+    border-radius: var(--border-radius-md, 8px);
+    font-family: var(--font-mono, monospace); font-size: 11px;
+    animation: slideIn .4s ease-out both;
+    position: relative; overflow: hidden;
+  }
+  .candidate.winner {
+    border-color: var(--color-border-success, #97C459);
+    background: var(--color-background-success, #EAF3DE);
+  }
+  .candidate.rejected { opacity: .45; }
+
+  .candidate-code { flex: 1; white-space: pre; overflow: hidden; color: var(--color-text-primary, #333); line-height: 1.4; }
+
+  .score-badge {
+    padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap;
+    animation: scoreReveal .3s ease-out both;
+  }
+  .score-good { background: var(--color-background-success, #EAF3DE); color: var(--color-text-success, #3B6D11); }
+  .score-mid { background: var(--color-background-warning, #FAEEDA); color: var(--color-text-warning, #854F0B); }
+  .score-bad { background: var(--color-background-danger, #FCEBEB); color: var(--color-text-danger, #A32D2D); }
+
+  .crown { display: inline-block; font-size: 14px; animation: crownDrop .5s ease-out both; margin-right: 4px; }
+
+  .io-pairs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 8px;
+    font-family: var(--font-mono, monospace); font-size: 11px;
+    max-height: 120px; overflow: hidden;
+  }
+  .io-pair {
+    display: flex; gap: 6px; padding: 3px 8px; border-radius: 4px;
+    background: var(--color-background-primary, #fff);
+    border: 0.5px solid var(--color-border-tertiary, #e8e8e6);
+    animation: fadeUp .3s ease-out both;
+  }
+  .io-input { color: var(--color-text-secondary, #888); }
+  .io-label { font-weight: 500; }
+  .io-label.pos { color: var(--color-text-success, #3B6D11); }
+  .io-label.neg { color: var(--color-text-danger, #A32D2D); }
+
+  .result-card {
+    margin-top: 12px; padding: 12px 16px;
+    background: var(--color-background-success, #EAF3DE);
+    border: 0.5px solid var(--color-border-success, #97C459);
+    border-radius: var(--border-radius-lg, 12px);
+    animation: fadeUp .5s ease-out both;
+  }
+  .result-title { font-size: 13px; font-weight: 500; color: var(--color-text-success, #3B6D11); margin-bottom: 4px; }
+  .result-code { font-family: var(--font-mono, monospace); font-size: 12px; color: var(--color-text-primary, #333); }
+  .result-stat { font-size: 12px; color: var(--color-text-success, #3B6D11); margin-top: 6px; }
+</style>
+
+<div style="padding: 1rem 0;">
+  <div class="controls">
+    <button class="btn-primary" id="run-btn" onclick="runDemo()">Run LLM-PV</button>
+    <button class="btn-secondary" onclick="resetDemo()">Reset</button>
+    <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+      <span style="font-size: 12px; color: var(--color-text-secondary);">Task:</span>
+      <select id="task-select" style="font-size: 12px; padding: 4px 8px;">
+        <option value="parity">10-parity</option>
+        <option value="prime">IsPrime</option>
+        <option value="palindrome">IsPalindrome</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="pipeline" id="pipeline">
+    <div class="stage" id="stage-data">
+      <div class="stage-indicator">1</div>
+      <div class="stage-content">
+        <div class="stage-title">Training data</div>
+        <div class="stage-desc">Split m=200 labeled examples into S_tr (100) and S_val (100)</div>
+        <div class="io-pairs" id="io-display"></div>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="stage" id="stage-prompt">
+      <div class="stage-indicator">2</div>
+      <div class="stage-content">
+        <div class="stage-title">Build prompt from S_tr</div>
+        <div class="stage-desc">Format I/O examples into a code-generation prompt for the LLM</div>
+        <div id="prompt-display"></div>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="stage" id="stage-sample">
+      <div class="stage-indicator">3</div>
+      <div class="stage-content">
+        <div class="stage-title">LLM proposes k=5 candidate programs</div>
+        <div class="stage-desc">Sample independent programs — no gradient updates, no adaptive feedback</div>
+        <div class="candidates" id="candidates-display"></div>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="stage" id="stage-verify">
+      <div class="stage-indicator">4</div>
+      <div class="stage-content">
+        <div class="stage-title">Execute and score on S_val</div>
+        <div class="stage-desc">Compile each candidate in a sandbox, evaluate validation error</div>
+        <div class="candidates" id="scored-display"></div>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="stage" id="stage-select">
+      <div class="stage-indicator">5</div>
+      <div class="stage-content">
+        <div class="stage-title">Select best program by validation error</div>
+        <div class="stage-desc">Return h* = argmin validation error — standard ERM selection</div>
+        <div id="result-display"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TASKS = {
+  parity: {
+    name: '10-parity',
+    genIO: (i) => {
+      const bits = Array.from({length: 20}, (_,j) => (((i*7+j*13+3)%11) > 5) ? 1 : 0);
+      const sel = [2,5,7,11,13,16,17,18,19,1];
+      const par = sel.reduce((a,s) => a ^ bits[s], 0);
+      return { input: bits.join(''), label: par };
+    },
+    candidates: [
+      { code: 'def f(x):\n  return sum(x) % 2', valAcc: 52, desc: 'Total parity' },
+      { code: 'def f(x):\n  return x[0] ^ x[5]', valAcc: 48, desc: 'Two-bit XOR' },
+      { code: 'def f(x):\n  s=[2,5,7,11,13,16,17,18,19,1]\n  return sum(x[i] for i in s) % 2', valAcc: 100, desc: 'Sparse XOR via F2 solve' },
+      { code: 'def f(x):\n  return int(sum(x[:10]) > 4)', valAcc: 55, desc: 'Half-sum threshold' },
+      { code: 'def f(x):\n  # syntax error\n  ret x[0', valAcc: null, desc: 'Invalid — rejected' },
+    ],
+    winner: 2,
+    finalCode: 'def f(x):\n  s = [1,2,5,7,11,13,16,17,18,19]\n  return sum(x[i] for i in s) % 2',
+    finalAcc: '100%'
+  },
+  prime: {
+    name: 'IsPrime',
+    genIO: (i) => {
+      const primes = [1009,1013,1019,1021,1031,1033,1039,1049,1051,1061,1063,1069];
+      const composites = [1001,1004,1008,1012,1015,1020,1022,1025,1026,1032,1034,1035];
+      const isPrime = i % 2 === 0;
+      const num = isPrime ? primes[i % primes.length] : composites[i % composites.length];
+      return { input: String(num), label: isPrime ? 1 : 0 };
+    },
+    candidates: [
+      { code: 'def f(x):\n  n = int(x)\n  return n % 2 == 1', valAcc: 60, desc: 'Odd test' },
+      { code: 'def f(x):\n  n = int(x)\n  return n%3!=0 and n%2!=0', valAcc: 72, desc: 'Div by 2,3' },
+      { code: 'def f(x):\n  n=int(x)\n  if n<2: return 0\n  for i in range(2,int(n**.5)+1):\n    if n%i==0: return 0\n  return 1', valAcc: 100, desc: 'Trial division' },
+      { code: 'def f(x):\n  return sum(int(d) for d in x)%3!=0', valAcc: 58, desc: 'Digit sum mod 3' },
+      { code: 'def f(x):\n  # Miller-Rabin\n  ...full impl...', valAcc: 100, desc: 'Miller-Rabin' },
+    ],
+    winner: 2,
+    finalCode: 'def f(x):\n  n = int(x)\n  if n < 2: return 0\n  for i in range(2, int(n**0.5)+1):\n    if n % i == 0: return 0\n  return 1',
+    finalAcc: '100%'
+  },
+  palindrome: {
+    name: 'IsPalindrome',
+    genIO: (i) => {
+      const half = Array.from({length: 5}, (_,j) => ((i*3+j*7)%10 > 4) ? 1 : 0);
+      const isPal = i % 3 !== 0;
+      let bits;
+      if (isPal) {
+        bits = [...half, ...half.slice().reverse()];
+      } else {
+        const rev = half.slice().reverse();
+        rev[0] = 1 - rev[0];
+        bits = [...half, ...rev];
+      }
+      return { input: bits.join(''), label: isPal ? 1 : 0 };
+    },
+    candidates: [
+      { code: 'def f(x):\n  return int(x == x[::-1])', valAcc: 100, desc: 'Direct check' },
+      { code: 'def f(x):\n  return int(x[0] == x[-1])', valAcc: 68, desc: 'Endpoints only' },
+      { code: 'def f(x):\n  return sum(x) % 2', valAcc: 51, desc: 'Parity heuristic' },
+      { code: 'def f(x):\n  n=len(x)\n  return int(all(\n    x[i]==x[n-1-i]\n    for i in range(n//2)))', valAcc: 100, desc: 'Loop check' },
+      { code: 'def f(x):\n  return int(x[:5] == x[5:])', valAcc: 45, desc: 'Half equality' },
+    ],
+    winner: 0,
+    finalCode: 'def f(x):\n  return int(x == x[::-1])',
+    finalAcc: '100%'
+  }
+};
+
+let animTimeout = null;
+let running = false;
+
+function resetDemo() {
+  if (animTimeout) clearTimeout(animTimeout);
+  running = false;
+  document.getElementById('run-btn').disabled = false;
+  document.querySelectorAll('.stage').forEach(s => { s.className = 'stage'; });
+  document.getElementById('io-display').innerHTML = '';
+  document.getElementById('prompt-display').innerHTML = '';
+  document.getElementById('candidates-display').innerHTML = '';
+  document.getElementById('scored-display').innerHTML = '';
+  document.getElementById('result-display').innerHTML = '';
+}
+
+function delay(ms) { return new Promise(r => { animTimeout = setTimeout(r, ms); }); }
+
+async function runDemo() {
+  if (running) return;
+  resetDemo();
+  running = true;
+  document.getElementById('run-btn').disabled = true;
+
+  const taskKey = document.getElementById('task-select').value;
+  const task = TASKS[taskKey];
+
+  // Stage 1: Show data
+  const s1 = document.getElementById('stage-data');
+  s1.classList.add('active');
+  const ioEl = document.getElementById('io-display');
+  for (let i = 0; i < 8; i++) {
+    const io = task.genIO(i);
+    const pair = document.createElement('div');
+    pair.className = 'io-pair';
+    pair.style.animationDelay = (i * 60) + 'ms';
+    pair.innerHTML = `<span class="io-input">${io.input.slice(0, 12)}…</span><span class="io-label ${io.label ? 'pos' : 'neg'}">${io.label ? '→ 1' : '→ 0'}</span>`;
+    ioEl.appendChild(pair);
+  }
+  await delay(800);
+  s1.classList.remove('active'); s1.classList.add('done');
+
+  // Stage 2: Prompt
+  const s2 = document.getElementById('stage-prompt');
+  s2.classList.add('active');
+  const promptEl = document.getElementById('prompt-display');
+  promptEl.innerHTML = `<div style="margin-top:8px;padding:10px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);line-height:1.6;animation:fadeUp .4s ease-out both">
+    <span style="color:var(--color-text-primary);font-weight:500">Task:</span> Given binary sequences → labels,<br>find a Python function f(x).<br>
+    <span style="color:var(--color-text-primary);font-weight:500">Data:</span> ${task.genIO(0).input.slice(0,15)}… → ${task.genIO(0).label}<br>
+    <span style="color:var(--color-text-secondary)">… (100 examples) …</span><br>
+    <span style="color:var(--color-text-primary);font-weight:500">Output:</span> {"code": "&lt;python function&gt;"}
+  </div>`;
+  await delay(1000);
+  s2.classList.remove('active'); s2.classList.add('done');
+
+  // Stage 3: Sample candidates
+  const s3 = document.getElementById('stage-sample');
+  s3.classList.add('active');
+  const candEl = document.getElementById('candidates-display');
+  for (let i = 0; i < task.candidates.length; i++) {
+    const c = task.candidates[i];
+    const div = document.createElement('div');
+    div.className = 'candidate';
+    div.style.animationDelay = (i * 200) + 'ms';
+    div.innerHTML = `<div style="font-size:10px;color:var(--color-text-secondary);width:14px;text-align:center;flex-shrink:0">${i+1}</div><div class="candidate-code">${c.code}</div>`;
+    candEl.appendChild(div);
+    await delay(300);
+  }
+  await delay(600);
+  s3.classList.remove('active'); s3.classList.add('done');
+
+  // Stage 4: Score
+  const s4 = document.getElementById('stage-verify');
+  s4.classList.add('active');
+  const scoredEl = document.getElementById('scored-display');
+  for (let i = 0; i < task.candidates.length; i++) {
+    const c = task.candidates[i];
+    const div = document.createElement('div');
+    div.className = 'candidate' + (i === task.winner ? ' winner' : (c.valAcc === null ? ' rejected' : ''));
+    div.style.animationDelay = (i * 150) + 'ms';
+
+    let scoreHTML;
+    if (c.valAcc === null) {
+      scoreHTML = `<span class="score-badge score-bad" style="animation-delay:${i*150+300}ms">failed</span>`;
+    } else if (c.valAcc >= 95) {
+      scoreHTML = `<span class="score-badge score-good" style="animation-delay:${i*150+300}ms">${c.valAcc}%</span>`;
+    } else if (c.valAcc >= 65) {
+      scoreHTML = `<span class="score-badge score-mid" style="animation-delay:${i*150+300}ms">${c.valAcc}%</span>`;
+    } else {
+      scoreHTML = `<span class="score-badge score-bad" style="animation-delay:${i*150+300}ms">${c.valAcc}%</span>`;
+    }
+
+    div.innerHTML = `
+      <div style="font-size:10px;color:var(--color-text-secondary);width:14px;text-align:center;flex-shrink:0">${i+1}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:2px">${c.desc}</div>
+      </div>
+      ${scoreHTML}
+    `;
+    scoredEl.appendChild(div);
+    await delay(250);
+  }
+  await delay(600);
+  s4.classList.remove('active'); s4.classList.add('done');
+
+  // Stage 5: Select
+  const s5 = document.getElementById('stage-select');
+  s5.classList.add('active');
+  const resEl = document.getElementById('result-display');
+  resEl.innerHTML = `<div class="result-card">
+    <div class="result-title"><span class="crown">&#9733;</span> Selected: h* with lowest validation error</div>
+    <div class="result-code" style="white-space:pre;margin-top:6px">${task.finalCode}</div>
+    <div class="result-stat">Test accuracy: <strong>${task.finalAcc}</strong> on 10,000 held-out examples</div>
+  </div>`;
+  await delay(400);
+
+  running = false;
+  document.getElementById('run-btn').disabled = false;
+}
+</script>
