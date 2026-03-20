@@ -134,11 +134,7 @@ In this post, we argue that contrastive learning is much closer to supervised co
 
 ### The setup
 
-Consider a labeled dataset $S = \{(x_i,y_i)\}_{i=1}^N$, but assume that during self-supervised training we only use the inputs $x_i$, not the labels $y_i$. For each sample $x_i$, we generate $K$ augmentations and map them through an encoder $f$:
-
-$$
-z_i^l = f(\alpha_l(x_i)).
-$$
+Consider a labeled dataset $S = \{(x_i,y_i)\}_{i=1}^N$, but assume that during self-supervised training we only use the inputs $x_i$, not the labels $y_i$. For each sample $x_i$, we generate $K$ augmentations and map them through an encoder $f$: $z_i^l = f(\alpha_l(x_i))$.
 
 A standard **decoupled contrastive loss** (DCL) takes the form
 
