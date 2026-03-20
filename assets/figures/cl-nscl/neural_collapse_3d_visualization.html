@@ -1,0 +1,192 @@
+
+<div style="position:relative;width:100%;height:560px;border-radius:var(--border-radius-lg);overflow:hidden">
+<canvas id="c" style="width:100%;height:100%;display:block"></canvas>
+<div id="ctrl" style="position:absolute;bottom:16px;left:16px;right:16px;display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border-radius:var(--border-radius-md)">
+<span style="font-size:12px;color:#aaa;white-space:nowrap">Epoch 0</span>
+<input type="range" min="0" max="100" value="0" id="slider" style="flex:1;accent-color:#7F77DD">
+<span style="font-size:12px;color:#aaa;white-space:nowrap">Epoch 200</span>
+</div>
+<div id="legend" style="position:absolute;top:16px;left:16px;display:flex;gap:10px">
+<span style="font-size:12px;color:#7F77DD">&#9679; Class 1</span>
+<span style="font-size:12px;color:#1D9E75">&#9679; Class 2</span>
+<span style="font-size:12px;color:#D85A30">&#9679; Class 3</span>
+<span style="font-size:12px;color:#378ADD">&#9679; Class 4</span>
+</div>
+<div id="info" style="position:absolute;top:16px;right:16px;font-size:11px;color:#999;text-align:right;line-height:1.6" >
+<div>Drag to rotate</div>
+<div id="stage" style="color:#ccc;font-weight:500">Pre-training: features scattered</div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const canvas = document.getElementById('c');
+const slider = document.getElementById('slider');
+const stageEl = document.getElementById('stage');
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth/canvas.clientHeight, 0.1, 100);
+camera.position.set(0, 0, 5.5);
+
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 0);
+
+const colors = [0x7F77DD, 0x1D9E75, 0xD85A30, 0x378ADD];
+const colorsVec = colors.map(c => new THREE.Color(c));
+
+const R = 1.8;
+const etfVertices = [
+  new THREE.Vector3(0, R, 0),
+  new THREE.Vector3(R*Math.sqrt(8/9), -R/3, 0),
+  new THREE.Vector3(-R*Math.sqrt(2/9), -R/3, R*Math.sqrt(2/3)),
+  new THREE.Vector3(-R*Math.sqrt(2/9), -R/3, -R*Math.sqrt(2/3))
+];
+
+function rand(s){let x=Math.sin(s)*43758.5453;return x-Math.floor(x)}
+function gauss(s){return Math.sqrt(-2*Math.log(rand(s+0.1)))*Math.cos(6.2832*rand(s+0.2))}
+
+const N = 40;
+const pointsData = [];
+
+for(let ci=0; ci<4; ci++){
+  for(let i=0; i<N; i++){
+    const seed = ci*1000+i;
+    const sx = gauss(seed)*1.2 + (ci===0?0.3:ci===1?-0.5:ci===2?0.2:-0.4);
+    const sy = gauss(seed+0.3)*1.2 + (ci===0?0.5:ci===1?-0.3:ci===2?-0.6:0.4);
+    const sz = gauss(seed+0.6)*1.2 + (ci===0?-0.2:ci===1?0.4:ci===2?0.3:-0.5);
+    pointsData.push({
+      classIdx: ci,
+      start: new THREE.Vector3(sx, sy, sz),
+      end: etfVertices[ci].clone()
+    });
+  }
+}
+
+const geom = new THREE.BufferGeometry();
+const positions = new Float32Array(pointsData.length*3);
+const colorArr = new Float32Array(pointsData.length*3);
+for(let i=0;i<pointsData.length;i++){
+  const c = colorsVec[pointsData[i].classIdx];
+  colorArr[i*3]=c.r; colorArr[i*3+1]=c.g; colorArr[i*3+2]=c.b;
+}
+geom.setAttribute('position', new THREE.BufferAttribute(positions,3));
+geom.setAttribute('color', new THREE.BufferAttribute(colorArr,3));
+
+const mat = new THREE.PointsMaterial({size:0.07, vertexColors:true, sizeAttenuation:true, transparent:true, opacity:0.85});
+const points = new THREE.Points(geom, mat);
+scene.add(points);
+
+const meanGeom = new THREE.SphereGeometry(0.1, 16, 16);
+const means = etfVertices.map((v,i) => {
+  const m = new THREE.Mesh(meanGeom, new THREE.MeshBasicMaterial({color:colors[i], transparent:true, opacity:0.9}));
+  scene.add(m);
+  return m;
+});
+
+const classArrows = etfVertices.map((v,i) => {
+  const dir = v.clone().normalize();
+  const len = v.length();
+  const arrowHelper = new THREE.ArrowHelper(dir, new THREE.Vector3(0,0,0), len, colors[i], 0.15, 0.1);
+  arrowHelper.visible = false;
+  scene.add(arrowHelper);
+  return arrowHelper;
+});
+
+const edgeMat = new THREE.LineBasicMaterial({color:0x666666, transparent:true, opacity:0.3});
+const edgePairs=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+const edgeLines = edgePairs.map(([a,b])=>{
+  const g = new THREE.BufferGeometry().setFromPoints([etfVertices[a], etfVertices[b]]);
+  const l = new THREE.Line(g, edgeMat.clone());
+  l.visible = false;
+  scene.add(l);
+  return l;
+});
+
+const originGeo = new THREE.SphereGeometry(0.04, 12, 12);
+const originDot = new THREE.Mesh(originGeo, new THREE.MeshBasicMaterial({color:0x888888}));
+scene.add(originDot);
+
+const axLen = 0.6;
+const axMat = new THREE.LineBasicMaterial({color:0x444444, transparent:true, opacity:0.3});
+[[axLen,0,0],[-axLen,0,0],[0,axLen,0],[0,-axLen,0],[0,0,axLen],[0,0,-axLen]].forEach(([x,y,z])=>{
+  const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(x,y,z)]);
+  scene.add(new THREE.Line(g, axMat));
+});
+
+let t = 0;
+
+function updatePoints(){
+  const pos = geom.attributes.position.array;
+  for(let i=0;i<pointsData.length;i++){
+    const d = pointsData[i];
+    const ease = t*t*(3-2*t);
+    pos[i*3]   = d.start.x + (d.end.x - d.start.x)*ease;
+    pos[i*3+1] = d.start.y + (d.end.y - d.start.y)*ease;
+    pos[i*3+2] = d.start.z + (d.end.z - d.start.z)*ease;
+  }
+  geom.attributes.position.needsUpdate = true;
+
+  for(let ci=0;ci<4;ci++){
+    let mx=0,my=0,mz=0,cnt=0;
+    for(let i=0;i<pointsData.length;i++){
+      if(pointsData[i].classIdx===ci){
+        mx+=pos[i*3]; my+=pos[i*3+1]; mz+=pos[i*3+2]; cnt++;
+      }
+    }
+    means[ci].position.set(mx/cnt, my/cnt, mz/cnt);
+    means[ci].scale.setScalar(0.8 + t*1.5);
+  }
+
+  const showETF = t > 0.3;
+  edgeLines.forEach(l => { l.visible = showETF; l.material.opacity = Math.max(0,(t-0.3)/0.7)*0.35; });
+  classArrows.forEach(a => { a.visible = t > 0.5; });
+
+  if(t < 0.15) stageEl.textContent = 'Pre-training: features scattered';
+  else if(t < 0.5) stageEl.textContent = 'NC1: within-class variability collapsing';
+  else if(t < 0.8) stageEl.textContent = 'NC2: means converging to simplex ETF';
+  else stageEl.textContent = 'NC3/NC4: full neural collapse achieved';
+}
+
+slider.addEventListener('input', e => { t = e.target.value/100; });
+
+let isDragging = false, prevX=0, prevY=0;
+let rotX = 0.3, rotY = 0;
+const pivot = new THREE.Group();
+scene.add(pivot);
+pivot.add(points);
+means.forEach(m=>pivot.add(m));
+classArrows.forEach(a=>pivot.add(a));
+edgeLines.forEach(l=>pivot.add(l));
+pivot.add(originDot);
+scene.children.filter(c=>c.type==='Line'&&!edgeLines.includes(c)).forEach(l=>{scene.remove(l);pivot.add(l)});
+
+canvas.addEventListener('pointerdown', e => { isDragging=true; prevX=e.clientX; prevY=e.clientY; });
+window.addEventListener('pointerup', () => isDragging=false);
+canvas.addEventListener('pointermove', e => {
+  if(!isDragging) return;
+  rotY += (e.clientX-prevX)*0.008;
+  rotX += (e.clientY-prevY)*0.008;
+  rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+  prevX=e.clientX; prevY=e.clientY;
+});
+
+let autoRot = 0;
+function animate(){
+  requestAnimationFrame(animate);
+  autoRot += 0.003;
+  pivot.rotation.set(rotX, rotY + autoRot, 0);
+  updatePoints();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = canvas.clientWidth/canvas.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+});
+})();
+</script>
