@@ -85,7 +85,7 @@ Before diving into the math, here is a live simulation of the mechanism. A $14 \
 <iframe 
   src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_bias_stable.html' | relative_url }}" 
   style="width: 100%; border: none; border-radius: 12px; overflow: hidden;"
-  height="500"
+  height="540"
   loading="lazy"
   title="Interactive low-rank bias explorer">
 </iframe>
@@ -96,6 +96,8 @@ Before diving into the math, here is a live simulation of the mechanism. A $14 \
   <strong>Interactive simulation of the low-rank mechanism.</strong>
   The heatmap shows the weight matrix $W_T$ (warm = positive, cool = negative). The singular value bars on the right reveal the rank structure: only a few bars light up above the 5% threshold while the rest stay flat. The memory window at the bottom shows how weight decay fades old gradient contributions — blocks go from bright (recent, high weight) to transparent (old, decayed away). The three sliders let you vary batch size $B$, learning rate $\mu$, and weight decay $\lambda$ to feel each knob's effect on the resulting rank.
 </div>
+
+</br>
 
 **What to try.** A few experiments that build intuition for the three parts of the mechanism:
 
