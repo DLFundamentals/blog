@@ -13,7 +13,7 @@ tags:
 excerpt: "Why mini-batch SGD with weight decay naturally pushes neural networks toward low-rank structure."
 ---
 
-*This post is based on: T. Galanti, Z. Siegel, A. Gupte, T. Poggio. ["SGD and Weight Decay Secretly Minimize the Rank of Your Neural Network"]([https://arxiv.org/abs/2404.09610](https://openreview.net/forum?id=xhW2WyPhRP)), CPAL 2025.*
+*This post is based on: T. Galanti, Z. Siegel, A. Gupte, T. Poggio. ["SGD and Weight Decay Secretly Minimize the Rank of Your Neural Network"](https://openreview.net/forum?id=xhW2WyPhRP), CPAL 2025.*
 
 ---
 
@@ -76,6 +76,34 @@ The mechanism has three parts, each developed in a section below:
   <strong>The low-rank mechanism.</strong>
   Each mini-batch gradient $G_t$ has rank $\le B$. Weight decay exponentially suppresses older updates (fading blocks). The current matrix $W_T$ is dominated by a short effective memory window of recent low-rank corrections.
 </div>
+
+## Interactive explorer
+
+Before diving into the math, here is a live simulation of the mechanism. A $14 \times 14$ weight matrix is built up step by step from rank-$B$ stochastic gradient updates under weight decay. Press **Play** to watch the dynamics unfold, or **Step** to advance one iteration at a time.
+
+<div style="margin: 2rem 0;">
+<iframe 
+  src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_bias_stable.html' | relative_url }}" 
+  style="width: 100%; border: none; border-radius: 12px; overflow: hidden;"
+  height="700"
+  loading="lazy"
+  title="Interactive low-rank bias explorer">
+</iframe>
+</div>
+
+<div style="margin-top: 0.5rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
+  <strong>Figure 3.</strong>
+  <strong>Interactive simulation of the low-rank mechanism.</strong>
+  The heatmap shows the weight matrix $W_T$ (warm = positive, cool = negative). The singular value bars on the right reveal the rank structure: only a few bars light up above the 5% threshold while the rest stay flat. The memory window at the bottom shows how weight decay fades old gradient contributions — blocks go from bright (recent, high weight) to transparent (old, decayed away). The three sliders let you vary batch size $B$, learning rate $\mu$, and weight decay $\lambda$ to feel each knob's effect on the resulting rank.
+</div>
+
+**What to try.** A few experiments that build intuition for the three parts of the mechanism:
+
+- **Low-rank updates.** Set $B = 1$ and step through. Each gradient is a single outer product, so the matrix grows in structured stripe-like patterns. Increase $B$ to 8 or higher and watch the updates become richer — more singular values light up.
+
+- **Weight decay limits memory.** With small $\lambda$ (say 0.01), the timeline blocks stay bright for many steps and the effective rank climbs. Increase $\lambda$ toward 0.10 and watch old blocks fade rapidly, the memory window shrinks, and the rank drops.
+
+- **The interaction.** The stat card shows both the *measured* effective rank (from the live SVD, counting singular values above 5% of $\sigma_1$) and the *predicted* rank from the formula $B \cdot \log(1/\varepsilon) / (2\mu\lambda)$. Try $B = 1$, $\mu = 0.10$, $\lambda = 0.10$ for very low rank (1–2), then $B = 8$, $\mu = 0.02$, $\lambda = 0.01$ for higher rank. The colored badge next to the equation shows the current decay factor $1 - 2\mu\lambda$, which is constrained to remain positive — the physical regime where weight decay actually decays.
 
 ## Part I: Stochastic gradients are low rank
 
