@@ -65,7 +65,7 @@ excerpt: "Contrastive learning is often much closer to supervised contrastive le
 .interactive-figure iframe {
   display: block;
   width: 100%;
-  height: 600px;
+  height: 550px;
   border: 0;
   border-radius: 12px;
   background: #fff;
