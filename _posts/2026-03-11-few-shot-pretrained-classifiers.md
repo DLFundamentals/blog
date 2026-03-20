@@ -217,7 +217,7 @@ where $\mathcal{C}(f)$ is some notion of complexity of the pre-trained model $f$
 
 **The $1/\sqrt{\ell}$ term** is the second generalization step. It says that with more source classes, the average geometry seen on the observed source classes better reflects the geometry of the full population of classes $\mathcal D$. This is exactly the term that lets the argument extend to unseen target classes.
 
-**The minimal class-distance term** $\min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|$ is the minimum pairwise distance between the empirical source class means in feature space. It captures the worst-case separation between classes: the larger this quantity is, the easier it is to distinguish classes by nearest-center classification, and the stronger the transfer guarantee becomes. Under neural collapse, the class means become more uniformly and maximally separated, which makes this term large.
+**The minimal class-distance term** $\min_{i\neq j}\lVert \mu_f(\tilde S_i)-\mu_f(\tilde S_j) \rVert$ is the minimum pairwise distance between the empirical source class means in feature space. It captures the worst-case separation between classes: the larger this quantity is, the easier it is to distinguish classes by nearest-center classification, and the stronger the transfer guarantee becomes. Under neural collapse, the class means become more uniformly and maximally separated, which makes this term large.
 
 So the theorem mirrors the conceptual story: many samples per class let you generalize from training points to the source-class distributions, and many source classes let you generalize from seen classes to unseen classes.
 
