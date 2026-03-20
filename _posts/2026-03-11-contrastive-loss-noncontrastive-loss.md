@@ -19,51 +19,120 @@ excerpt: "Contrastive learning is often much closer to supervised contrastive le
 
 ---
 
+<style>
+.cl-overview {
+  margin: 2rem 0 1rem 0;
+}
+
+.cl-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.cl-overview-panel {
+  text-align: center;
+  margin: 0;
+}
+
+.cl-overview-panel img {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+.cl-overview-label {
+  margin-top: 0.55rem;
+  font-size: 0.98rem;
+}
+
+.cl-figure-caption {
+  margin-top: 1rem;
+  font-size: 1.02rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.interactive-figure {
+  margin: 1.75rem 0 2rem 0;
+  width: 100%;
+}
+
+.interactive-figure iframe {
+  display: block;
+  width: 100%;
+  height: 760px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+@media (max-width: 900px) {
+  .cl-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cl-overview-panel img {
+    max-width: 320px;
+  }
+
+  .interactive-figure iframe {
+    height: 620px;
+  }
+}
+
+@media (max-width: 600px) {
+  .interactive-figure iframe {
+    height: 500px;
+  }
+}
+</style>
+
 Self-supervised contrastive learning trains on unlabeled data, yet the learned features often look remarkably semantic: same-class samples cluster together, linear probes perform well, and downstream transfer can approach supervised pre-training. That raises a basic question:
 
 > How can a method that never sees labels learn representations that look so class-aware?
 
-In this blog post we argue that contrastive learning is much closer to supervised contrastive learning than its name suggests. This closeness operates at two levels, each addressed by one of the papers above:
+In this post, we argue that contrastive learning is much closer to supervised contrastive learning than its name suggests. This closeness operates at two levels, each addressed by one of the papers above:
 
 > <span style="color:#1e6bd6; font-weight:600;">
-> 1. The self-supervised contrastive loss is close to a supervised variant that removes same-class negatives. The gap shrinks as $O(1/C)$ with the number of classes.<br><br>
+> 1. The self-supervised contrastive loss is close to a supervised variant that removes same-class negatives. The gap shrinks as \(O(1/C)\) with the number of classes.<br><br>
 > 2. Under shared training randomness, the learned representations of the two methods remain closely aligned throughout training, even as their parameters diverge.
 > </span>
 
-<div style="margin: 2rem 0;">
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start;">
+<div class="cl-overview">
+  <div class="cl-overview-grid">
+    <figure class="cl-overview-panel">
+      <img src="{{ '/assets/figures/cl-nscl/weight_space_angle.png' | relative_url }}" alt="Weight space alignment between CL and NSCL">
+      <div class="cl-overview-label"><strong>(a)</strong> Weight space</div>
+    </figure>
 
-    <div style="text-align: center;">
-      <img src="{{ '/assets/figures/cl-nscl/weight_space_angle.png' | relative_url }}" style="width:100%; max-width:240px;">
-      <div><strong>(a)</strong> Weight space</div>
-    </div>
+    <figure class="cl-overview-panel">
+      <img src="{{ '/assets/figures/cl-nscl/rep_space_angle.png' | relative_url }}" alt="Representation space alignment between CL and NSCL">
+      <div class="cl-overview-label"><strong>(b)</strong> Representation space</div>
+    </figure>
 
-    <div style="text-align: center;">
-      <img src="{{ '/assets/figures/cl-nscl/rep_space_angle.png' | relative_url }}" style="width:100%; max-width:240px;">
-      <div><strong>(b)</strong> Representation space</div>
-    </div>
-
-    <div style="text-align: center;">
-      <img src="{{ '/assets/figures/cl-nscl/cka_rsa_gap.png' | relative_url }}" style="width:100%; max-width:240px;">
-      <div><strong>(c)</strong> CKA / RSA / weight gap</div>
-    </div>
-
+    <figure class="cl-overview-panel">
+      <img src="{{ '/assets/figures/cl-nscl/cka_rsa_gap.png' | relative_url }}" alt="CKA RSA and weight gap between CL and NSCL">
+      <div class="cl-overview-label"><strong>(c)</strong> CKA / RSA / weight gap</div>
+    </figure>
   </div>
 </div>
 
-<div style="margin-top: 1rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
+<div class="cl-figure-caption">
   <strong>Figure 1.</strong>
   <strong>CL and NSCL can separate in weight space while remaining closely aligned in representation space.</strong>
   The objectives are related, the learned geometry stays similar, but the parameter trajectories need not coincide.
 </div>
 
-<br>
-
 ## Part I: The losses are close
 
 ### The setup
 
-Consider a labeled dataset $S = \{(x_i,y_i)\}_{i=1}^N$, but assume that during self-supervised training we only use the inputs $x_i$, not the labels $y_i$. For each sample $x_i$, we generate $K$ augmentations and map them through an encoder $f$:
+Consider a labeled dataset \(S = \{(x_i,y_i)\}_{i=1}^N\), but assume that during self-supervised training we only use the inputs \(x_i\), not the labels \(y_i\). For each sample \(x_i\), we generate \(K\) augmentations and map them through an encoder \(f\):
 
 $$
 z_i^l = f(\alpha_l(x_i)).
@@ -87,7 +156,7 @@ We call this **NSCL**, for **negatives-only supervised contrastive learning**. T
 
 ### Why the gap is small
 
-Suppose the dataset is balanced, with $C$ classes and $n$ samples per class, so $N = Cn$. Fix an anchor. In DCL, the denominator sums over all $N-1$ other samples. In NSCL, it sums over only the $N-n = n(C-1)$ different-class samples. The same-class terms that appear in DCL but not in NSCL number exactly $n-1$, a fraction roughly $1/C$ of the total. So when $C$ is large, the two denominators are nearly the same.
+Suppose the dataset is balanced, with \(C\) classes and \(n\) samples per class, so \(N = Cn\). Fix an anchor. In DCL, the denominator sums over all \(N-1\) other samples. In NSCL, it sums over only the \(N-n = n(C-1)\) different-class samples. The same-class terms that appear in DCL but not in NSCL number exactly \(n-1\), a fraction roughly \(1/C\) of the total. So when \(C\) is large, the two denominators are nearly the same.
 
 This can be made precise:
 
@@ -95,25 +164,25 @@ $$
 \mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{e^2}{C-1}.
 $$
 
-The bound is both label-agnostic and architecture-independent: it holds for any encoder $f$, without assumptions on the data distribution or the model class. The gap shrinks as $O(1/C)$, which means that for problems with many semantic classes, DCL is already almost NSCL.
+The bound is both label-agnostic and architecture-independent: it holds for any encoder \(f\), without assumptions on the data distribution or the model class. The gap shrinks as \(O(1/C)\), which means that for problems with many semantic classes, DCL is already almost NSCL.
 
-### What NSCL minimizers look like?
+### What NSCL minimizers look like
 
 Since NSCL is the supervised bridge, it is natural to ask what its optimal solutions look like. Any global minimizer of the NSCL loss exhibits three structural properties:
 
 1. **Augmentation collapse:** all augmented views of the same sample map to the same point.
 2. **Within-class collapse:** all samples from the same class share a single representation.
-3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame—a maximally separated, symmetric configuration on the unit sphere.
+3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame, a maximally separated, symmetric configuration on the unit sphere.
 
 <div class="interactive-figure">
   <iframe
-    src="{{ site.baseurl }}/assets/figures/cl-nscl/neural_collapse_3d_visualization.html"
+    src="{{ '/assets/figures/cl-nscl/neural_collapse_3d_visualization.html' | relative_url }}"
     title="3D visualization of neural collapse"
     loading="lazy">
   </iframe>
 </div>
 
-This is the same geometric structure that arises at the global optima of supervised losses such as cross-entropy and mean squared error, the phenomenon known as **neural collapse**. The fact that NSCL shares these optimal solutions is not a coincidence: it reflects the tight connection between the self-supervised and supervised objectives.
+This is the same geometric structure that arises at the global optima of supervised losses such as cross-entropy and mean squared error, the phenomenon known as **neural collapse**. The fact that NSCL shares these optimal solutions is not a coincidence. It reflects the tight connection between the self-supervised and supervised objectives.
 
 ## Part II: The representations are close
 
@@ -147,7 +216,7 @@ $$
 \mathrm{CKA}_T \ge \frac{1-\rho_T}{1+\rho_T}, \qquad \mathrm{RSA}_T \ge \frac{1-r_T}{1+r_T},
 $$
 
-where $\rho_T$ and $r_T$ are normalized versions of the similarity-matrix discrepancy.
+where \(\rho_T\) and \(r_T\) are normalized versions of the similarity-matrix discrepancy.
 
 ### But weights can still diverge
 
@@ -165,17 +234,17 @@ This is not paradoxical. In deep networks, parameter space is highly redundant. 
 
 Putting the two pieces together gives a much sharper picture of why contrastive learning works.
 
-The standard story is that contrastive learning is a *self-supervised* method that *somehow* discovers semantic structure. The picture here is more precise: the self-supervised objective is already close to a specific supervised contrastive objective (NSCL), that objective's optimal solutions exhibit the same neural-collapse geometry as supervised training, and the learned representations of the two methods remain aligned throughout training.
+The standard story is that contrastive learning is a *self-supervised* method that *somehow* discovers semantic structure. The picture here is more precise: the self-supervised objective is already close to a specific supervised contrastive objective, namely NSCL; that objective's optimal solutions exhibit the same neural-collapse geometry as supervised training; and the learned representations of the two methods remain aligned throughout training.
 
-So rather than thinking of CL as a completely different form of learning that mysteriously recovers semantics, it is more accurate to think of it as a self-supervised procedure whose objective and learned geometry sit near a very specific supervised counterpart—not cross-entropy, not generic supervised learning, but a supervised contrastive objective that differs from CL in only one controlled way: whether same-class samples are excluded from the denominator.
+So rather than thinking of CL as a completely different form of learning that mysteriously recovers semantics, it is more accurate to think of it as a self-supervised procedure whose objective and learned geometry sit near a very specific supervised counterpart. Not cross-entropy, not generic supervised learning, but a supervised contrastive objective that differs from CL in only one controlled way: whether same-class samples are excluded from the denominator.
 
 ## Takeaway
 
 Contrastive learning is more supervised than it looks. This appears in three layers:
 
-1. **The losses are close.** The standard self-supervised contrastive loss approximates the NSCL loss, with a gap that shrinks as $O(1/C)$.
+1. **The losses are close.** The standard self-supervised contrastive loss approximates the NSCL loss, with a gap that shrinks as \(O(1/C)\).
 
-2. **The geometry is the same.** NSCL minimizers exhibit the same simplex ETF structure as supervised losses—augmentation collapse, within-class collapse, and maximally separated class centers.
+2. **The geometry is the same.** NSCL minimizers exhibit the same simplex ETF structure as supervised losses: augmentation collapse, within-class collapse, and maximally separated class centers.
 
 3. **The representations stay aligned.** Under shared training randomness, the learned representations of CL and NSCL remain closely aligned, even as their parameters diverge.
 
