@@ -217,19 +217,15 @@ where $\mathcal{C}(f)$ is some notion of complexity of the pre-trained model $f$
 
 **The $1/\sqrt{\ell}$ term** is the second generalization step. It says that with more source classes, the average geometry seen on the observed source classes better reflects the geometry of the full population of classes $\mathcal D$. This is exactly the term that lets the argument extend to unseen target classes.
 
-**The $\min_{i\neq j}|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)|$ term** is the minimum pairwise distance between the empirical source class means in feature space. It captures the worst-case separation between classes: the larger this quantity is, the easier it is to distinguish classes by nearest-center classification, and the stronger the transfer guarantee becomes. Under neural collapse, the class means become more uniformly and maximally separated, which makes this term large.
+**The minimal class-distance term** $\min_{i\neq j}|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)|$ is the minimum pairwise distance between the empirical source class means in feature space. It captures the worst-case separation between classes: the larger this quantity is, the easier it is to distinguish classes by nearest-center classification, and the stronger the transfer guarantee becomes. Under neural collapse, the class means become more uniformly and maximally separated, which makes this term large.
 
 So the theorem mirrors the conceptual story: many samples per class let you generalize from training points to the source-class distributions, and many source classes let you generalize from seen classes to unseen classes.
 
-### Why neural collapse helps
+### Why the bound is meaningful in the few-shot regime
 
-Neural collapse improves both parts of the geometry. It shrinks within-class variability, which reduces the CDNV numerator. And under NC2, the class means become maximally separated, which enlarges the denominator. In the ideal ETF geometry, the class centers are as far apart as possible given their norm. So neural collapse is not merely correlated with transfer. It improves exactly the quantity that appears in the bound.
+The key point is that the bound remains informative even when $n$ is a small constant, while $m$ and $\ell$ grow. The downstream learner does not need to discover complex structure from tiny target data. That structure has already been built into the feature space during pretraining.
 
-### Why this works in the true few-shot regime
-
-The bound remains meaningful when $n$ is a small constant while $m$ and $\ell$ grow. This is the key point: the downstream learner does not need to discover complex structure from tiny data. Pretraining has already shaped the feature space so that new classes also look clusterable.
-
-Once the representation has that geometry, a few target examples are enough to estimate the new class centers and classify by proximity to them.
+Once the representation makes unseen classes form tight, well-separated clusters, only a few target examples are needed to estimate their centers and classify by nearest center.
 
 <hr class="section-rule">
 
