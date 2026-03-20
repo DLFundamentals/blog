@@ -132,7 +132,7 @@ In this post, we argue that contrastive learning is much closer to supervised co
 
 ### The setup
 
-Consider a labeled dataset \(S = \{(x_i,y_i)\}_{i=1}^N\), but assume that during self-supervised training we only use the inputs \(x_i\), not the labels \(y_i\). For each sample \(x_i\), we generate \(K\) augmentations and map them through an encoder \(f\):
+Consider a labeled dataset $S = \{(x_i,y_i)\}_{i=1}^N$, but assume that during self-supervised training we only use the inputs $x_i$, not the labels $y_i$. For each sample \(x_i\), we generate $K$ augmentations and map them through an encoder $f$:
 
 $$
 z_i^l = f(\alpha_l(x_i)).
@@ -156,7 +156,7 @@ We call this **NSCL**, for **negatives-only supervised contrastive learning**. T
 
 ### Why the gap is small
 
-Suppose the dataset is balanced, with \(C\) classes and \(n\) samples per class, so \(N = Cn\). Fix an anchor. In DCL, the denominator sums over all \(N-1\) other samples. In NSCL, it sums over only the \(N-n = n(C-1)\) different-class samples. The same-class terms that appear in DCL but not in NSCL number exactly \(n-1\), a fraction roughly \(1/C\) of the total. So when \(C\) is large, the two denominators are nearly the same.
+Suppose the dataset is balanced, with $C$ classes and $n$ samples per class, so $N = Cn$. Fix an anchor. In DCL, the denominator sums over all $N-1$ other samples. In NSCL, it sums over only the $N-n = n(C-1)$ different-class samples. The same-class terms that appear in DCL but not in NSCL number exactly $n-1$, a fraction roughly $1/C$ of the total. So when $C$ is large, the two denominators are nearly the same.
 
 This can be made precise:
 
@@ -164,7 +164,7 @@ $$
 \mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{e^2}{C-1}.
 $$
 
-The bound is both label-agnostic and architecture-independent: it holds for any encoder \(f\), without assumptions on the data distribution or the model class. The gap shrinks as \(O(1/C)\), which means that for problems with many semantic classes, DCL is already almost NSCL.
+The bound is both label-agnostic and architecture-independent: it holds for any encoder $f$, without assumptions on the data distribution or the model class. The gap shrinks as $O(1/C)$, which means that for problems with many semantic classes, DCL is already almost NSCL.
 
 ### What NSCL minimizers look like
 
