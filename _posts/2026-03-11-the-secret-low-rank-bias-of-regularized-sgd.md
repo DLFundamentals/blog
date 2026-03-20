@@ -97,7 +97,7 @@ Before diving into the math, here is a live simulation of the mechanism. A $14 \
   The heatmap shows the weight matrix $W_T$ (warm = positive, cool = negative). The singular value bars on the right reveal the rank structure: only a few bars light up above the 5% threshold while the rest stay flat. The memory window at the bottom shows how weight decay fades old gradient contributions — blocks go from bright (recent, high weight) to transparent (old, decayed away). The three sliders let you vary batch size $B$, learning rate $\mu$, and weight decay $\lambda$ to feel each knob's effect on the resulting rank.
 </div>
 
-</br>
+<br>
 
 **What to try.** A few experiments that build intuition for the three parts of the mechanism:
 
