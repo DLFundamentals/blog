@@ -17,14 +17,14 @@ excerpt: "A geometric explanation for why ordinary supervised pretraining can tr
 
 ---
 
-Deep networks trained on large classification benchmarks such as ImageNet often transfer surprisingly well to new tasks. Train a classifier on a large source dataset, keep the learned representation, fit a simple linear head on a handful of labeled examples from new classes — and it works. Practitioners rely on this all the time.
+Deep networks trained on large classification benchmarks such as ImageNet often transfer surprisingly well to new tasks. Train a classifier on a large source dataset, keep the learned representation, fit a simple linear head on a handful of labeled examples from new classes, and it works. Practitioners rely on this all the time.
 
 But from a theoretical perspective, the phenomenon is puzzling. A classifier trained on ImageNet is optimized to separate the ImageNet classes. Why should the same representation also make it easy to separate **new** classes that never appeared during training? And why should only a handful of labeled examples be enough?
 
 The main message of this post is:
 
 > <span style="color:#1e6bd6; font-weight:600;">
-> If supervised pretraining makes each class form a tight cluster in feature space while keeping different class means well separated, then new classes can be learned from only a few labeled examples using a nearest-center classifier. This geometric property — class-feature variability collapse — is what makes few-shot adaptation possible.
+> If supervised pretraining makes each class form a tight cluster in feature space while keeping different class means well separated, then new classes can be learned from only a few labeled examples using a nearest-center classifier. This geometric property, class-feature variability collapse, is what makes few-shot adaptation possible.
 > </span>
 
 The explanation has three parts, each developed in a section below:
@@ -38,17 +38,18 @@ The explanation has three parts, each developed in a section below:
   margin: 2rem 0;
 }
 
-.task-title {
-  font-weight: 700;
-  font-size: 1.05rem;
-  margin: 1.2rem 0 0.6rem 0;
+.task-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
 }
 
-.task-full-figure {
-  margin: 0 0 1.6rem 0;
+.task-panel {
+  margin: 0;
 }
 
-.task-full-figure img {
+.task-panel img {
   display: block;
   width: 100%;
   max-width: 420px;
@@ -57,15 +58,12 @@ The explanation has three parts, each developed in a section below:
   border-radius: 10px;
 }
 
-.task-full-figure figcaption {
-  margin-top: 0.45rem;
-  font-size: 0.95rem;
-  color: #555;
-  text-align: center;
-}
-
 @media (max-width: 700px) {
-  .task-full-figure img {
+  .task-row {
+    grid-template-columns: 1fr;
+  }
+
+  .task-panel img {
     max-width: 100%;
   }
 }
@@ -80,15 +78,15 @@ Transfer learning should not be expected to work equally well for every possible
 There is an unknown distribution $\mathcal D$ over a collection $\mathcal E$ of class-conditional distributions. Each element of $\mathcal E$ represents one possible class. The source task is built from class-conditionals $\tilde P_1,\dots,\tilde P_\ell \sim \mathcal D$, and the target task from new, independent draws $P_1,\dots,P_k \sim \mathcal D$.
 
 <div class="task-block">
-  <div class="task-title">Source task</div>
-  <figure class="task-full-figure">
-    <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/source_classes.png" alt="Source classes">
-  </figure>
+  <div class="task-row">
+    <figure class="task-panel">
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/source_classes.png" alt="Source classes">
+    </figure>
 
-  <div class="task-title">Target task</div>
-  <figure class="task-full-figure">
-    <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/target_classes.png" alt="Target classes">
-  </figure>
+    <figure class="task-panel">
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/target_classes.png" alt="Target classes">
+    </figure>
+  </div>
 </div>
 
 This captures the intended use of pretrained representations: we train on many source classes that are representative of a broader population, then ask whether the learned features transfer to new classes drawn from that same population.
@@ -129,7 +127,7 @@ If a new target class is diffuse in feature space, then a few labeled samples ar
 
 ### The connection to neural collapse
 
-The CDNV is closely related to the NC1 property of **neural collapse**: during training, the features of same-class samples tend to concentrate around their class means. Under the additional NC2 property — that the class means form a maximally separated simplex equiangular tight frame — the minimum pairwise distance between class means is maximized, which pushes CDNV even lower. So neural collapse, when it occurs, creates precisely the geometric conditions that make few-shot transfer work.
+The CDNV is closely related to the NC1 property of **neural collapse**: during training, the features of same-class samples tend to concentrate around their class means. Under the additional NC2 property, that the class means form a maximally separated simplex equiangular tight frame, the minimum pairwise distance between class means is maximized, which pushes CDNV even lower. So neural collapse, when it occurs, creates precisely the geometric conditions that make few-shot transfer work.
 
 ## Part III: The transfer bound
 
@@ -149,13 +147,13 @@ up to logarithmic factors, where $\Lambda = \min_{i\neq j}\|\mu_f(\tilde S_i)-\m
 
 **The $1/\sqrt{m}$ term** is a standard sample-complexity term. With more examples from each source class, the empirical geometry of each class better reflects its true geometry.
 
-**The $1/\sqrt{l}$ term** is more interesting: it captures **generalization across classes**. Since the target classes are unseen during pretraining, the representation must generalize not only across new examples, but across new class-conditionals. Having many source classes is essential in its own right — this is not reducible to having more total data.
+**The $1/\sqrt{l}$ term** is more interesting: it captures **generalization across classes**. Since the target classes are unseen during pretraining, the representation must generalize not only across new examples, but across new class-conditionals. Having many source classes is essential in its own right. This is not reducible to having more total data.
 
 **The denominator** $\Lambda$ measures the minimum separation between source class means. Under neural collapse (NC2), the class means form an equiangular tight frame, and $\Lambda$ is maximized: $\Lambda = \sqrt{2}\|\mu_f(\tilde S_i)\|$. So neural collapse simultaneously makes the numerator small (tight clusters) and the denominator large (well-separated means).
 
 ### Why this works in the true few-shot regime
 
-The bound remains meaningful when $n$ is a small constant while $m$ and $l$ grow. This is the key point: the burden of learning is shifted entirely to pretraining. If the source task is rich enough (many classes, many samples per class) and the learned feature geometry is sufficiently collapsed and separated, then the downstream target task can be solved from very little data. The transfer error converges to zero even with a fixed, small number of target samples — a property that distinguishes this result from standard generalization bounds that require the number of target samples to grow.
+The bound remains meaningful when $n$ is a small constant while $m$ and $l$ grow. This is the key point: the burden of learning is shifted entirely to pretraining. If the source task is rich enough (many classes, many samples per class) and the learned feature geometry is sufficiently collapsed and separated, then the downstream target task can be solved from very little data. The transfer error converges to zero even with a fixed, small number of target samples, a property that distinguishes this result from standard generalization bounds that require the number of target samples to grow.
 
 ## What this does and does not claim
 
@@ -171,6 +169,6 @@ Few-shot transfer works because pretraining learns a feature space with the righ
 
 2. **Well-separated means.** Neural collapse maximizes the distance between class centers, making the CDNV small and the denominator $\Lambda$ large.
 
-3. **Geometry that generalizes.** With many source classes, the collapsed geometry extends to unseen target classes — the $1/\sqrt{l}$ term ensures that the representation learned on $l$ source classes transfers to new classes from the same population.
+3. **Geometry that generalizes.** With many source classes, the collapsed geometry extends to unseen target classes. The $1/\sqrt{l}$ term ensures that the representation learned on $l$ source classes transfers to new classes from the same population.
 
 The result is that few-shot adaptation does not require the downstream learner to discover complex structure from tiny data. The hard work has already been done by pretraining: the geometry of the feature space is doing the real work.
