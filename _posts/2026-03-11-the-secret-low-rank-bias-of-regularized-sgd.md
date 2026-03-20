@@ -71,6 +71,10 @@ The mechanism is simple:
 2. weight decay prevents the layer from retaining too much of the distant past,
 3. so the current weight matrix is dominated by a relatively short history of low-rank corrections.
 
+<div style="text-align:center; margin: 2rem 0;">
+  <img src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_mechanism.png' | relative_url }}" style="width:100%; max-width:950px;">
+</div>
+
 That is the core mechanism. The rest of the post just makes it precise.
 
 ## A local view of one layer
@@ -217,10 +221,6 @@ Another way to say it is:
 - SGD writes only a few directions per step,
 - weight decay prevents too many old directions from remaining active,
 - so the layer behaves like a short moving memory of low-rank corrections.
-
-<div style="text-align:center; margin: 2rem 0;">
-  <img src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_mechanism.png' | relative_url }}" style="width:100%; max-width:950px;">
-</div>
 
 ## A simple effective-rank heuristic
 
