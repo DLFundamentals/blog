@@ -1,0 +1,11 @@
+@import url("https://giscus.app/default.css");
+ 
+/* Hide thumbs-down and confused reactions */
+button[aria-label*="-1"],
+button[aria-label*="THUMBS_DOWN"],
+button[aria-label*="thumbs_down"],
+button[aria-label*="Downvote"],
+button[aria-label*="CONFUSED"],
+button[aria-label*="confused"] {
+  display: none !important;
+}
