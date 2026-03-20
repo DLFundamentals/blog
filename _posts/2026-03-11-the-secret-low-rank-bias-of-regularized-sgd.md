@@ -21,7 +21,7 @@ Deep networks are heavily overparameterized, yet the solutions found in practice
 
 Much of the existing theory explains low-rank behavior only in cleaner settings than modern practice: linear models, specialized losses, exact symmetries, or global optimality arguments. What is missing is a structural explanation for the regime practitioners actually use:
 
-**mini-batch SGD with weight decay.**
+**training a practical neural network with mini-batch SGD and weight decay.**
 
 The main message of this post is:
 
