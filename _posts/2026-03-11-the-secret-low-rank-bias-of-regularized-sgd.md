@@ -25,8 +25,8 @@ Much of the existing theory explains low-rank behavior only in cleaner settings 
 
 <div class="key-message">
   Mini-batch SGD with weight decay creates a strong pressure toward low-rank layers.
-  This pressure becomes stronger with smaller batch size, larger learning rate, and
-  stronger weight decay.
+  This pressure becomes stronger with smaller batch size $B$, larger learning rate $\mu$, and
+  stronger weight decay $\lambda$.
 </div>
 
 <div class="figure col-wide">
