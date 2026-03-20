@@ -17,11 +17,9 @@ excerpt: "Why mini-batch SGD with weight decay naturally pushes neural networks 
 
 ---
 
-Deep networks are heavily overparameterized, yet the solutions found in practice are far from arbitrary. Even when many parameter settings can fit the training data, stochastic gradient methods often converge to highly structured models. One particularly striking form of structure is **low rank**: across many architectures, trained weight matrices are far more compressible than their ambient dimension would suggest.
+Deep networks are heavily overparameterized, yet the solutions found in practice are far from arbitrary. Even when many parameter settings can fit the training data, stochastic gradient methods often converge to highly structured models. One particularly striking form of structure is **low rank**: across many architectures, trained weight matrices are far more compressible than their full dimension would suggest.
 
-Much of the existing theory explains low-rank behavior only in cleaner settings than modern practice: linear models, specialized losses, exact symmetries, or global optimality arguments. What is missing is a structural explanation for the regime practitioners actually use:
-
-**training a practical neural network with mini-batch SGD and weight decay.**
+Much of the existing theory explains low-rank behavior only in cleaner settings than modern practice: linear models, specialized losses, exact symmetries, or global optimality arguments. What is missing is a structural explanation for the regime practitioners actually use: **training practical neural networks with mini-batch SGD and weight decay.**
 
 The main message of this post is:
 
@@ -119,7 +117,7 @@ $$
 
 A single-example gradient is not an arbitrary full-rank matrix. It has the simplest possible form: one left direction times one right direction.
 
-### A mini-batch gives a rank-$B$ update
+### A mini-batch gives an update of rank at most $B$
 
 The mini-batch gradient is the average of $B$ rank-1 terms:
 
