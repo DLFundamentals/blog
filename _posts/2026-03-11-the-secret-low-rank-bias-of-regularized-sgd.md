@@ -13,7 +13,7 @@ tags:
 excerpt: "Why mini-batch SGD with weight decay naturally pushes neural networks toward low-rank structure."
 ---
 
-*This post is based on: T. Galanti, Z. Siegel, A. Gupte, T. Poggio. ["SGD and Weight Decay Secretly Minimize the Rank of Your Neural Network"](https://arxiv.org/abs/2404.09610), CPAL 2025.*
+*This post is based on: T. Galanti, Z. Siegel, A. Gupte, T. Poggio. ["SGD and Weight Decay Secretly Minimize the Rank of Your Neural Network"]([https://arxiv.org/abs/2404.09610](https://openreview.net/forum?id=xhW2WyPhRP)), CPAL 2025.*
 
 ---
 
