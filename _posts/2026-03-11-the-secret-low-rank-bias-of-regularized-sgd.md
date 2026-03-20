@@ -86,13 +86,13 @@ The mechanism has three parts, each developed in a section below:
 Fix all parameters except one trainable matrix $W$. Locally around that layer, the network can be written as
 
 $$
-h_W(x) = g(Wf(x)),
+h(x) = g(Wf(x)),
 $$
 
 where $f(x)$ is the representation entering the layer and $g$ collects everything afterward. We train with the regularized loss
 
 $$
-L_S^\lambda(W) = \frac{1}{m}\sum_{i=1}^m \ell_i(h_W(x_i)) + \lambda \|W\|_F^2.
+L_S^\lambda(W) = \frac{1}{m}\sum_{i=1}^m \ell_i(h(x_i)) + \lambda \|W\|_F^2.
 $$
 
 Under mini-batch SGD with weight decay, the update is
@@ -108,13 +108,13 @@ where $G_t := \nabla_W L_{\tilde S_t}(W_t)$ is the mini-batch gradient. The prev
 For a single training example $x$, the chain rule gives
 
 $$
-\nabla_W \ell(h_W(x)) = \delta(x) f(x)^\top,
+\nabla_W \ell(h(x)) = \delta(x) f(x)^\top,
 $$
 
-where $\delta(x) := J_g(Wf(x))^\top \nabla_h \ell(h_W(x))$. This is an outer product of two vectors, so
+where $\delta(x) := J_g(Wf(x))^\top \nabla_h \ell(h(x))$. This is an outer product of two vectors, so
 
 $$
-\operatorname{rank}\big(\nabla_W \ell(h_W(x))\big) \le 1.
+\operatorname{rank}\big(\nabla_W \ell(h(x))\big) \le 1.
 $$
 
 A single-example gradient is not an arbitrary full-rank matrix. It has the simplest possible form: one left direction times one right direction.
@@ -160,20 +160,20 @@ This bound captures the right qualitative dependencies: smaller batch size, larg
 The rank-1 statement changes when the same matrix $W$ is reused multiple times within a single example. This happens in convolutions (same kernel at many spatial locations), self-attention projections ($W_Q$, $W_K$, $W_V$ applied to many tokens), and any shared linear operator. In that case,
 
 $$
-h_W(x) = g(Wf_1(x), \dots, Wf_R(x)),
+h(x) = g(Wf_1(x), \dots, Wf_R(x)),
 $$
 
 and the chain rule gives
 
 $$
-\nabla_W \ell(h_W(x)) = \sum_{r=1}^R \delta_r(x) f_r(x)^\top, \qquad \operatorname{rank}\big(\nabla_W \ell(h_W(x))\big) \le R.
+\nabla_W \ell(h(x)) = \sum_{r=1}^R \delta_r(x) f_r(x)^\top, \qquad \operatorname{rank}\big(\nabla_W \ell(h(x))\big) \le R.
 $$
 
 For a mini-batch, $\operatorname{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, BR)$. The rest of the argument is unchanged: weight decay still exponentially suppresses old updates, so the current matrix remains close to a weighted sum of recent low-rank gradients. The one-use setting $R = 1$ is simply the cleanest case.
 
 ### Why the local view is natural
 
-The representation $h_W(x) = g(Wf(x))$ is not an artificial simplification. It is the natural local view of any layer: fix all other parameters, isolate the place where $W$ acts, and absorb everything before it into $f$ and everything after it into $g$. For fully connected layers this is immediate. For residual blocks, the dependence on $W$ still enters through $Wf(x)$, so the outer-product structure of the gradient is preserved.
+The representation $h(x) = g(Wf(x))$ is not an artificial simplification. It is the natural local view of any layer: fix all other parameters, isolate the place where $W$ acts, and absorb everything before it into $f$ and everything after it into $g$. For fully connected layers this is immediate. For residual blocks, the dependence on $W$ still enters through $Wf(x)$, so the outer-product structure of the gradient is preserved.
 
 ## What this does and does not say
 
