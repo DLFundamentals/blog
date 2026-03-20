@@ -461,6 +461,19 @@ article tbody tr:hover {
 /* ═══════════════════
    Giscus Comments
    ═══════════════════ */
+.comments-section {
+  margin-top: 3rem;
+}
+.comments-heading {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--navy);
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  border: none;
+  padding: 0;
+}
 .giscus {
   margin-top: 0.5rem;
 }
