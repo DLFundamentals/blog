@@ -2,9 +2,16 @@
 layout: post
 title: "Why SGD Prefers Low-Rank Neural Networks"
 date: 2026-03-11
+author: Tomer Galanti
+tags:
+  - deep-learning
+  - low-rank-bias
+  - sgd
+  - compression
+  - theory
+  - foundation-models
+excerpt: "Why do trained neural networks often end up low rank? Mini-batch SGD and weight decay together create a built-in pressure toward compressible layers."
 ---
-
-<div class="col">
 
 *Based on: T. Galanti, Z. Siegel, A. Gupte, T. Poggio. ["SGD and Weight Decay Secretly Minimize the Rank of Your Neural Network"](https://openreview.net/forum?id=xhW2WyPhRP), CPAL 2025.*
 
