@@ -10,6 +10,8 @@ date: 2026-03-11
 
 ---
 
+## Introduction
+
 Deep networks are heavily overparameterized, yet the solutions found in practice are far from arbitrary. Even when many parameter settings can fit the training data, stochastic gradient methods often converge to highly structured models. One particularly striking form of structure is **low rank**: across many architectures, trained weight matrices are far more compressible than their full dimension would suggest.
 
 Much of the existing theory explains low-rank behavior only in cleaner settings than modern practice: linear models, specialized losses, exact symmetries, or global optimality arguments. What is missing is a structural explanation for the regime practitioners actually use: **training practical neural networks with mini-batch SGD and weight decay.**
