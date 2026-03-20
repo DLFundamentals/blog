@@ -24,7 +24,7 @@ Deep networks trained on large classification benchmarks such as ImageNet often 
 But from a theoretical perspective, the phenomenon is puzzling. A classifier trained on ImageNet is optimized to separate the ImageNet classes. Why should the same representation also make it easy to separate **new** classes that never appeared during training? And why should only a handful of labeled examples be enough?
 
 <div class="key-message">
-The key idea is geometric. If pretraining makes same-class features tightly clustered and different class means well separated on the source task, then this geometry first generalizes to fresh samples from those source classes, and then — because classes themselves are i.i.d. draws from a common population — it also extends to new unseen classes. Once that happens, a nearest-center classifier can learn the new classes from only a few examples.
+The key idea is geometric. If pretraining makes same-class features tightly clustered and different class means well separated on the source task, then this geometry first generalizes to fresh samples from those source classes, and then it also extends to new unseen classes. Once that happens, a nearest-center classifier can learn the new classes from only a few examples.
 </div>
 
 The explanation has three steps:
