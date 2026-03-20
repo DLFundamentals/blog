@@ -160,9 +160,9 @@ But low-rank updates alone are not enough. If we accumulated them forever with n
 ## Part II: Weight decay limits memory
 
 Unrolling the recursion
-\[
+$$
 W_{t+1} = (1 - 2\mu\lambda)W_t - \mu G_t
-\]
+$$
 for $n$ steps gives the identity at the heart of the argument:
 
 $$
@@ -182,21 +182,14 @@ The first term shrinks exponentially in $n$. The second is a weighted sum of rec
 
 ### A simple effective-rank heuristic
 
-Choose $n$ so the old-memory term is negligible:
-\[
-(1-2\mu\lambda)^n \approx e^{-2\mu\lambda n} \le \varepsilon,
-\]
-which gives
-\[
-n \approx \frac{\log(1/\varepsilon)}{\mu\lambda}.
-\]
+Choose $n$ so the old-memory term is negligible: $(1-2\mu\lambda)^n \approx e^{-2\mu\lambda n} \le \varepsilon$, which gives $n \approx \frac{\log(1/\varepsilon)}{\mu\lambda}$.
 
 The recent term is a sum of $n$ gradients of rank at most $B$, so
 
 <div class="math-block">
-\[
+$$
 \textnormal{rank}_\varepsilon(W_T) \lesssim \frac{B \log(1/\varepsilon)}{\mu\lambda}.
-\]
+$$
 </div>
 
 This bound captures the right qualitative dependencies: smaller batch size, larger learning rate, or larger weight decay all shorten the effective memory and produce lower effective rank.
@@ -221,10 +214,7 @@ $$
 \textnormal{rank}\big(\nabla_W \ell(h(x))\big) \le R.
 $$
 
-For a mini-batch,
-\[
-\textnormal{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, BR).
-\]
+For a mini-batch, $\textnormal{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, BR)$.
 
 The rest of the argument is unchanged: weight decay still exponentially suppresses old updates, so the current matrix remains close to a weighted sum of recent low-rank gradients. The one-use setting $R = 1$ is simply the cleanest case.
 
