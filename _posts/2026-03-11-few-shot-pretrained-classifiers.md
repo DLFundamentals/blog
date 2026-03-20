@@ -13,8 +13,6 @@ tags:
 excerpt: "A geometric explanation for why ordinary supervised pretraining can transfer remarkably well to new classes with only a few labeled examples."
 ---
 
-<div class="col">
-
 *Based on: T. Galanti, A. Gyorgy, M. Hutter. ["Generalization Bounds for Few-Shot Transfer Learning with Pretrained Classifiers"](https://arxiv.org/abs/2212.12532), JMLR 2023.*
 
 ---
@@ -45,8 +43,6 @@ Transfer learning should not be expected to work equally well for every possible
 
 There is an unknown distribution $\mathcal D$ over a collection $\mathcal E$ of class-conditional distributions. Each element of $\mathcal E$ represents one possible class. The source task is built from class-conditionals $\tilde P_1,\dots,\tilde P_\ell \sim \mathcal D$, and the target task from new, independent draws $P_1,\dots,P_k \sim \mathcal D$.
 
-</div>
-
 <div class="figure col-wide">
   <div class="figure-grid" style="grid-template-columns: repeat(2, 1fr);">
     <div class="figure-grid-item">
@@ -63,19 +59,21 @@ There is an unknown distribution $\mathcal D$ over a collection $\mathcal E$ of 
   </div>
 </div>
 
-<div class="col">
-
 This captures the intended use of pretrained representations: we train on many source classes that are representative of a broader population, then ask whether the learned features transfer to new classes drawn from that same population.
 
 ### The downstream procedure
 
 We train on the source task with many samples per class ($m$ large), learn a feature map $f: \mathcal{X} \to \mathbb{R}^p$, then freeze it. For the target task, we observe only $n$ samples per class ($n$ small) and classify by nearest class center:
 
-$$h(x)=\arg\min_{c\in[k]} \|f(x)-\mu_f(S_c)\|, \qquad \mu_f(S_c)=\frac{1}{n}\sum_{i=1}^n f(x_{ci}).$$
+$$
+h(x)=\arg\min_{c\in[k]} \|f(x)-\mu_f(S_c)\|, \qquad \mu_f(S_c)=\frac{1}{n}\sum_{i=1}^n f(x_{ci}).
+$$
 
 The **transfer error** is the expected few-shot error over newly sampled target tasks:
 
-$$\mathcal L_{\mathcal D}(f) = \mathbb E_{P_1,\dots,P_k \sim \mathcal D} \; \mathbb E_{S_c \sim P_c^n} \left[L_P(h)\right].$$
+$$
+\mathcal L_{\mathcal D}(f) = \mathbb E_{P_1,\dots,P_k \sim \mathcal D} \; \mathbb E_{S_c \sim P_c^n} \left[L_P(h)\right].
+$$
 
 <hr class="section-rule">
 
@@ -87,7 +85,9 @@ For two class-conditional distributions $Q_i$ and $Q_j$, define the **class-dist
 
 <div class="math-block">
 
-$$V_f(Q_i,Q_j) = \frac{\operatorname{Var}_f(Q_i)}{\|\mu_f(Q_i)-\mu_f(Q_j)\|^2},$$
+$$
+V_f(Q_i,Q_j) = \frac{\operatorname{Var}_f(Q_i)}{\|\mu_f(Q_i)-\mu_f(Q_j)\|^2},
+$$
 
 </div>
 
@@ -103,9 +103,6 @@ If a new target class is diffuse in feature space, then a few labeled samples ar
 
 The CDNV is closely related to the NC1 property of **neural collapse**: during training, the features of same-class samples tend to concentrate around their class means. Under the additional NC2 property — that the class means form a maximally separated simplex equiangular tight frame — the minimum pairwise distance between class means is maximized, which pushes CDNV even lower. So neural collapse, when it occurs, creates precisely the geometric conditions that make few-shot transfer work.
 
-</div>
-
-<!-- Interactive visualization: training with neural collapse and few-shot transfer -->
 <div class="col-wide">
   <div class="embed-wrap">
     <iframe
@@ -116,20 +113,18 @@ The CDNV is closely related to the NC1 property of **neural collapse**: during t
     </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 2.</strong> Interactive simulation of the transfer mechanism. Drag the epoch slider to watch source classes (left) collapse into tight, well-separated clusters via neural collapse. Simultaneously, unseen target classes (right) also concentrate in the same feature space — even though they were never trained on. Once collapse is strong, the NCC decision boundaries (red dashed lines) emerge and classify target samples accurately from just 5 examples per class.
+    <strong>Figure 2.</strong> Interactive simulation of the transfer mechanism. Drag the epoch slider to watch source classes (left) collapse into tight, well-separated clusters via neural collapse. Simultaneously, unseen target classes (right) also concentrate in the same feature space, even though they were never trained on. Once collapse is strong, the NCC decision boundaries (red dashed lines) emerge and classify target samples accurately from just 5 examples per class.
   </div>
 </div>
-
-<div class="col">
 
 <div class="card-stack">
   <div class="card">
     <div class="card-title">Watch source collapse</div>
-    <p>Drag the epoch slider from 0 to 200. The source classes (left panel) start scattered, then cluster tightly around their means — this is NC1 (within-class variability collapse). The class means simultaneously spread apart — this is NC2.</p>
+    <p>Drag the epoch slider from 0 to 200. The source classes in the left panel start scattered, then cluster tightly around their means. This is NC1, or within-class variability collapse. The class means simultaneously spread apart. This is NC2.</p>
   </div>
   <div class="card">
     <div class="card-title">Target classes follow</div>
-    <p>The right panel shows unseen target classes with only 5 samples each. As the feature map improves from source training, these target samples also concentrate — even though the representation was never optimized for them. This is the transfer.</p>
+    <p>The right panel shows unseen target classes with only 5 samples each. As the feature map improves from source training, these target samples also concentrate, even though the representation was never optimized for them. This is the transfer.</p>
   </div>
   <div class="card">
     <div class="card-title">NCC boundaries appear</div>
@@ -145,7 +140,9 @@ The CDNV is closely related to the NC1 property of **neural collapse**: during t
 
 The paper proves that the transfer error $\mathcal{L}_{\mathcal D}(f)$ of a pretrained feature map $f$ is controlled by the average CDNV on the source classes plus generalization terms. At a high level, the bound has the form
 
-$$\mathcal L_{\mathcal D}(f) \;\lesssim\; (k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j) + \frac{k\,\mathrm{complexity}(f)}{\Lambda} \left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{l}}\right),$$
+$$
+\mathcal L_{\mathcal D}(f) \;\lesssim\; (k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j) + \frac{k\,\mathrm{complexity}(f)}{\Lambda} \left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{l}}\right),
+$$
 
 up to logarithmic factors, where $\Lambda = \min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|$ is the minimum pairwise distance between source class means.
 
@@ -182,6 +179,4 @@ What it does say is precise: there is a concrete geometric quantity (CDNV) that 
     <li><strong>Geometry that generalizes.</strong> With many source classes, the collapsed geometry extends to unseen target classes. The $1/\sqrt{l}$ term ensures that the representation learned on $l$ source classes transfers to new classes from the same population.</li>
   </ol>
   <p style="margin-top: 1rem; margin-bottom: 0;">The result is that few-shot adaptation does not require the downstream learner to discover complex structure from tiny data. The hard work has already been done by pretraining: the geometry of the feature space is doing the real work.</p>
-</div>
-
 </div>
