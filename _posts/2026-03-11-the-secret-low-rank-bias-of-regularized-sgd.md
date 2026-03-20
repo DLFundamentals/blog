@@ -71,7 +71,7 @@ The mechanism has three parts, each developed in a section below:
   <img src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_mechanism.png' | relative_url }}" style="width:100%; max-width:950px;">
 </div>
 
-<div style="margin-top: 0.5rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
+<div style="margin-top: 0.2rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
   <strong>Figure 2.</strong>
   <strong>The low-rank mechanism.</strong>
   Each mini-batch gradient $G_t$ has rank $\le B$. Weight decay exponentially suppresses older updates (fading blocks). The current matrix $W_T$ is dominated by a short effective memory window of recent low-rank corrections.
