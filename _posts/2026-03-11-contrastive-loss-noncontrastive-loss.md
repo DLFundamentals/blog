@@ -13,15 +13,22 @@ tags:
 excerpt: "Contrastive learning is often much closer to supervised contrastive learning than it first appears, both at the level of the objective and at the level of the learned representation geometry."
 ---
 
-Self-supervised contrastive learning is one of the most successful paradigms in modern representation learning. It trains on unlabeled data, yet the learned features often look remarkably semantic: same-class samples cluster together, linear probes perform well, and downstream transfer can approach supervised pre-training.
+*This post is based on two papers:*
+- *A. Luthra, T. Yang, T. Galanti. ["Self-Supervised Contrastive Learning is Approximately Supervised Contrastive Learning"](https://arxiv.org/abs/2506.04411), 2025.*
+- *A. Luthra, T. Yang, T. Galanti. ["On the Alignment Between Supervised and Self-Supervised Contrastive Learning"](https://arxiv.org/abs/2510.08852), 2025.*
 
-That raises a basic question:
+---
+
+Self-supervised contrastive learning trains on unlabeled data, yet the learned features often look remarkably semantic: same-class samples cluster together, linear probes perform well, and downstream transfer can approach supervised pre-training. That raises a basic question:
 
 > How can a method that never sees labels learn representations that look so class-aware?
 
-The main message of this post is that contrastive learning is often much closer to supervised contrastive learning than it first appears. This closeness shows up in two layers. First, the standard self-supervised contrastive objective is close to a supervised variant that removes same-class negatives. Second, when the two models are trained under shared randomness, their learned representations can remain highly aligned even when their parameters drift apart.
+The answer turns out to be simple and precise. Contrastive learning is much closer to supervised contrastive learning than its name suggests. This closeness operates at two levels, each addressed by one of the papers above:
 
-This gives a cleaner way to think about why contrastive learning so often behaves like a supervised method.
+> <span style="color:#1e6bd6; font-weight:600;">
+> 1. The self-supervised contrastive loss is close to a supervised variant that removes same-class negatives. The gap shrinks as $O(1/C)$ with the number of classes.<br><br>
+> 2. Under shared training randomness, the learned representations of the two methods remain closely aligned throughout training, even as their parameters diverge.
+> </span>
 
 <div style="margin: 2rem 0;">
   <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start;">
@@ -47,26 +54,22 @@ This gives a cleaner way to think about why contrastive learning so often behave
 <div style="margin-top: 1rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
   <strong>Figure 1.</strong>
   <strong>CL and NSCL can separate in weight space while remaining closely aligned in representation space.</strong>
-  This is the central phenomenon: the objectives are related, the learned geometry remains similar, but the parameter trajectories need not coincide.
+  The objectives are related, the learned geometry stays similar, but the parameter trajectories need not coincide.
 </div>
 
 <br>
 
-## The setup
+## Part I: The losses are close
 
-Consider a labeled dataset
+### The setup
 
-$$
-S = \{(x_i,y_i)\}_{i=1}^N,
-$$
-
-but assume that during self-supervised training we only use the inputs $x_i$, not the labels $y_i$. For each sample $x_i$, we generate $K$ augmentations and map them through an encoder $f$:
+Consider a labeled dataset $S = \{(x_i,y_i)\}_{i=1}^N$, but assume that during self-supervised training we only use the inputs $x_i$, not the labels $y_i$. For each sample $x_i$, we generate $K$ augmentations and map them through an encoder $f$:
 
 $$
 z_i^l = f(\alpha_l(x_i)).
 $$
 
-A standard decoupled contrastive loss (DCL) takes the form
+A standard **decoupled contrastive loss** (DCL) takes the form
 
 $$
 \mathcal{L}^{\mathrm{DCL}}(f) = -\frac{1}{K^2N}\sum_{l_1,l_2=1}^K\sum_{i=1}^N \log\left(\frac{\exp(\mathrm{sim}(z_i^{l_1},z_i^{l_2}))}{\sum_{l_3=1}^K\sum_{j\neq i}\exp(\mathrm{sim}(z_i^{l_1},z_j^{l_3}))}\right).
@@ -80,102 +83,66 @@ $$
 \mathcal{L}^{\mathrm{NSCL}}(f) = -\frac{1}{K^2N}\sum_{l_1,l_2=1}^K\sum_{i=1}^N \log\left(\frac{\exp(\mathrm{sim}(z_i^{l_1},z_i^{l_2}))}{\sum_{l_3=1}^K\sum_{j:y_j\neq y_i}\exp(\mathrm{sim}(z_i^{l_1},z_j^{l_3}))}\right).
 $$
 
-We call this objective **NSCL**, for **negatives-only supervised contrastive learning**.
+We call this **NSCL**, for **negatives-only supervised contrastive learning**. The two losses differ in exactly one place: DCL treats every other sample as a negative, while NSCL removes same-class samples from the denominator.
 
-The two losses differ in exactly one place:
+### Why the gap is small
 
-- DCL treats every other sample as a negative.
-- NSCL removes same-class samples from the denominator.
+Suppose the dataset is balanced, with $C$ classes and $n$ samples per class, so $N = Cn$. Fix an anchor. In DCL, the denominator sums over all $N-1$ other samples. In NSCL, it sums over only the $N-n = n(C-1)$ different-class samples. The same-class terms that appear in DCL but not in NSCL number exactly $n-1$, a fraction roughly $1/C$ of the total. So when $C$ is large, the two denominators are nearly the same.
 
-So the only mismatch between the two comes from the fact that self-supervised contrastive learning accidentally treats some same-class samples as negatives.
-
-## Why the loss gap is small
-
-This difference looks important, but in many-class problems it is often quite mild.
-
-Suppose for simplicity that the dataset is balanced, with $C$ classes and exactly $n$ samples per class, so $N = Cn$.
-
-Fix an anchor. In DCL, the denominator includes all other samples. In NSCL, it excludes samples from the same class. Therefore:
-- the number of same-class terms that appear in DCL but not in NSCL is exactly $n-1$,
-- the number of different-class terms is exactly $N-n = n(C-1)$.
-
-So when $C$ is large, the same-class terms form only a small fraction of the denominator. This already suggests that the two losses should be close.
-
-That intuition can be made precise. For any encoder $f$,
+This can be made precise:
 
 $$
-\mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \log\left(1+\frac{e^2}{C-1}\right) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{e^2}{C-1}.
+\mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{e^2}{C-1}.
 $$
 
-So in the balanced setting, the gap between DCL and NSCL shrinks like $O(1/C)$.
+The bound is both label-agnostic and architecture-independent: it holds for any encoder $f$, without assumptions on the data distribution or the model class. The gap shrinks as $O(1/C)$, which means that for problems with many semantic classes, DCL is already almost NSCL.
 
-This is the first structural point:
+### What NSCL minimizers look like
 
-> In many-class regimes, the standard self-supervised contrastive loss is already close to a supervised contrastive loss.
+Since NSCL is the supervised bridge, it is natural to ask what its optimal solutions look like. Any global minimizer of the NSCL loss exhibits three structural properties:
 
-This does not mean CL is literally supervised learning in disguise. It does mean that the objective is much more supervised-like than the name suggests.
+1. **Augmentation collapse:** all augmented views of the same sample map to the same point.
+2. **Within-class collapse:** all samples from the same class share a single representation.
+3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame—a maximally separated, symmetric configuration on the unit sphere.
 
-## What this explains, and what it does not
+This is the same geometric structure that arises at the global optima of supervised losses such as cross-entropy and mean squared error, the phenomenon known as **neural collapse**. The fact that NSCL shares these optimal solutions is not a coincidence: it reflects the tight connection between the self-supervised and supervised objectives.
 
-This theorem is conceptually useful because it identifies the exact source of the CL-NSCL gap. The self-supervised loss differs from the supervised one only because it includes same-class samples in the denominator, and that contribution becomes small when the number of classes is large.
+### Few-shot transfer
 
-Still, loss-level closeness is not the whole story. A small objective gap does not by itself imply similar parameters, similar trajectories, or similar learned geometry. Two nearby losses can still drive optimization in rather different directions.
+The geometric structure of NSCL minimizers also governs downstream transfer. A new bound on the few-shot error of linear probing depends on two quantities:
 
-So the real follow-up question is not just whether the losses are close, but whether the learned representations are close as well.
+- **within-class dispersion:** how spread out the representations of same-class samples are,
+- **between-class variation along the line connecting centroids:** how much the features vary in the directions that separate classes.
 
-## From losses to geometry
+When the representation is close to the NSCL optimum—collapsed within classes, separated between classes—both quantities are favorable, and few-shot linear probing succeeds with very few labeled examples. This provides a principled explanation for why contrastive features transfer so well.
 
-To study this, consider training CL and NSCL under shared randomness:
+## Part II: The representations are close
 
-- same initialization,
-- same mini-batches,
-- same augmentations.
+Loss-level closeness is useful, but it does not by itself imply similar learned geometry. A small objective gap could still drive optimization in different directions. The second paper addresses this directly.
 
-Then the only real difference between the two runs is the objective.
+### Shared-randomness coupling
 
-To compare the learned representations, it is more useful to look at their similarity structure than at their raw parameters. If $Z$ denotes a collection of embeddings, define the similarity matrix
+Consider training CL and NSCL under shared randomness: same initialization, same mini-batches, same augmentations. The only difference between the two runs is the objective.
 
-$$
-\Sigma(Z)_{ij} = \cos(z_i,z_j).
-$$
-
-This matrix captures the geometry of the representation space directly. From it one can compute standard alignment measures such as:
-
-- **CKA**, which compares centered similarity structure,
-- **RSA**, which compares pairwise dissimilarity structure.
-
-These are natural metrics for asking whether two models learn the same relational geometry over the data.
-
-## The second result
-
-Under a coupled training protocol, one can bound the difference between the CL and NSCL similarity matrices throughout training. A representative bound has the form
+To compare the learned representations, define the cosine similarity matrix
 
 $$
-\|\Sigma_T^{\mathrm{CL}}-\Sigma_T^{\mathrm{NS}}\|_F \lesssim \frac{e^{2/\tau}}{\tau C \sqrt{B}} \cdot \exp\left(\frac{1}{2\tau^2 B}\sum_{t=0}^{T-1}\eta_t\right)\cdot \left(\sum_{t=0}^{T-1}\eta_t\right),
+\Sigma(Z)_{ij} = \cos(z_i,z_j),
 $$
 
-where:
+which captures the geometry of the representation directly. From it, standard alignment metrics follow: **CKA** (centered kernel alignment) and **RSA** (representational similarity analysis).
 
-- $B$ is the batch size,
-- $\tau$ is the temperature,
-- $\eta_t$ are the step sizes.
+### The similarity matrices stay close
 
-The exact form matters less here than the scaling. The right-hand side gets smaller when:
+Under the coupled training protocol, the difference between the CL and NSCL similarity matrices throughout training satisfies a bound of the form
 
-- the number of classes is larger,
-- the batch size is larger,
-- the temperature is higher,
-- the cumulative step size is more moderate.
+$$
+\|\Sigma_T^{\mathrm{CL}}-\Sigma_T^{\mathrm{NS}}\|_F \lesssim \frac{e^{2/\tau}}{\tau C \sqrt{B}} \cdot \exp\left(\frac{1}{2\tau^2 B}\sum_{t=0}^{T-1}\eta_t\right)\cdot \left(\sum_{t=0}^{T-1}\eta_t\right).
+$$
 
-So the same regimes that make the loss-level CL-NSCL gap small also make the learned representation geometry more tightly coupled.
+The right-hand side gets smaller when the number of classes is larger, the batch size is larger, the temperature is higher, and the cumulative step size is more moderate. The same regimes that make the loss gap small also keep the representations aligned.
 
-This is the second structural point:
-
-> The CL-NSCL connection persists beyond the objective. It often appears directly in the geometry of the learned representations.
-
-## Consequences for CKA and RSA
-
-Once the similarity matrices are close, one immediately gets lower bounds on standard representation-alignment metrics. In simplified form, these bounds look like
+This immediately yields lower bounds on CKA and RSA:
 
 $$
 \mathrm{CKA}_T \ge \frac{1-\rho_T}{1+\rho_T}, \qquad \mathrm{RSA}_T \ge \frac{1-r_T}{1+r_T},
@@ -183,64 +150,34 @@ $$
 
 where $\rho_T$ and $r_T$ are normalized versions of the similarity-matrix discrepancy.
 
-So the theory does not merely say that CL and NSCL have nearby objective values. It says that, under shared randomness, their internal geometry can remain meaningfully aligned throughout training.
+### But weights can still diverge
 
-That is a substantially stronger statement.
-
-## Why weights can still diverge
-
-At the same time, weight-space coupling is far less stable.
-
-A typical parameter-space bound takes the form
+In contrast, parameter-space coupling is far less stable. A typical bound on parameter divergence takes the form
 
 $$
 \|w_T^{\mathrm{CL}}-w_T^{\mathrm{NS}}\| \lesssim \frac{G e^{2/\tau}}{\beta\tau C} \cdot \left(\exp\left(\beta\sum_{t=0}^{T-1}\eta_t\right)-1\right),
 $$
 
-which can grow exponentially with training time.
+which can grow exponentially with training time. So while the similarity matrices remain close, the parameters themselves may drift far apart.
 
-So while the similarity matrices remain controlled, the parameters themselves may drift quite far apart.
+This is not paradoxical. In deep networks, parameter space is highly redundant. Two models can take very different routes through weight space and still induce very similar representation geometry. The experiments confirm exactly this pattern: CL and NSCL stay much more aligned in representation space than in weight space, and NSCL tracks CL more closely than other supervised objectives across CIFAR-10, CIFAR-100, Tiny-ImageNet, mini-ImageNet, and ImageNet-1K.
 
-This is not paradoxical. In deep networks, parameter space is highly redundant and unstable. Two models can take very different routes through weight space and still induce very similar representation geometry. In this setting, representation-space alignment is the more meaningful notion of closeness.
+## The right mental model
 
-That is exactly what the experiments show.
+Putting the two pieces together gives a much sharper picture of why contrastive learning works.
 
-## What the experiments say
+The standard story is that contrastive learning is a *self-supervised* method that *somehow* discovers semantic structure. The picture here is more precise: the self-supervised objective is already close to a specific supervised contrastive objective (NSCL), that objective's optimal solutions exhibit the same neural-collapse geometry as supervised training, and the learned representations of the two methods remain aligned throughout training.
 
-Across datasets such as CIFAR-10, CIFAR-100, Tiny-ImageNet, mini-ImageNet, and ImageNet-1K, the empirical picture is consistent:
-
-- CL and NSCL remain much more aligned than CL and standard supervised baselines,
-- alignment improves as the number of classes increases,
-- alignment improves as the temperature increases,
-- weight-space divergence is much larger than representation-space divergence.
-
-So the theoretical picture matches the observed one. NSCL is not merely a convenient supervised comparison. It is the supervised objective whose learned geometry most closely tracks CL.
-
-That is exactly why it is a useful conceptual bridge.
-
-## The right way to think about CL
-
-Putting the two pieces together gives a much better mental model of contrastive learning.
-
-The first piece says that the self-supervised objective is already close to a supervised contrastive objective. The second says that, under shared training randomness, the learned representations often remain close as well.
-
-So rather than thinking of CL as a completely different type of learning that somehow mysteriously recovers semantics, it is more accurate to think of it as a self-supervised procedure whose objective and learned geometry often sit near a very specific supervised counterpart.
-
-Not cross-entropy.
-
-Not generic supervised learning.
-
-But a supervised contrastive objective that differs from CL in only one controlled way: whether same-class samples are excluded from the denominator.
-
-That is a much sharper and more useful comparison.
+So rather than thinking of CL as a completely different form of learning that mysteriously recovers semantics, it is more accurate to think of it as a self-supervised procedure whose objective and learned geometry sit near a very specific supervised counterpart—not cross-entropy, not generic supervised learning, but a supervised contrastive objective that differs from CL in only one controlled way: whether same-class samples are excluded from the denominator.
 
 ## Takeaway
 
-Contrastive learning is more supervised than it looks.
+Contrastive learning is more supervised than it looks. This appears in three layers:
 
-Mathematically, this appears in two layers:
+1. **The losses are close.** The standard self-supervised contrastive loss approximates the NSCL loss, with a gap that shrinks as $O(1/C)$.
 
-1. the standard self-supervised contrastive loss is close to a supervised contrastive loss that excludes same-class negatives,
-2. and under shared training randomness, the learned representation geometry can remain closely aligned as well, even if the parameters diverge.
+2. **The geometry is the same.** NSCL minimizers exhibit the same simplex ETF structure as supervised losses—augmentation collapse, within-class collapse, and maximally separated class centers.
 
-So the semantic behavior of self-supervised contrastive learning is not as mysterious as it first seems. The objective is already closer to supervised learning than the label “self-supervised” suggests, and the learned geometry often reflects that closeness throughout training.
+3. **The representations stay aligned.** Under shared training randomness, the learned representations of CL and NSCL remain closely aligned, even as their parameters diverge.
+
+The semantic behavior of self-supervised contrastive learning is not as mysterious as it first seems. The objective is already close to supervised learning, its optimal geometry matches supervised learning, and the learned representations track supervised learning throughout training.
