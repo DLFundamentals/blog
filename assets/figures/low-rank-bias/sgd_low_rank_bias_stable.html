@@ -1,55 +1,59 @@
-
 <style>
-.cr{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem}
+html,body{margin:0;padding:0;overflow:hidden;height:100%}
+.cr{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
 .cg{display:flex;align-items:center;gap:6px}
-.cl{font-size:13px;color:var(--color-text-secondary);white-space:nowrap}
-.cv{font-size:13px;font-weight:500;min-width:36px;font-family:var(--font-mono);color:var(--color-text-primary)}
+.cl{font-size:13px;color:#6b7280;white-space:nowrap}
+.cv{font-size:13px;font-weight:500;min-width:36px;font-family:monospace;color:#1d2939}
 .main{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
 .mat-wrap{position:relative;flex-shrink:0}
-.mat-label{font-size:12px;color:var(--color-text-secondary);text-align:center;margin-top:6px}
+.mat-label{font-size:12px;color:#6b7280;text-align:center;margin-top:4px}
 .sv-wrap{flex:1;min-width:200px}
-.sv-title{font-size:13px;color:var(--color-text-secondary);margin-bottom:8px}
-.sv-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;height:15px}
-.sv-idx{font-size:11px;color:var(--color-text-tertiary);width:18px;text-align:right;font-family:var(--font-mono)}
-.sv-track{flex:1;height:12px;background:var(--color-background-secondary);border-radius:6px;overflow:hidden}
-.sv-fill{height:100%;border-radius:6px;transition:width .25s}
-.sv-val{font-size:11px;color:var(--color-text-secondary);min-width:36px;font-family:var(--font-mono)}
-.tl-wrap{margin-top:1.25rem}
-.tl-title{font-size:13px;color:var(--color-text-secondary);margin-bottom:6px}
+.sv-title{font-size:13px;color:#6b7280;margin-bottom:6px}
+.sv-row{display:flex;align-items:center;gap:6px;margin-bottom:2px;height:14px}
+.sv-idx{font-size:11px;color:#9ca3af;width:18px;text-align:right;font-family:monospace}
+.sv-track{flex:1;height:10px;background:#f1f3f5;border-radius:5px;overflow:hidden}
+.sv-fill{height:100%;border-radius:5px;transition:width .25s}
+.sv-val{font-size:11px;color:#6b7280;min-width:36px;font-family:monospace}
+.tl-wrap{margin-top:0.75rem}
+.tl-title{font-size:12px;color:#6b7280;margin-bottom:4px}
 .tl-row{display:flex;gap:2px;align-items:flex-end;overflow:hidden;padding:2px 0}
-.tl-blk{width:16px;height:16px;border-radius:2px;flex-shrink:0;transition:opacity .25s}
+.tl-blk{width:14px;height:14px;border-radius:2px;flex-shrink:0;transition:opacity .25s}
 .tl-marker{position:relative}
-.tl-marker::after{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid var(--color-text-info)}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:1.25rem}
-.sc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px}
-.sc-l{font-size:12px;color:var(--color-text-secondary)}
-.sc-v{font-size:22px;font-weight:500;margin-top:2px;color:var(--color-text-primary)}
-.sc-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:2px;font-family:var(--font-mono)}
-.eq-box{font-size:12px;color:var(--color-text-secondary);padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:1rem;font-family:var(--font-mono);line-height:1.6;overflow-x:auto}
-.decay-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;font-family:var(--font-mono);margin-left:8px}
+.tl-marker::after{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid #2563eb}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:0.75rem}
+.sc{background:#f8f9fb;border-radius:8px;padding:8px 10px}
+.sc-l{font-size:11px;color:#6b7280}
+.sc-v{font-size:18px;font-weight:500;margin-top:1px;color:#1d2939}
+.sc-sub{font-size:10px;color:#9ca3af;margin-top:1px;font-family:monospace}
+.eq-box{font-size:12px;color:#6b7280;padding:6px 10px;background:#f8f9fb;border-radius:8px;margin-bottom:0.75rem;font-family:monospace;line-height:1.6;overflow-x:auto}
+.decay-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;font-family:monospace;margin-left:8px}
+button{font-size:12px;padding:4px 12px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#374151;cursor:pointer}
+button:hover{background:#f8f9fb}
+input[type=range]{height:4px;-webkit-appearance:none;appearance:none;background:#e5e7eb;border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#2563eb;cursor:pointer}
 </style>
 
-<div style="padding:1rem 0">
+<div style="padding:10px 14px">
 
 <div class="eq-box">W<sub>T</sub> = (1 - 2&mu;&lambda;)<sup>n</sup> W<sub>T-n</sub> &minus; &mu; &Sigma; (1 - 2&mu;&lambda;)<sup>j-1</sup> G<sub>T-j</sub> <span id="decay-badge" class="decay-badge"></span></div>
 
 <div class="cr">
   <div class="cg">
     <span class="cl">B</span>
-    <input type="range" min="1" max="14" value="3" step="1" id="sl-b" style="width:90px" oninput="onParam('b')">
+    <input type="range" min="1" max="14" value="3" step="1" id="sl-b" style="width:80px" oninput="onParam('b')">
     <span class="cv" id="v-b">3</span>
   </div>
   <div class="cg">
     <span class="cl">&mu;</span>
-    <input type="range" min="1" max="100" value="5" step="1" id="sl-mu" style="width:90px" oninput="onParam('mu')">
+    <input type="range" min="1" max="100" value="5" step="1" id="sl-mu" style="width:80px" oninput="onParam('mu')">
     <span class="cv" id="v-mu">0.05</span>
   </div>
   <div class="cg">
     <span class="cl">&lambda;</span>
-    <input type="range" min="1" max="100" value="1" step="1" id="sl-lam" style="width:90px" oninput="onParam('lam')">
+    <input type="range" min="1" max="100" value="1" step="1" id="sl-lam" style="width:80px" oninput="onParam('lam')">
     <span class="cv" id="v-lam">0.01</span>
   </div>
-  <div style="margin-left:auto;display:flex;gap:6px">
+  <div style="margin-left:auto;display:flex;gap:4px">
     <button id="btn-play" onclick="togglePlay()">Play</button>
     <button onclick="doStep()">Step</button>
     <button onclick="doReset()">Reset</button>
@@ -58,7 +62,7 @@
 
 <div class="main">
   <div class="mat-wrap">
-    <canvas id="mat-cv" width="198" height="198" style="border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);display:block"></canvas>
+    <canvas id="mat-cv" width="182" height="182" style="border-radius:8px;border:1px solid #e5e7eb;display:block"></canvas>
     <div class="mat-label">Weight matrix W<sub>T</sub></div>
   </div>
   <div class="sv-wrap">
@@ -68,7 +72,7 @@
 </div>
 
 <div class="tl-wrap">
-  <div class="tl-title">Memory window <span style="color:var(--color-text-tertiary)">(recent gradient updates, opacity = decay weight)</span></div>
+  <div class="tl-title">Memory window <span style="color:#9ca3af">(recent gradient updates, opacity = decay weight)</span></div>
   <div class="tl-row" id="tl-row"></div>
 </div>
 
@@ -81,7 +85,7 @@
 </div>
 
 <script>
-const N=14,CS=14,PAD=1;
+const N=14,CS=13,PAD=1;
 let sd=42;
 function rn(){sd=(sd*1664525+1013904223)>>>0;return sd/4294967296}
 function gs(){return Math.sqrt(-2*Math.log(rn()+1e-15))*Math.cos(6.2832*rn())}
@@ -130,10 +134,10 @@ function onParam(src){
   var dc=(1-2*mu*lam);
   var badge=document.getElementById('decay-badge');
   badge.textContent='1\u22122\u03BC\u03BB = '+dc.toFixed(3);
-  if(dc>0.9){badge.style.background='var(--color-background-info)';badge.style.color='var(--color-text-info)'}
-  else if(dc>0.5){badge.style.background='var(--color-background-success)';badge.style.color='var(--color-text-success)'}
-  else if(dc>0.1){badge.style.background='var(--color-background-warning)';badge.style.color='var(--color-text-warning)'}
-  else{badge.style.background='var(--color-background-danger)';badge.style.color='var(--color-text-danger)'}
+  if(dc>0.9){badge.style.background='#E6F1FB';badge.style.color='#185FA5'}
+  else if(dc>0.5){badge.style.background='#EAF3DE';badge.style.color='#3B6D11'}
+  else if(dc>0.1){badge.style.background='#FAEEDA';badge.style.color='#854F0B'}
+  else{badge.style.background='#FCEBEB';badge.style.color='#A32D2D'}
 
   render();
 }
@@ -181,8 +185,7 @@ function render(){
   cx.clearRect(0,0,cv.width,cv.height);
   let mx=0;for(let i=0;i<N*N;i++){const v=Math.abs(W[i]);if(v>mx)mx=v}
   if(mx<1e-15)mx=1;
-  const dark=matchMedia('(prefers-color-scheme:dark)').matches;
-  const bgR=dark?44:245,bgG=dark?44:245,bgB=dark?42:240;
+  const bgR=245,bgG=245,bgB=240;
   for(let r=0;r<N;r++)for(let c2=0;c2<N;c2++){
     const v=W[r*N+c2]/mx;
     let cr,cg,cb;
@@ -207,7 +210,7 @@ function render(){
     if(sv[i]>thresh)effRank++;
     const pct=Math.round(sv[i]/svMax*100);
     const isActive=sv[i]>thresh;
-    const color=isActive?'#1D9E75':'var(--color-border-tertiary)';
+    const color=isActive?'#1D9E75':'#e5e7eb';
     const row=document.createElement('div');row.className='sv-row';
     row.innerHTML=`<span class="sv-idx">${i+1}</span><div class="sv-track"><div class="sv-fill" style="width:${pct}%;background:${color}"></div></div><span class="sv-val">${sv[i]<0.001?'0':sv[i].toFixed(2)}</span>`;
     barsEl.appendChild(row);
@@ -221,7 +224,7 @@ function render(){
     const h=hist[i];
     const blk=document.createElement('div');blk.className='tl-blk';
     const inWindow=h.w>0.01;
-    blk.style.background=inWindow?'#1D9E75':'var(--color-border-tertiary)';
+    blk.style.background=inWindow?'#1D9E75':'#e5e7eb';
     blk.style.opacity=Math.max(0.08,Math.min(1,h.w));
     if(i===hist.length-1)blk.classList.add('tl-marker');
     tlEl.appendChild(blk);
