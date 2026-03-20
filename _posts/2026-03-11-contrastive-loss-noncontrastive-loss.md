@@ -23,7 +23,7 @@ Self-supervised contrastive learning trains on unlabeled data, yet the learned f
 
 > How can a method that never sees labels learn representations that look so class-aware?
 
-The answer turns out to be simple and precise. Contrastive learning is much closer to supervised contrastive learning than its name suggests. This closeness operates at two levels, each addressed by one of the papers above:
+In this blog post we argue that contrastive learning is much closer to supervised contrastive learning than its name suggests. This closeness operates at two levels, each addressed by one of the papers above:
 
 > <span style="color:#1e6bd6; font-weight:600;">
 > 1. The self-supervised contrastive loss is close to a supervised variant that removes same-class negatives. The gap shrinks as $O(1/C)$ with the number of classes.<br><br>
@@ -97,7 +97,7 @@ $$
 
 The bound is both label-agnostic and architecture-independent: it holds for any encoder $f$, without assumptions on the data distribution or the model class. The gap shrinks as $O(1/C)$, which means that for problems with many semantic classes, DCL is already almost NSCL.
 
-### What NSCL minimizers look like
+### What NSCL minimizers look like?
 
 Since NSCL is the supervised bridge, it is natural to ask what its optimal solutions look like. Any global minimizer of the NSCL loss exhibits three structural properties:
 
@@ -106,15 +106,6 @@ Since NSCL is the supervised bridge, it is natural to ask what its optimal solut
 3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame—a maximally separated, symmetric configuration on the unit sphere.
 
 This is the same geometric structure that arises at the global optima of supervised losses such as cross-entropy and mean squared error, the phenomenon known as **neural collapse**. The fact that NSCL shares these optimal solutions is not a coincidence: it reflects the tight connection between the self-supervised and supervised objectives.
-
-### Few-shot transfer
-
-The geometric structure of NSCL minimizers also governs downstream transfer. A new bound on the few-shot error of linear probing depends on two quantities:
-
-- **within-class dispersion:** how spread out the representations of same-class samples are,
-- **between-class variation along the line connecting centroids:** how much the features vary in the directions that separate classes.
-
-When the representation is close to the NSCL optimum—collapsed within classes, separated between classes—both quantities are favorable, and few-shot linear probing succeeds with very few labeled examples. This provides a principled explanation for why contrastive features transfer so well.
 
 ## Part II: The representations are close
 
