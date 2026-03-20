@@ -98,7 +98,7 @@ The bound is both label-agnostic and architecture-independent: it holds for any 
 <div class="col-wide">
   <div class="embed-wrap">
     <iframe
-      src="{{ '/assets/figures/cl-nscl/cl_nscl_loss_gap_explorer.html' | relative_url }}"
+      src="{{ '/assets/figures/cl-nscl/cl_nscl_loss_gap.html' | relative_url }}"
       height="400"
       loading="lazy"
       title="CL-NSCL loss gap explorer">
