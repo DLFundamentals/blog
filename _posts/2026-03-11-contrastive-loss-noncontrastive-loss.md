@@ -13,23 +13,26 @@ tags:
 excerpt: "Contrastive learning is often much closer to supervised contrastive learning than it first appears, both at the level of the objective and at the level of the learned representation geometry."
 ---
 
-<div class="col">
-
 *This post is based on two papers:*
+
 - *A. Luthra, T. Yang, T. Galanti. ["Self-Supervised Contrastive Learning is Approximately Supervised Contrastive Learning"](https://arxiv.org/abs/2506.04411), NeurIPS 2025.*
 - *A. Luthra, T. Yang, T. Galanti. ["On the Alignment Between Supervised and Self-Supervised Contrastive Learning"](https://arxiv.org/abs/2510.08852), ICLR 2025.*
 
 ---
+
+## Introduction
 
 Self-supervised contrastive learning trains on unlabeled data, yet the learned features often look remarkably semantic: same-class samples cluster together, linear probes perform well, and downstream transfer can approach supervised pre-training. That raises a basic question: **how can a method that never sees labels learn representations that look so class-aware?**
 
 In this post, we argue that contrastive learning is much closer to supervised contrastive learning than its name suggests. This closeness operates at two levels, each addressed by one of the papers above.
 
 <div class="key-message">
-1. The self-supervised contrastive loss is close to a supervised variant that removes same-class negatives. The gap shrinks as O(1/C) with the number of classes.<br><br>
-2. Under shared training randomness, the learned representations of the two methods remain closely aligned throughout training, even as their parameters diverge.
-</div>
-
+  <p style="margin: 0;">
+    1. The self-supervised contrastive loss is close to a supervised variant that removes same-class negatives. The gap shrinks as $O(1/C)$ with the number of classes.
+  </p>
+  <p style="margin: 1rem 0 0 0;">
+    2. Under shared training randomness, the learned representations of the two methods remain closely aligned throughout training, even as their parameters diverge.
+  </p>
 </div>
 
 <div class="figure col-wide">
@@ -51,8 +54,6 @@ In this post, we argue that contrastive learning is much closer to supervised co
     <strong>Figure 1.</strong> CL and NSCL can separate in weight space while remaining closely aligned in representation space. The objectives are related, the learned geometry stays similar, but the parameter trajectories need not coincide.
   </div>
 </div>
-
-<div class="col">
 
 <hr class="section-rule">
 
@@ -94,9 +95,6 @@ $$
 
 The bound is both label-agnostic and architecture-independent: it holds for any encoder $f$, without assumptions on the data distribution or the model class. The gap shrinks as $O(1/C)$, which means that for problems with many semantic classes, DCL is already almost NSCL.
 
-</div>
-
-<!-- Interactive loss gap visualization -->
 <div class="col-wide">
   <div class="embed-wrap">
     <iframe
@@ -107,11 +105,9 @@ The bound is both label-agnostic and architecture-independent: it holds for any 
     </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 2.</strong> Interactive visualization of the CL-NSCL loss gap. The grid shows what each method's denominator includes: DCL sums over all other samples (including same-class negatives in red), while NSCL excludes them (dashed outlines). The chart shows both the gap bound and the same-class fraction shrinking as C grows. Drag the sliders to explore.
+    <strong>Figure 2.</strong> Interactive visualization of the CL-NSCL loss gap. The grid shows what each method's denominator includes: DCL sums over all other samples, including same-class negatives in red, while NSCL excludes them. The chart shows both the gap bound and the same-class fraction shrinking as $C$ grows. Drag the sliders to explore.
   </div>
 </div>
-
-<div class="col">
 
 ### What NSCL minimizers look like
 
@@ -119,11 +115,8 @@ Since NSCL is the supervised bridge, it is natural to ask what its optimal solut
 
 1. **Augmentation collapse:** all augmented views of the same sample map to the same point.
 2. **Within-class collapse:** all samples from the same class share a single representation.
-3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame — a maximally separated, symmetric configuration on the unit sphere.
+3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame, a maximally separated, symmetric configuration on the unit sphere.
 
-</div>
-
-<!-- Neural collapse 3D visualization (resized smaller) -->
 <div class="col-wide">
   <div class="embed-wrap">
     <iframe
@@ -135,11 +128,9 @@ Since NSCL is the supervised bridge, it is natural to ask what its optimal solut
     </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 3.</strong> Neural collapse geometry: class centers form a simplex equiangular tight frame on the unit sphere. This is the same structure that arises at global optima of supervised losses such as cross-entropy — the fact that NSCL shares these optimal solutions reflects the tight connection between the self-supervised and supervised objectives.
+    <strong>Figure 3.</strong> Neural collapse geometry: class centers form a simplex equiangular tight frame on the unit sphere. This is the same structure that arises at global optima of supervised losses such as cross-entropy. The fact that NSCL shares these optimal solutions reflects the tight connection between the self-supervised and supervised objectives.
   </div>
 </div>
-
-<div class="col">
 
 <hr class="section-rule">
 
@@ -214,6 +205,4 @@ So rather than thinking of CL as a completely different form of learning that my
     <li><strong>The representations stay aligned.</strong> Under shared training randomness, the learned representations of CL and NSCL remain closely aligned, even as their parameters diverge.</li>
   </ol>
   <p style="margin-top: 1rem; margin-bottom: 0;">The semantic behavior of self-supervised contrastive learning is not as mysterious as it first seems. The objective is already close to supervised learning, its optimal geometry matches supervised learning, and the learned representations track supervised learning throughout training.</p>
-</div>
-
 </div>
