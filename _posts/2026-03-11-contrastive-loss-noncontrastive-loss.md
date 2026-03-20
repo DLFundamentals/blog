@@ -98,10 +98,12 @@ Self-supervised contrastive learning trains on unlabeled data, yet the learned f
 
 In this post, we argue that contrastive learning is much closer to supervised contrastive learning than its name suggests. This closeness operates at two levels, each addressed by one of the papers above:
 
-> <span style="color:#1e6bd6; font-weight:600;">
-> 1. The self-supervised contrastive loss is close to a supervised variant that removes same-class negatives. The gap shrinks as \(O(1/C)\) with the number of classes.<br><br>
-> 2. Under shared training randomness, the learned representations of the two methods remain closely aligned throughout training, even as their parameters diverge.
-> </span>
+<blockquote>
+  <span style="color:#1e6bd6; font-weight:600;">
+    1. The self-supervised contrastive loss is close to a supervised variant that removes same-class negatives. The gap shrinks as \(O(1/C)\) with the number of classes.<br><br>
+    2. Under shared training randomness, the learned representations of the two methods remain closely aligned throughout training, even as their parameters diverge.
+  </span>
+</blockquote>
 
 <div class="cl-overview">
   <div class="cl-overview-grid">
@@ -132,7 +134,7 @@ In this post, we argue that contrastive learning is much closer to supervised co
 
 ### The setup
 
-Consider a labeled dataset $S = \{(x_i,y_i)\}_{i=1}^N$, but assume that during self-supervised training we only use the inputs $x_i$, not the labels $y_i$. For each sample \(x_i\), we generate $K$ augmentations and map them through an encoder $f$:
+Consider a labeled dataset $S = \{(x_i,y_i)\}_{i=1}^N$, but assume that during self-supervised training we only use the inputs $x_i$, not the labels $y_i$. For each sample $x_i$, we generate $K$ augmentations and map them through an encoder $f$:
 
 $$
 z_i^l = f(\alpha_l(x_i)).
@@ -216,19 +218,19 @@ $$
 \mathrm{CKA}_T \ge \frac{1-\rho_T}{1+\rho_T}, \qquad \mathrm{RSA}_T \ge \frac{1-r_T}{1+r_T},
 $$
 
-where \(\rho_T\) and \(r_T\) are normalized versions of the similarity-matrix discrepancy.
+where $\rho_T$ and $r_T$ are normalized versions of the similarity-matrix discrepancy.
 
 ### But weights can still diverge
 
 In contrast, parameter-space coupling is far less stable. A typical bound on parameter divergence takes the form
 
 $$
-\|w_T^{\mathrm{CL}}-w_T^{\mathrm{NS}}\| \lesssim \frac{G e^{2/\tau}}{\beta\tau C} \cdot \left(\exp\left(\beta\sum_{t=0}^{T-1}\eta_t\right)-1\right),
+\|w_T^{\mathrm{CL}}-w_T^{\mathrm{NS}}\| \lesssim \frac{G e^{2/\tau}}{\beta\tau C} \cdot \left(\exp\left(\beta\sum_{t=0}^{T-1}\eta_t\right)-1\right).
 $$
 
-which can grow exponentially with training time. So while the similarity matrices remain close, the parameters themselves may drift far apart.
+Although both bounds grow exponentially, the exponent in the similarity-matrix bound is much milder: it is scaled by $1/B$, whereas the weight-space bound has no analogous batch-size moderation. Thus, representation-level alignment can remain stable even when parameter-space divergence becomes large.
 
-This is not paradoxical. In deep networks, parameter space is highly redundant. Two models can take very different routes through weight space and still induce very similar representation geometry. The experiments confirm exactly this pattern: CL and NSCL stay much more aligned in representation space than in weight space, and NSCL tracks CL more closely than other supervised objectives across CIFAR-10, CIFAR-100, Tiny-ImageNet, mini-ImageNet, and ImageNet-1K.
+This is not paradoxical. In deep networks, parameter space is highly redundant. Two models can follow very different paths in weight space and still induce very similar representation geometry.
 
 ## The right mental model
 
@@ -242,7 +244,7 @@ So rather than thinking of CL as a completely different form of learning that my
 
 Contrastive learning is more supervised than it looks. This appears in three layers:
 
-1. **The losses are close.** The standard self-supervised contrastive loss approximates the NSCL loss, with a gap that shrinks as \(O(1/C)\).
+1. **The losses are close.** The standard self-supervised contrastive loss approximates the NSCL loss, with a gap that shrinks as $O(1/C)$.
 
 2. **The geometry is the same.** NSCL minimizers exhibit the same simplex ETF structure as supervised losses: augmentation collapse, within-class collapse, and maximally separated class centers.
 
