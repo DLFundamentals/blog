@@ -1,0 +1,268 @@
+
+<style>
+.cr{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem}
+.cg{display:flex;align-items:center;gap:6px}
+.cl{font-size:13px;color:var(--color-text-secondary);white-space:nowrap}
+.cv{font-size:13px;font-weight:500;min-width:36px;font-family:var(--font-mono);color:var(--color-text-primary)}
+.main{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.mat-wrap{position:relative;flex-shrink:0}
+.mat-label{font-size:12px;color:var(--color-text-secondary);text-align:center;margin-top:6px}
+.sv-wrap{flex:1;min-width:200px}
+.sv-title{font-size:13px;color:var(--color-text-secondary);margin-bottom:8px}
+.sv-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;height:15px}
+.sv-idx{font-size:11px;color:var(--color-text-tertiary);width:18px;text-align:right;font-family:var(--font-mono)}
+.sv-track{flex:1;height:12px;background:var(--color-background-secondary);border-radius:6px;overflow:hidden}
+.sv-fill{height:100%;border-radius:6px;transition:width .25s}
+.sv-val{font-size:11px;color:var(--color-text-secondary);min-width:36px;font-family:var(--font-mono)}
+.tl-wrap{margin-top:1.25rem}
+.tl-title{font-size:13px;color:var(--color-text-secondary);margin-bottom:6px}
+.tl-row{display:flex;gap:2px;align-items:flex-end;overflow:hidden;padding:2px 0}
+.tl-blk{width:16px;height:16px;border-radius:2px;flex-shrink:0;transition:opacity .25s}
+.tl-marker{position:relative}
+.tl-marker::after{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid var(--color-text-info)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:1.25rem}
+.sc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px}
+.sc-l{font-size:12px;color:var(--color-text-secondary)}
+.sc-v{font-size:22px;font-weight:500;margin-top:2px;color:var(--color-text-primary)}
+.sc-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:2px;font-family:var(--font-mono)}
+.eq-box{font-size:12px;color:var(--color-text-secondary);padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:1rem;font-family:var(--font-mono);line-height:1.6;overflow-x:auto}
+.decay-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;font-family:var(--font-mono);margin-left:8px}
+</style>
+
+<div style="padding:1rem 0">
+
+<div class="eq-box">W<sub>T</sub> = (1 - 2&mu;&lambda;)<sup>n</sup> W<sub>T-n</sub> &minus; &mu; &Sigma; (1 - 2&mu;&lambda;)<sup>j-1</sup> G<sub>T-j</sub> <span id="decay-badge" class="decay-badge"></span></div>
+
+<div class="cr">
+  <div class="cg">
+    <span class="cl">B</span>
+    <input type="range" min="1" max="14" value="3" step="1" id="sl-b" style="width:90px" oninput="onParam('b')">
+    <span class="cv" id="v-b">3</span>
+  </div>
+  <div class="cg">
+    <span class="cl">&mu;</span>
+    <input type="range" min="1" max="100" value="5" step="1" id="sl-mu" style="width:90px" oninput="onParam('mu')">
+    <span class="cv" id="v-mu">0.05</span>
+  </div>
+  <div class="cg">
+    <span class="cl">&lambda;</span>
+    <input type="range" min="1" max="100" value="1" step="1" id="sl-lam" style="width:90px" oninput="onParam('lam')">
+    <span class="cv" id="v-lam">0.01</span>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:6px">
+    <button id="btn-play" onclick="togglePlay()">Play</button>
+    <button onclick="doStep()">Step</button>
+    <button onclick="doReset()">Reset</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="mat-wrap">
+    <canvas id="mat-cv" width="198" height="198" style="border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);display:block"></canvas>
+    <div class="mat-label">Weight matrix W<sub>T</sub></div>
+  </div>
+  <div class="sv-wrap">
+    <div class="sv-title">Singular values</div>
+    <div id="sv-bars"></div>
+  </div>
+</div>
+
+<div class="tl-wrap">
+  <div class="tl-title">Memory window <span style="color:var(--color-text-tertiary)">(recent gradient updates, opacity = decay weight)</span></div>
+  <div class="tl-row" id="tl-row"></div>
+</div>
+
+<div class="stats">
+  <div class="sc"><div class="sc-l">Step</div><div class="sc-v" id="st-step">0</div></div>
+  <div class="sc"><div class="sc-l">Effective rank</div><div class="sc-v" id="st-rank">-</div><div class="sc-sub" id="st-pred"></div></div>
+  <div class="sc"><div class="sc-l">Memory window</div><div class="sc-v" id="st-mem">-</div><div class="sc-sub" id="st-mem-f"></div></div>
+</div>
+
+</div>
+
+<script>
+const N=14,CS=14,PAD=1;
+let sd=42;
+function rn(){sd=(sd*1664525+1013904223)>>>0;return sd/4294967296}
+function gs(){return Math.sqrt(-2*Math.log(rn()+1e-15))*Math.cos(6.2832*rn())}
+
+let W=new Float64Array(N*N),stepN=0,playing=false,af=null;
+let hist=[];
+let B=3,mu=0.05,lam=0.01;
+const MU_LAM_MAX=0.499;
+
+function fmtNum(v){
+  if(v>=1) return v.toFixed(1);
+  if(v>=0.1) return v.toFixed(2);
+  return v.toFixed(3);
+}
+
+function onParam(src){
+  B=+document.getElementById('sl-b').value;
+  let rawMu=+document.getElementById('sl-mu').value/100;
+  let rawLam=+document.getElementById('sl-lam').value/100;
+
+  if(src==='mu'){
+    mu=rawMu;
+    const maxLam=Math.floor(MU_LAM_MAX/mu*100);
+    const lamSlider=document.getElementById('sl-lam');
+    if(+lamSlider.value>maxLam) lamSlider.value=maxLam;
+    lam=+lamSlider.value/100;
+  } else if(src==='lam'){
+    lam=rawLam;
+    const maxMu=Math.floor(MU_LAM_MAX/lam*100);
+    const muSlider=document.getElementById('sl-mu');
+    if(+muSlider.value>maxMu) muSlider.value=maxMu;
+    mu=+muSlider.value/100;
+  } else {
+    mu=rawMu;
+    lam=rawLam;
+    if(mu*lam>=0.5){
+      lam=Math.floor(MU_LAM_MAX/mu*100)/100;
+      document.getElementById('sl-lam').value=Math.round(lam*100);
+    }
+  }
+
+  document.getElementById('v-b').textContent=B;
+  document.getElementById('v-mu').textContent=fmtNum(mu);
+  document.getElementById('v-lam').textContent=fmtNum(lam);
+
+  var dc=(1-2*mu*lam);
+  var badge=document.getElementById('decay-badge');
+  badge.textContent='1\u22122\u03BC\u03BB = '+dc.toFixed(3);
+  if(dc>0.9){badge.style.background='var(--color-background-info)';badge.style.color='var(--color-text-info)'}
+  else if(dc>0.5){badge.style.background='var(--color-background-success)';badge.style.color='var(--color-text-success)'}
+  else if(dc>0.1){badge.style.background='var(--color-background-warning)';badge.style.color='var(--color-text-warning)'}
+  else{badge.style.background='var(--color-background-danger)';badge.style.color='var(--color-text-danger)'}
+
+  render();
+}
+
+function frobNorm(M){let s=0;for(let i=0;i<N*N;i++)s+=M[i]*M[i];return Math.sqrt(s)}
+
+function doStep(){
+  const G=new Float64Array(N*N);
+  for(let b=0;b<B;b++){
+    const d=Array.from({length:N},()=>gs());
+    const f=Array.from({length:N},()=>gs());
+    for(let i=0;i<N;i++)for(let j=0;j<N;j++)G[i*N+j]+=d[i]*f[j]/B;
+  }
+  const dc=1-2*mu*lam;
+  for(let i=0;i<N*N;i++)W[i]=dc*W[i]-mu*G[i];
+  hist.push({norm:frobNorm(G),w:1});
+  for(let i=0;i<hist.length-1;i++)hist[i].w*=dc;
+  if(hist.length>60)hist.shift();
+  stepN++;
+  render();
+}
+
+function singVals(){
+  const A=new Float64Array(N*N);
+  for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+    let s=0;for(let k=0;k<N;k++)s+=W[k*N+i]*W[k*N+j];A[i*N+j]=s;
+  }
+  for(let it=0;it<400;it++){
+    let mx=0,p=0,q=1;
+    for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){const v=Math.abs(A[i*N+j]);if(v>mx){mx=v;p=i;q=j}}
+    if(mx<1e-14)break;
+    const app=A[p*N+p],aqq=A[q*N+q],apq=A[p*N+q];
+    const th=0.5*Math.atan2(2*apq,app-aqq),c=Math.cos(th),s=Math.sin(th);
+    for(let j=0;j<N;j++){const pj=A[p*N+j],qj=A[q*N+j];A[p*N+j]=c*pj+s*qj;A[q*N+j]=-s*pj+c*qj}
+    for(let i=0;i<N;i++){const ip=A[i*N+p],iq=A[i*N+q];A[i*N+p]=c*ip+s*iq;A[i*N+q]=-s*ip+c*iq}
+  }
+  const sv=[];
+  for(let i=0;i<N;i++)sv.push(Math.sqrt(Math.max(0,A[i*N+i])));
+  sv.sort((a,b)=>b-a);
+  return sv;
+}
+
+function render(){
+  const cv=document.getElementById('mat-cv'),cx=cv.getContext('2d');
+  cx.clearRect(0,0,cv.width,cv.height);
+  let mx=0;for(let i=0;i<N*N;i++){const v=Math.abs(W[i]);if(v>mx)mx=v}
+  if(mx<1e-15)mx=1;
+  const dark=matchMedia('(prefers-color-scheme:dark)').matches;
+  const bgR=dark?44:245,bgG=dark?44:245,bgB=dark?42:240;
+  for(let r=0;r<N;r++)for(let c2=0;c2<N;c2++){
+    const v=W[r*N+c2]/mx;
+    let cr,cg,cb;
+    if(v>=0){
+      const t=Math.min(1,v);
+      cr=Math.round(bgR+(216-bgR)*t);cg=Math.round(bgG+(90-bgG)*t);cb=Math.round(bgB+(48-bgB)*t);
+    }else{
+      const t=Math.min(1,-v);
+      cr=Math.round(bgR+(55-bgR)*t);cg=Math.round(bgG+(138-bgG)*t);cb=Math.round(bgB+(221-bgB)*t);
+    }
+    cx.fillStyle=`rgb(${cr},${cg},${cb})`;
+    cx.fillRect(c2*CS+PAD,r*CS+PAD,CS-2*PAD,CS-2*PAD);
+  }
+
+  const sv=singVals();
+  const svMax=sv[0]||1;
+  const barsEl=document.getElementById('sv-bars');
+  barsEl.innerHTML='';
+  const thresh=svMax*0.05;
+  let effRank=0;
+  for(let i=0;i<N;i++){
+    if(sv[i]>thresh)effRank++;
+    const pct=Math.round(sv[i]/svMax*100);
+    const isActive=sv[i]>thresh;
+    const color=isActive?'#1D9E75':'var(--color-border-tertiary)';
+    const row=document.createElement('div');row.className='sv-row';
+    row.innerHTML=`<span class="sv-idx">${i+1}</span><div class="sv-track"><div class="sv-fill" style="width:${pct}%;background:${color}"></div></div><span class="sv-val">${sv[i]<0.001?'0':sv[i].toFixed(2)}</span>`;
+    barsEl.appendChild(row);
+  }
+
+  const tlEl=document.getElementById('tl-row');
+  tlEl.innerHTML='';
+  const mulam=mu*lam;
+  const memWin=mulam>1e-10?Math.round(Math.log(100)/(2*mulam)):999;
+  for(let i=0;i<hist.length;i++){
+    const h=hist[i];
+    const blk=document.createElement('div');blk.className='tl-blk';
+    const inWindow=h.w>0.01;
+    blk.style.background=inWindow?'#1D9E75':'var(--color-border-tertiary)';
+    blk.style.opacity=Math.max(0.08,Math.min(1,h.w));
+    if(i===hist.length-1)blk.classList.add('tl-marker');
+    tlEl.appendChild(blk);
+  }
+
+  document.getElementById('st-step').textContent=stepN;
+  document.getElementById('st-rank').textContent=stepN===0?'-':effRank;
+  const predRank=mulam>1e-10?Math.min(N,Math.round(B*Math.log(100)/(2*mulam))):N;
+  document.getElementById('st-pred').textContent=stepN>10?'predicted: ~'+predRank:'';
+  document.getElementById('st-mem').textContent=mulam>1e-10?(memWin>999?'>999':memWin)+' steps':'\u221E';
+  document.getElementById('st-mem-f').textContent='log(1/\u03B5) / (2\u03BC\u03BB)';
+}
+
+function togglePlay(){
+  playing=!playing;
+  document.getElementById('btn-play').textContent=playing?'Pause':'Play';
+  if(playing)tick();
+}
+
+function tick(){
+  if(!playing)return;
+  doStep();
+  af=setTimeout(tick,120);
+}
+
+function doReset(){
+  playing=false;
+  if(af)clearTimeout(af);
+  document.getElementById('btn-play').textContent='Play';
+  W=new Float64Array(N*N);stepN=0;hist=[];sd=42;
+  render();
+}
+
+(function init(){
+  const barsEl=document.getElementById('sv-bars');
+  for(let i=0;i<N;i++){
+    const row=document.createElement('div');row.className='sv-row';
+    row.innerHTML=`<span class="sv-idx">${i+1}</span><div class="sv-track"><div class="sv-fill" style="width:0%"></div></div><span class="sv-val">0</span>`;
+    barsEl.appendChild(row);
+  }
+  onParam('b');
+  render();
+})();
+</script>
