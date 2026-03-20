@@ -42,48 +42,53 @@ The explanation has three steps:
 To reason about transfer to **new classes**, we need a model that relates source and target tasks. The key idea is to treat classes themselves as random objects.
 
 There is an unknown distribution $\mathcal D$ over a collection $\mathcal E$ of class-conditional distributions. Each element of $\mathcal E$ represents one possible class. The source task is built from i.i.d. draws
+
 $$
 \tilde P_1,\dots,\tilde P_\ell \sim \mathcal D,
 $$
+
 and the target task is built from new, independent i.i.d. draws
+
 $$
 P_1,\dots,P_k \sim \mathcal D.
 $$
 
 So source and target classes are different, but they come from the same underlying population of classes.
 
-<div class="figure col-wide">
-  <div class="figure-grid" style="grid-template-columns: repeat(2, 1fr);">
-    <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/pretrained-classifiers/source_classes.png' | relative_url }}" alt="Source classes">
-      <div class="label">Source classes ($\ell$ i.i.d. draws from $\mathcal{D}$)</div>
-    </div>
-    <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/pretrained-classifiers/target_classes.png' | relative_url }}" alt="Target classes">
-      <div class="label">Target classes ($k$ new i.i.d. draws from $\mathcal{D}$)</div>
-    </div>
+<div class="col-wide">
+  <div class="embed-wrap">
+    <iframe
+      src="{{ '/assets/figures/pretrained-classifiers/fewshot_sampling_process.html' | relative_url }}"
+      height="440"
+      loading="lazy"
+      title="Class sampling process">
+    </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 1.</strong> Source and target classes are both drawn from the same population $\mathcal{D}$. The representation learned on the source classes must therefore generalize not only across new samples, but also across new classes.
+    <strong>Figure 1.</strong> The class-sampling process. Click through to watch source and target classes drawn independently from the population $\mathcal{D}$. Source classes receive $m = 18$ samples each (dense clusters); target classes receive only $n = 4$ (sparse, outlined dots). The representation learned from the source must generalize to classify the target from these few examples alone.
   </div>
 </div>
 
-This captures the intended use of pretrained representations: we train on many source classes that are representative of a broader population, then ask whether the learned geometry extends to new classes drawn from that same population.
+This captures the intended use of pretrained representations: we train on many source classes that are representative of a broader population, then ask whether the learned features transfer to new classes drawn from that same population.
 
 ### Notation for feature means and variances
 
 Let $f:\mathcal X \to \mathbb R^p$ be the learned feature map.
 
 For any class-conditional distribution $Q \in \mathcal E$, define its **population feature mean**
+
 $$
 \mu_f(Q) := \mathbb E_{x\sim Q}[f(x)]
 $$
+
 and its **population within-class variance**
+
 $$
 \operatorname{Var}_f(Q) := \mathbb E_{x\sim Q}\|f(x)-\mu_f(Q)\|^2.
 $$
 
 For a finite sample $S=\{x_1,\dots,x_n\}$ from one class, define the **empirical feature mean**
+
 $$
 \mu_f(S) := \frac{1}{n}\sum_{i=1}^n f(x_i).
 $$
@@ -92,29 +97,18 @@ We will use population quantities to describe the true geometry induced by $f$, 
 
 ### Source pretraining and target adaptation
 
-For each source class $\tilde P_i$, we observe a training set $\tilde S_i$ of size $m$, with
-$$
-\tilde S_i \sim \tilde P_i^m.
-$$
-Using these source classes and labels, we train a classifier and obtain a feature map $f$.
+For each source class $\tilde P_i$, we observe a training set $\tilde S_i$ of size $m$, with $\tilde S_i \sim \tilde P_i^m$. Using these source classes and labels, we train a classifier and obtain a feature map $f$.
 
-At transfer time, we freeze $f$. For each new target class $P_c$, we observe only a few labeled examples
-$$
-S_c \sim P_c^n,
-$$
-where $n$ is small. We then classify by nearest empirical class center:
+At transfer time, we freeze $f$. For each new target class $P_c$, we observe only a few labeled examples $S_c \sim P_c^n$, where $n$ is small. We then classify by nearest empirical class center:
+
 $$
 h(x)=\arg\min_{c\in[k]} \|f(x)-\mu_f(S_c)\|.
 $$
 
 The **transfer error** is the expected few-shot error over newly sampled target tasks:
+
 $$
-\mathcal L_{\mathcal D}(f)
-=
-\mathbb E_{P_1,\dots,P_k \sim \mathcal D}
-\;
-\mathbb E_{S_c \sim P_c^n}
-\left[L_P(h)\right].
+\mathcal L_{\mathcal D}(f) = \mathbb E_{P_1,\dots,P_k \sim \mathcal D} \; \mathbb E_{S_c \sim P_c^n} \left[L_P(h)\right].
 $$
 
 This is the quantity we want to understand: when does a representation learned on $\ell$ source classes support few-shot learning on new classes?
@@ -126,13 +120,11 @@ This is the quantity we want to understand: when does a representation learned o
 ### Class-distance normalized variance
 
 For two class-conditionals $Q_i$ and $Q_j$, define the **class-distance normalized variance** (CDNV):
+
 <div class="math-block">
 
 $$
-V_f(Q_i,Q_j)
-=
-\frac{\operatorname{Var}_f(Q_i)}
-{\|\mu_f(Q_i)-\mu_f(Q_j)\|^2}.
+V_f(Q_i,Q_j) = \frac{\operatorname{Var}_f(Q_i)}{\|\mu_f(Q_i)-\mu_f(Q_j)\|^2}.
 $$
 
 </div>
@@ -160,10 +152,7 @@ First, during pretraining we only observe **source training samples** $\tilde S_
 
 Second, the source classes themselves are i.i.d. draws from $\mathcal D$. So if the source classes exhibit good population geometry on average, then this property extends to new classes $P_1,\dots,P_k$ drawn from the same $\mathcal D$. This is the second generalization step: **from observed source classes to unseen target classes**.
 
-That is the logic behind transfer:
-- clustering on source training data,
-- generalizes to clustering for the underlying source classes,
-- and because classes are i.i.d., extends to unseen classes too.
+That is the logic behind transfer: clustering on source training data generalizes to clustering for the underlying source classes, and because classes are i.i.d., extends to unseen classes too.
 
 ### The connection to neural collapse
 
@@ -175,13 +164,13 @@ So neural collapse creates exactly the geometry that few-shot transfer wants: ti
   <div class="embed-wrap">
     <iframe
       src="{{ '/assets/figures/pretrained-classifiers/fewshot_transfer_visualization.html' | relative_url }}"
-      height="420"
+      height="450"
       loading="lazy"
       title="Few-shot transfer visualization">
     </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 2.</strong> Interactive simulation of the transfer mechanism. As source classes collapse into tight, well-separated clusters, the same learned feature geometry also organizes unseen target classes. Once the clusters are tight enough and the means are far enough apart, nearest-center classification succeeds from just a few target examples.
+    <strong>Figure 2.</strong> Interactive simulation of the transfer mechanism. As source classes collapse into tight, well-separated clusters, the same learned feature geometry also organizes unseen target classes. Once the clusters are tight enough and the means are far enough apart, nearest-center classification succeeds from just a few target examples. Drag to rotate.
   </div>
 </div>
 
@@ -208,36 +197,25 @@ So neural collapse creates exactly the geometry that few-shot transfer wants: ti
 
 The paper proves that the transfer error $\mathcal{L}_{\mathcal D}(f)$ of a pretrained feature map $f$ is controlled by the average empirical CDNV on the source classes plus generalization terms. At a high level, the bound has the form
 
+<div class="math-block">
+
 $$
-\mathcal L_{\mathcal D}(f)
-\;\lesssim\;
-(k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j)
-+
-\frac{k\,\mathrm{complexity}(f)}{\Lambda}
-\left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{\ell}}\right),
+\mathcal L_{\mathcal D}(f) \;\lesssim\; (k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j) + \frac{k\,\mathrm{complexity}(f)}{\Lambda} \left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{\ell}}\right),
 $$
 
-up to logarithmic factors, where
-$$
-\Lambda = \min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|
-$$
-is the minimum pairwise distance between empirical source class means.
+</div>
+
+up to logarithmic factors, where $\Lambda = \min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|$ is the minimum pairwise distance between empirical source class means.
 
 ### What each term means
 
-**The geometric term**
-$$
-(k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j)
-$$
-is small when the source training classes are tightly clustered relative to their separation. This is the observable signature of good few-shot transfer geometry.
+**The geometric term** $(k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j)$ is small when the source training classes are tightly clustered relative to their separation. This is the observable signature of good few-shot transfer geometry.
 
 **The $1/\sqrt{m}$ term** is the first generalization step. It says that with more samples per source class, the empirical clustering on $\tilde S_i$ better reflects the true geometry of the underlying source-class distributions $\tilde P_i$.
 
 **The $1/\sqrt{\ell}$ term** is the second generalization step. It says that with more source classes, the average geometry seen on the observed source classes better reflects the geometry of the full population of classes $\mathcal D$. This is exactly the term that lets the argument extend to unseen target classes.
 
-So the theorem mirrors the conceptual story:
-- many samples per class let you generalize from training points to the source-class distributions,
-- many source classes let you generalize from seen classes to unseen classes.
+So the theorem mirrors the conceptual story: many samples per class let you generalize from training points to the source-class distributions, and many source classes let you generalize from seen classes to unseen classes.
 
 ### Why neural collapse helps
 
