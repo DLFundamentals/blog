@@ -85,7 +85,7 @@ Before diving into the math, here is a live simulation of the mechanism. A $14 \
 <iframe 
   src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_bias_stable.html' | relative_url }}" 
   style="width: 100%; border: none; border-radius: 12px; overflow: hidden;"
-  height="700"
+  height="500"
   loading="lazy"
   title="Interactive low-rank bias explorer">
 </iframe>
