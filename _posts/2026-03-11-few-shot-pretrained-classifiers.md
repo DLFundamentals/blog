@@ -69,6 +69,8 @@ So source and target classes are different, but they come from the same underlyi
   </div>
 </div>
 
+<br>
+
 This captures the intended use of pretrained representations: we train on many source classes that are representative of a broader population, then ask whether the learned features transfer to new classes drawn from that same population.
 
 ### Notation for feature means and variances
@@ -129,20 +131,26 @@ $$
 
 </div>
 
-This compares the spread of class $Q_i$ to the squared distance between the means of $Q_i$ and $Q_j$.
+This quantity compares two competing effects in feature space: the within-class spread of $Q_i$ and the separation between the class means of $Q_i$ and $Q_j$.
 
-Small CDNV means exactly what we want: same-class features are tightly concentrated, while different class means are far apart.
+Small CDNV is exactly the favorable regime for transfer: samples from the same class form a tight cluster, while different classes remain well separated.
 
 ### Why CDNV is the right quantity
 
-Few-shot learning with a nearest-center classifier succeeds only if a few labeled examples give a reliable estimate of each target class center. That requires two things:
+Few-shot learning with a nearest-center classifier succeeds only if a small number of labeled samples is enough to estimate each target class center accurately. That requires two things at once:
 
-1. **Low within-class variability**: samples from the same class should lie close to their class mean.
-2. **Large between-class separation**: different class means should be far apart.
+1. **Low within-class variability**: same-class samples must stay close to their class mean.
+2. **Large between-class separation**: different class means must be far apart.
 
-CDNV packages both requirements into one dimensionless quantity. If $V_f(Q_i,Q_j)$ is small, then class $Q_i$ is tight relative to its separation from class $Q_j$, and nearest-center classification becomes easier.
+CDNV combines these two requirements into a single scale-free quantity. If $V_f(Q_i,Q_j)$ is small, then the noise within class $Q_i$ is small relative to its separation from class $Q_j$. In that regime, empirical class centers are stable, and nearest-center classification becomes reliable even from a few labeled examples.
 
-This is why **class-feature variability collapse** matters. It is not just a visual pattern in representation space. It is precisely the geometry that makes few-shot estimation of class centers reliable.
+This is why **class-feature variability collapse** is not just a qualitative geometric pattern. It directly measures whether the representation makes few-shot transfer possible.
+
+### The connection to neural collapse
+
+CDNV is closely tied to the geometry of **neural collapse**. The NC1 component says that features from the same class collapse toward their class mean, which drives the numerator $\operatorname{Var}_f(Q_i)$ downward. The NC2 component says that class means become maximally spread out, ideally approaching a simplex equiangular tight frame, which enlarges the denominator $\|\mu_f(Q_i)-\mu_f(Q_j)\|^2$.
+
+So neural collapse improves CDNV from both sides: it shrinks within-class spread and enlarges between-class separation. That is exactly why it creates the right geometry for few-shot transfer.
 
 ### The two generalization steps
 
@@ -153,12 +161,6 @@ First, during pretraining we only observe **source training samples** $\tilde S_
 Second, the source classes themselves are i.i.d. draws from $\mathcal D$. So if the source classes exhibit good population geometry on average, then this property extends to new classes $P_1,\dots,P_k$ drawn from the same $\mathcal D$. This is the second generalization step: **from observed source classes to unseen target classes**.
 
 That is the logic behind transfer: clustering on source training data generalizes to clustering for the underlying source classes, and because classes are i.i.d., extends to unseen classes too.
-
-### The connection to neural collapse
-
-The CDNV is closely related to the NC1 property of **neural collapse**: during training, features of same-class samples tend to concentrate around their class means. Under the additional NC2 property — that the class means form a maximally separated simplex equiangular tight frame — the minimum pairwise distance between class means is maximized, which pushes CDNV even lower.
-
-So neural collapse creates exactly the geometry that few-shot transfer wants: tight same-class clusters and well-separated class centers.
 
 <div class="col-wide">
   <div class="embed-wrap">
@@ -195,17 +197,17 @@ So neural collapse creates exactly the geometry that few-shot transfer wants: ti
 
 ### The main result
 
-The paper proves that the transfer error $\mathcal{L}_{\mathcal D}(f)$ of a pretrained feature map $f$ is controlled by the average empirical CDNV on the source classes plus generalization terms. At a high level, the bound has the form
+To formalize the argument, the paper proves that the transfer error $\mathcal{L}_{\mathcal D}(f)$ of a pretrained feature map $f$ is controlled by the average empirical CDNV on the source classes plus generalization terms. At a high level, the bound has the form
 
 <div class="math-block">
 
 $$
-\mathcal L_{\mathcal D}(f) \;\lesssim\; (k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j) + \frac{k\,\mathrm{complexity}(f)}{\Lambda} \left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{\ell}}\right),
+\mathcal L_{\mathcal D}(f) \;\lesssim\; (k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j) + \frac{k\,\mathcal{C}(f)}{\min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|} \left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{\ell}}\right),
 $$
 
 </div>
 
-up to logarithmic factors, where $\Lambda = \min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|$ is the minimum pairwise distance between empirical source class means.
+where $\mathcal{C}(f)$ is some notion of complexity of the pre-trained model $f$.
 
 ### What each term means
 
@@ -215,15 +217,13 @@ up to logarithmic factors, where $\Lambda = \min_{i\neq j}\|\mu_f(\tilde S_i)-\m
 
 **The $1/\sqrt{\ell}$ term** is the second generalization step. It says that with more source classes, the average geometry seen on the observed source classes better reflects the geometry of the full population of classes $\mathcal D$. This is exactly the term that lets the argument extend to unseen target classes.
 
+**The $\min_{i\neq j}|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)|$ term** is the minimum pairwise distance between the empirical source class means in feature space. It captures the worst-case separation between classes: the larger this quantity is, the easier it is to distinguish classes by nearest-center classification, and the stronger the transfer guarantee becomes. Under neural collapse, the class means become more uniformly and maximally separated, which makes this term large.
+
 So the theorem mirrors the conceptual story: many samples per class let you generalize from training points to the source-class distributions, and many source classes let you generalize from seen classes to unseen classes.
 
 ### Why neural collapse helps
 
-Neural collapse improves both parts of the geometry.
-
-It shrinks within-class variability, which reduces the CDNV numerator. And under NC2, the class means become maximally separated, which enlarges the denominator. In the ideal ETF geometry, the class centers are as far apart as possible given their norm.
-
-So neural collapse is not merely correlated with transfer. It improves exactly the quantity that appears in the bound.
+Neural collapse improves both parts of the geometry. It shrinks within-class variability, which reduces the CDNV numerator. And under NC2, the class means become maximally separated, which enlarges the denominator. In the ideal ETF geometry, the class centers are as far apart as possible given their norm. So neural collapse is not merely correlated with transfer. It improves exactly the quantity that appears in the bound.
 
 ### Why this works in the true few-shot regime
 
