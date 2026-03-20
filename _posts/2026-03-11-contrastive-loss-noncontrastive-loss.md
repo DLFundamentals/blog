@@ -99,7 +99,7 @@ The bound is both label-agnostic and architecture-independent: it holds for any 
   <div class="embed-wrap">
     <iframe
       src="{{ '/assets/figures/cl-nscl/cl_nscl_loss_gap_explorer.html' | relative_url }}"
-      height="480"
+      height="400"
       loading="lazy"
       title="CL-NSCL loss gap explorer">
     </iframe>
