@@ -83,32 +83,14 @@ There is an unknown distribution $\mathcal D$ over a collection $\mathcal E$ of 
   <div class="task-title">Source task</div>
   <div class="task-grid">
     <figure>
-      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/1_red_panda.png" alt="Source class 1">
-      <figcaption>\(\tilde P_1\)</figcaption>
-    </figure>
-    <figure>
-      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/2_golden_retriever.png" alt="Source class 2">
-      <figcaption>\(\tilde P_2\)</figcaption>
-    </figure>
-    <figure>
-      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/3_tiger.png" alt="Source class 3">
-      <figcaption>\(\tilde P_3\)</figcaption>
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/source_classes.png" alt="Source classes">
     </figure>
   </div>
 
   <div class="task-title">Target task</div>
   <div class="task-grid">
     <figure>
-      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/7_elephant.png" alt="Target class 1">
-      <figcaption>\(P_1\)</figcaption>
-    </figure>
-    <figure>
-      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/4_raccoon.png" alt="Target class 2">
-      <figcaption>\(P_2\)</figcaption>
-    </figure>
-    <figure>
-      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/9_lion.png" alt="Target class 3">
-      <figcaption>\(P_3\)</figcaption>
+      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/target_classes.png" alt="Target classes">
     </figure>
   </div>
 </div>
