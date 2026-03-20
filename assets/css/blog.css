@@ -457,3 +457,41 @@ article tbody tr:hover {
   .hero-meta { font-size: 0.78rem; }
   .figure-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
 }
+
+/* ═══════════════════
+   Giscus Comments
+   ═══════════════════ */
+.giscus {
+  margin-top: 0.5rem;
+}
+.giscus-frame {
+  border: none !important;
+}
+
+/* ═══════════════════
+   Reaction / like badges (index page)
+   ═══════════════════ */
+.post-reactions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.post-reactions svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: all 0.2s;
+}
+.post-reactions:hover svg {
+  stroke: var(--accent);
+}
+.post-reactions:hover {
+  color: var(--accent);
+}
