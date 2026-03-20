@@ -4,252 +4,351 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-html,body{margin:0;padding:0;overflow:hidden;height:100%}
-*{box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#374151;background:#fff}
-.wrap{padding:8px 14px}
-.ctrl{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.ctrl label{font-size:12px;color:#6b7280;min-width:50px}
-.ctrl input[type=range]{flex:1;height:4px;-webkit-appearance:none;appearance:none;background:#e5e7eb;border-radius:2px;outline:none}
-.ctrl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#2563eb;cursor:pointer}
-.ctrl span{font-size:12px;font-weight:500;min-width:60px;font-family:monospace}
-.panels{display:flex;gap:10px}
-.panel{flex:1;min-width:0}
-.panel-title{font-size:11px;color:#6b7280;margin-bottom:4px;text-align:center}
-canvas{display:block;width:100%;border-radius:6px;border:1px solid #e5e7eb;background:#fafafa}
-.legend{font-size:10px;color:#9ca3af;display:flex;gap:10px;justify-content:center;margin-top:6px;flex-wrap:wrap}
-.legend span{display:flex;align-items:center;gap:3px}
-.legend .sq{width:8px;height:8px;border-radius:50%;display:inline-block}
-.stats{display:flex;gap:6px;margin-top:6px}
-.stat{background:#f8f9fb;border-radius:6px;padding:5px 8px;flex:1;min-width:0}
-.stat-l{font-size:9px;color:#6b7280}
-.stat-v{font-size:14px;font-weight:500;margin-top:1px;color:#1d2939}
+html,body{margin:0;padding:0;overflow:hidden;height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#wrap{position:relative;width:100%;height:100%}
+canvas{display:block;width:100%;height:100%}
+#hud{position:absolute;bottom:8px;left:10px;right:10px;display:flex;flex-direction:column;gap:6px}
+#slider-row{display:flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);border-radius:8px}
+#slider-row label{font-size:11px;color:#bbb;white-space:nowrap}
+#slider-row input[type=range]{flex:1;height:3px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,0.2);border-radius:2px;outline:none}
+#slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;cursor:pointer}
+#slider-row span{font-size:11px;color:#ddd;min-width:30px;font-family:monospace}
+#stats-row{display:flex;gap:4px}
+.st{flex:1;padding:5px 8px;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);border-radius:6px}
+.st-l{font-size:9px;color:#999}
+.st-v{font-size:13px;font-weight:500;color:#eee;margin-top:1px}
+#legend{position:absolute;top:8px;left:10px;display:flex;gap:8px;flex-wrap:wrap}
+#legend span{font-size:10px;display:flex;align-items:center;gap:3px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.ring{width:8px;height:8px;border-radius:50%;display:inline-block;border:2px solid;background:transparent;box-sizing:border-box}
+#info{position:absolute;top:8px;right:10px;text-align:right}
+#info div{font-size:10px;color:#999}
+#stage{font-size:11px;color:#ddd;font-weight:500}
 </style>
 </head>
 <body>
-<div class="wrap">
-
-<div class="ctrl">
-  <label>Epoch</label>
-  <input type="range" min="0" max="200" value="0" step="1" id="epoch" oninput="update()">
-  <span id="v-epoch">0 / 200</span>
+<div id="wrap">
+<canvas id="c"></canvas>
+<div id="legend">
+  <span><span class="dot" style="background:#7F77DD"></span><span style="color:#7F77DD">src 1</span></span>
+  <span><span class="dot" style="background:#1D9E75"></span><span style="color:#1D9E75">src 2</span></span>
+  <span><span class="dot" style="background:#D85A30"></span><span style="color:#D85A30">src 3</span></span>
+  <span><span class="dot" style="background:#378ADD"></span><span style="color:#378ADD">src 4</span></span>
+  <span><span class="ring" style="border-color:#D4537E"></span><span style="color:#D4537E">tgt A</span></span>
+  <span><span class="ring" style="border-color:#BA7517"></span><span style="color:#BA7517">tgt B</span></span>
+  <span><span class="ring" style="border-color:#639922"></span><span style="color:#639922">tgt C</span></span>
 </div>
-
-<div class="panels">
-  <div class="panel">
-    <div class="panel-title">Source classes (train)</div>
-    <canvas id="cv-src" height="220"></canvas>
+<div id="info">
+  <div>Drag to rotate</div>
+  <div id="stage">Pre-training: features scattered</div>
+</div>
+<div id="hud">
+  <div id="stats-row">
+    <div class="st"><div class="st-l">Source CDNV</div><div class="st-v" id="s-cdnv">-</div></div>
+    <div class="st"><div class="st-l">Target CDNV</div><div class="st-v" id="t-cdnv">-</div></div>
+    <div class="st"><div class="st-l">NCC accuracy</div><div class="st-v" id="s-acc">-</div></div>
+    <div class="st"><div class="st-l">Min class sep.</div><div class="st-v" id="s-sep">-</div></div>
   </div>
-  <div class="panel">
-    <div class="panel-title">Target classes (unseen, few-shot)</div>
-    <canvas id="cv-tgt" height="220"></canvas>
+  <div id="slider-row">
+    <label>Epoch 0</label>
+    <input type="range" min="0" max="200" value="0" step="1" id="epoch">
+    <label>200</label>
+    <span id="v-ep">0</span>
   </div>
 </div>
-
-<div class="legend">
-  <span><span class="sq" style="background:#534AB7"></span> class 1</span>
-  <span><span class="sq" style="background:#1D9E75"></span> class 2</span>
-  <span><span class="sq" style="background:#D85A30"></span> class 3</span>
-  <span><span class="sq" style="background:#378ADD"></span> class 4 (source only)</span>
-  <span><span class="sq" style="background:#D4537E"></span> class 5 (target only)</span>
-  <span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border:2px solid #374151;border-radius:50%;display:inline-block"></span> class mean</span>
-  <span style="display:flex;align-items:center;gap:3px"><span style="width:12px;height:2px;background:#E24B4A;display:inline-block"></span> NCC boundary</span>
 </div>
 
-<div class="stats">
-  <div class="stat"><div class="stat-l">Source CDNV</div><div class="stat-v" id="s-cdnv">-</div></div>
-  <div class="stat"><div class="stat-l">Target CDNV</div><div class="stat-v" id="t-cdnv">-</div></div>
-  <div class="stat"><div class="stat-l">NCC accuracy</div><div class="stat-v" id="s-acc">-</div></div>
-  <div class="stat"><div class="stat-l">Stage</div><div class="stat-v" id="s-stage" style="font-size:11px">Pre-training</div></div>
-</div>
-
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-const srcColors = ['#534AB7','#1D9E75','#D85A30','#378ADD'];
-const tgtColors = ['#534AB7','#1D9E75','#D85A30','#D4537E'];
-const N = 20;
+(function(){
+const canvas=document.getElementById('c');
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(50,canvas.clientWidth/canvas.clientHeight,0.1,100);
+camera.position.set(0,0,7);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setSize(canvas.clientWidth,canvas.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setClearColor(0x000000,0);
 
-let sd = 7;
+const pivot=new THREE.Group();
+scene.add(pivot);
+
+let sd=42;
 function rn(){sd=(sd*1664525+1013904223)>>>0;return sd/4294967296}
-function gs(s){sd=s;return Math.sqrt(-2*Math.log(rn()+1e-15))*Math.cos(6.2832*rn())}
+function gs(){return Math.sqrt(-2*Math.log(rn()+1e-15))*Math.cos(6.2832*rn())}
 
-const srcCentersInit = [[0.2,0.7],[0.8,0.75],[0.3,0.25],[0.75,0.3]];
-const srcCentersFinal = [[0.18,0.82],[0.82,0.82],[0.18,0.18],[0.82,0.18]];
-const tgtCentersInit = [[0.25,0.65],[0.7,0.7],[0.35,0.3],[0.6,0.25]];
-const tgtCentersFinal = [[0.18,0.82],[0.82,0.82],[0.18,0.18],[0.72,0.28]];
+const R=2.0;
+const srcETF=[
+  new THREE.Vector3(0,R,0),
+  new THREE.Vector3(R*Math.sqrt(8/9),-R/3,0),
+  new THREE.Vector3(-R*Math.sqrt(2/9),-R/3,R*Math.sqrt(2/3)),
+  new THREE.Vector3(-R*Math.sqrt(2/9),-R/3,-R*Math.sqrt(2/3))
+];
+const tgtETF=[
+  new THREE.Vector3(R*0.7,R*0.5,R*0.3),
+  new THREE.Vector3(-R*0.6,-R*0.2,R*0.6),
+  new THREE.Vector3(R*0.1,-R*0.7,-R*0.5)
+];
 
-function makePoints(centers,nPerClass,seed){
-  const pts=[];
-  for(let c=0;c<centers.length;c++){
-    for(let i=0;i<nPerClass;i++){
-      const s=seed+c*1000+i;
-      pts.push({c,sx:gs(s)*0.15+centers[c][0],sy:gs(s+99)*0.15+centers[c][1]});
-    }
-  }
-  return pts;
-}
+const srcColors=[0x7F77DD,0x1D9E75,0xD85A30,0x378ADD];
+const tgtColors=[0xD4537E,0xBA7517,0x639922];
+const srcColorsVec=srcColors.map(c=>new THREE.Color(c));
+const tgtColorsVec=tgtColors.map(c=>new THREE.Color(c));
 
-const srcPts = makePoints(srcCentersInit,N,42);
-const tgtPts = makePoints(tgtCentersInit,5,999);
+const NSrc=18,NTgt=5;
+const srcData=[],tgtData=[];
 
-function ease(t){return t*t*(3-2*t)}
-
-function lerpPts(pts,centersInit,centersFinal,t,spreadFactor){
-  const e=ease(Math.min(1,t));
-  return pts.map(p=>{
-    const ci=centersInit[p.c];
-    const cf=centersFinal[p.c];
-    const cx=ci[0]+(cf[0]-ci[0])*e;
-    const cy=ci[1]+(cf[1]-ci[1])*e;
-    const dx=p.sx-ci[0];
-    const dy=p.sy-ci[1];
-    const spread=1-e*(1-spreadFactor);
-    return {c:p.c, x:cx+dx*spread, y:cy+dy*spread};
-  });
-}
-
-function computeMeans(pts,nClasses){
-  const means=[];
-  for(let c=0;c<nClasses;c++){
-    let sx=0,sy=0,n=0;
-    pts.forEach(p=>{if(p.c===c){sx+=p.x;sy+=p.y;n++}});
-    means.push({x:sx/n,y:sy/n});
-  }
-  return means;
-}
-
-function computeCDNV(pts,means){
-  let totalVar=0,minDist=Infinity,pairs=0;
-  for(let c=0;c<means.length;c++){
-    let v=0,n=0;
-    pts.forEach(p=>{if(p.c===c){v+=(p.x-means[c].x)**2+(p.y-means[c].y)**2;n++}});
-    if(n>0) totalVar+=v/n;
-  }
-  totalVar/=means.length;
-  for(let i=0;i<means.length;i++)for(let j=i+1;j<means.length;j++){
-    const d=(means[i].x-means[j].x)**2+(means[i].y-means[j].y)**2;
-    if(d<minDist)minDist=d;
-    pairs++;
-  }
-  return minDist>1e-10?totalVar/minDist:99;
-}
-
-function drawScene(canvasId,pts,means,colors,t,showBoundary){
-  const cv=document.getElementById(canvasId);
-  const W=cv.width,H=cv.height;
-  const cx=cv.getContext('2d');
-  cx.clearRect(0,0,W,H);
-
-  const pad=20;
-  const toX=v=>pad+(W-2*pad)*v;
-  const toY=v=>H-pad-(H-2*pad)*v;
-
-  if(showBoundary && t>0.6){
-    const alpha=Math.min(1,(t-0.6)/0.3)*0.5;
-    cx.strokeStyle=`rgba(226,75,74,${alpha})`;
-    cx.lineWidth=1.5;
-    cx.setLineDash([4,3]);
-    for(let i=0;i<means.length;i++){
-      for(let j=i+1;j<means.length;j++){
-        const mx=(means[i].x+means[j].x)/2;
-        const my=(means[i].y+means[j].y)/2;
-        const dx=means[j].x-means[i].x;
-        const dy=means[j].y-means[i].y;
-        const len=Math.sqrt(dx*dx+dy*dy);
-        if(len<1e-6)continue;
-        const nx=-dy/len*0.4;
-        const ny=dx/len*0.4;
-        cx.beginPath();
-        cx.moveTo(toX(mx-nx),toY(my-ny));
-        cx.lineTo(toX(mx+nx),toY(my+ny));
-        cx.stroke();
-      }
-    }
-    cx.setLineDash([]);
-  }
-
-  pts.forEach(p=>{
-    cx.beginPath();
-    cx.arc(toX(p.x),toY(p.y),3.5,0,Math.PI*2);
-    cx.fillStyle=colors[p.c];
-    cx.globalAlpha=0.7;
-    cx.fill();
-    cx.globalAlpha=1;
-  });
-
-  const meanAlpha=Math.min(1,t*3);
-  means.forEach((m,i)=>{
-    if(i>=colors.length)return;
-    cx.beginPath();
-    cx.arc(toX(m.x),toY(m.y),6,0,Math.PI*2);
-    cx.strokeStyle=colors[i];
-    cx.lineWidth=2;
-    cx.globalAlpha=meanAlpha;
-    cx.stroke();
-    cx.beginPath();
-    cx.arc(toX(m.x),toY(m.y),2,0,Math.PI*2);
-    cx.fillStyle=colors[i];
-    cx.fill();
-    cx.globalAlpha=1;
-  });
-}
-
-function nccAccuracy(pts,means,colors){
-  let correct=0;
-  pts.forEach(p=>{
-    let bestD=Infinity,bestC=-1;
-    means.forEach((m,i)=>{
-      const d=(p.x-m.x)**2+(p.y-m.y)**2;
-      if(d<bestD){bestD=d;bestC=i}
+sd=42;
+for(let ci=0;ci<4;ci++){
+  for(let i=0;i<NSrc;i++){
+    srcData.push({
+      c:ci,
+      start:new THREE.Vector3(gs()*1.3+(ci%2?0.5:-0.5),gs()*1.3+(ci<2?0.5:-0.5),gs()*1.3),
+      end:srcETF[ci].clone()
     });
-    if(bestC===p.c)correct++;
-  });
-  return Math.round(correct/pts.length*100);
+  }
+}
+sd=999;
+for(let ci=0;ci<3;ci++){
+  for(let i=0;i<NTgt;i++){
+    tgtData.push({
+      c:ci,
+      start:new THREE.Vector3(gs()*1.4+(ci===0?0.3:ci===1?-0.4:0.1),gs()*1.4+(ci===0?0.4:ci===1?-0.3:-0.5),gs()*1.4+(ci===0?0.2:ci===1?0.5:-0.3)),
+      end:tgtETF[ci].clone()
+    });
+  }
 }
 
-function update(){
-  const epoch=+document.getElementById('epoch').value;
-  const t=epoch/200;
-  document.getElementById('v-epoch').textContent=epoch+' / 200';
+const srcGeom=new THREE.BufferGeometry();
+const srcPos=new Float32Array(srcData.length*3);
+const srcCol=new Float32Array(srcData.length*3);
+for(let i=0;i<srcData.length;i++){
+  const c=srcColorsVec[srcData[i].c];
+  srcCol[i*3]=c.r;srcCol[i*3+1]=c.g;srcCol[i*3+2]=c.b;
+}
+srcGeom.setAttribute('position',new THREE.BufferAttribute(srcPos,3));
+srcGeom.setAttribute('color',new THREE.BufferAttribute(srcCol,3));
+const srcMat=new THREE.PointsMaterial({size:0.09,vertexColors:true,sizeAttenuation:true,transparent:true,opacity:0.8});
+const srcPts=new THREE.Points(srcGeom,srcMat);
+pivot.add(srcPts);
 
-  const srcSpread=0.08;
-  const tgtSpread=0.15+0.1*(1-ease(t));
-  const srcNow=lerpPts(srcPts,srcCentersInit,srcCentersFinal,t,srcSpread);
-  const tgtNow=lerpPts(tgtPts,tgtCentersInit,tgtCentersFinal,t*0.85,tgtSpread);
+const tgtGeom=new THREE.BufferGeometry();
+const tgtPos=new Float32Array(tgtData.length*3);
+const tgtCol=new Float32Array(tgtData.length*3);
+for(let i=0;i<tgtData.length;i++){
+  const c=tgtColorsVec[tgtData[i].c];
+  tgtCol[i*3]=c.r;tgtCol[i*3+1]=c.g;tgtCol[i*3+2]=c.b;
+}
+tgtGeom.setAttribute('position',new THREE.BufferAttribute(tgtPos,3));
+tgtGeom.setAttribute('color',new THREE.BufferAttribute(tgtCol,3));
+const tgtMat=new THREE.PointsMaterial({size:0.14,vertexColors:true,sizeAttenuation:true,transparent:true,opacity:0.9});
+const tgtPts=new THREE.Points(tgtGeom,tgtMat);
+pivot.add(tgtPts);
 
-  const srcMeans=computeMeans(srcNow,4);
-  const tgtMeans=computeMeans(tgtNow,4);
+const ringGeo=new THREE.RingGeometry(0.08,0.12,16);
+const tgtRings=[];
+for(let i=0;i<tgtData.length;i++){
+  const mat=new THREE.MeshBasicMaterial({color:tgtColors[tgtData[i].c],side:THREE.DoubleSide,transparent:true,opacity:0.9});
+  const mesh=new THREE.Mesh(ringGeo,mat);
+  pivot.add(mesh);
+  tgtRings.push(mesh);
+}
 
-  const cvSrc=document.getElementById('cv-src');
-  const cvTgt=document.getElementById('cv-tgt');
-  cvSrc.width=cvSrc.clientWidth*2;cvSrc.height=cvSrc.clientHeight*2;
-  cvTgt.width=cvTgt.clientWidth*2;cvTgt.height=cvTgt.clientHeight*2;
-  cvSrc.getContext('2d').scale(2,2);
-  cvTgt.getContext('2d').scale(2,2);
-  cvSrc.style.height=cvSrc.clientHeight+'px';
-  cvTgt.style.height=cvTgt.clientHeight+'px';
+const meanGeo=new THREE.SphereGeometry(0.08,12,12);
+const srcMeans=srcETF.map((_,i)=>{
+  const m=new THREE.Mesh(meanGeo,new THREE.MeshBasicMaterial({color:srcColors[i],transparent:true,opacity:0}));
+  pivot.add(m);return m;
+});
+const tgtMeanGeo=new THREE.SphereGeometry(0.1,12,12);
+const tgtMeans=tgtETF.map((_,i)=>{
+  const m=new THREE.Mesh(tgtMeanGeo,new THREE.MeshBasicMaterial({color:tgtColors[i],transparent:true,opacity:0}));
+  pivot.add(m);return m;
+});
 
-  drawScene('cv-src',srcNow,srcMeans,srcColors,t,t>0.7);
-  drawScene('cv-tgt',tgtNow,tgtMeans,tgtColors,t,t>0.8);
+const edgePairs=[];
+for(let i=0;i<4;i++)for(let j=i+1;j<4;j++)edgePairs.push([i,j]);
+const edges=edgePairs.map(([a,b])=>{
+  const g=new THREE.BufferGeometry().setFromPoints([srcETF[a],srcETF[b]]);
+  const l=new THREE.Line(g,new THREE.LineBasicMaterial({color:0x666666,transparent:true,opacity:0}));
+  l.visible=false;pivot.add(l);return l;
+});
 
-  const srcCDNV=computeCDNV(srcNow,srcMeans);
-  const tgtCDNV=computeCDNV(tgtNow,tgtMeans);
+const nccLines=[];
+for(let i=0;i<3;i++){
+  for(let j=i+1;j<3;j++){
+    const mid=tgtETF[i].clone().add(tgtETF[j]).multiplyScalar(0.5);
+    const dir=tgtETF[j].clone().sub(tgtETF[i]).normalize();
+    const up=new THREE.Vector3(0,1,0);
+    const perp1=new THREE.Vector3().crossVectors(dir,up).normalize().multiplyScalar(0.9);
+    if(perp1.length()<0.01)perp1.set(0.9,0,0);
+    const perp2=new THREE.Vector3().crossVectors(dir,perp1).normalize().multiplyScalar(0.9);
+    const pts=[
+      mid.clone().add(perp1),
+      mid.clone().add(perp2),
+      mid.clone().sub(perp1),
+      mid.clone().sub(perp2),
+      mid.clone().add(perp1)
+    ];
+    const g=new THREE.BufferGeometry().setFromPoints(pts);
+    const l=new THREE.Line(g,new THREE.LineBasicMaterial({color:0xE24B4A,transparent:true,opacity:0}));
+    l.visible=false;pivot.add(l);nccLines.push(l);
+  }
+}
+
+const axLen=0.5;
+const axMat=new THREE.LineBasicMaterial({color:0x444444,transparent:true,opacity:0.2});
+[[axLen,0,0],[-axLen,0,0],[0,axLen,0],[0,-axLen,0],[0,0,axLen],[0,0,-axLen]].forEach(([x,y,z])=>{
+  const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(x,y,z)]);
+  pivot.add(new THREE.Line(g,axMat));
+});
+pivot.add(new THREE.Mesh(new THREE.SphereGeometry(0.03,8,8),new THREE.MeshBasicMaterial({color:0x888888})));
+
+let t=0;
+const slider=document.getElementById('epoch');
+
+function ease(v){return v*v*(3-2*v)}
+
+function updateScene(){
+  const e=ease(Math.min(1,t));
+  const eTgt=ease(Math.min(1,t*0.8));
+
+  for(let i=0;i<srcData.length;i++){
+    const d=srcData[i];
+    const spread=1-e*0.92;
+    const dx=d.start.x-srcETF[d.c].x;
+    const dy=d.start.y-srcETF[d.c].y;
+    const dz=d.start.z-srcETF[d.c].z;
+    srcPos[i*3]=d.end.x+dx*spread;
+    srcPos[i*3+1]=d.end.y+dy*spread;
+    srcPos[i*3+2]=d.end.z+dz*spread;
+  }
+  srcGeom.attributes.position.needsUpdate=true;
+
+  for(let i=0;i<tgtData.length;i++){
+    const d=tgtData[i];
+    const spread=1-eTgt*0.85;
+    const dx=d.start.x-tgtETF[d.c].x;
+    const dy=d.start.y-tgtETF[d.c].y;
+    const dz=d.start.z-tgtETF[d.c].z;
+    tgtPos[i*3]=d.end.x+dx*spread;
+    tgtPos[i*3+1]=d.end.y+dy*spread;
+    tgtPos[i*3+2]=d.end.z+dz*spread;
+    tgtRings[i].position.set(tgtPos[i*3],tgtPos[i*3+1],tgtPos[i*3+2]);
+    tgtRings[i].lookAt(camera.position);
+  }
+  tgtGeom.attributes.position.needsUpdate=true;
+
+  for(let ci=0;ci<4;ci++){
+    let mx=0,my=0,mz=0,n=0;
+    for(let i=0;i<srcData.length;i++){
+      if(srcData[i].c===ci){mx+=srcPos[i*3];my+=srcPos[i*3+1];mz+=srcPos[i*3+2];n++}
+    }
+    srcMeans[ci].position.set(mx/n,my/n,mz/n);
+    srcMeans[ci].material.opacity=Math.min(0.9,t*3);
+    srcMeans[ci].scale.setScalar(0.6+t*2);
+  }
+  for(let ci=0;ci<3;ci++){
+    let mx=0,my=0,mz=0,n=0;
+    for(let i=0;i<tgtData.length;i++){
+      if(tgtData[i].c===ci){mx+=tgtPos[i*3];my+=tgtPos[i*3+1];mz+=tgtPos[i*3+2];n++}
+    }
+    tgtMeans[ci].position.set(mx/n,my/n,mz/n);
+    tgtMeans[ci].material.opacity=Math.min(0.9,t*2.5);
+    tgtMeans[ci].scale.setScalar(0.5+t*1.8);
+  }
+
+  edges.forEach(l=>{l.visible=t>0.4;l.material.opacity=Math.max(0,(t-0.4)/0.5)*0.25});
+  nccLines.forEach(l=>{l.visible=t>0.7;l.material.opacity=Math.max(0,(t-0.7)/0.3)*0.4});
+
+  const srcCDNV=computeCDNV(srcPos,srcData,4);
+  const tgtCDNV=computeCDNV(tgtPos,tgtData,3);
   document.getElementById('s-cdnv').textContent=srcCDNV.toFixed(3);
   document.getElementById('t-cdnv').textContent=tgtCDNV.toFixed(3);
 
-  const acc=nccAccuracy(tgtNow,tgtMeans,tgtColors);
-  document.getElementById('s-acc').textContent=t>0.3?acc+'%':'-';
+  let minSep=Infinity;
+  for(let i=0;i<4;i++)for(let j=i+1;j<4;j++){
+    const d=srcMeans[i].position.distanceTo(srcMeans[j].position);
+    if(d<minSep)minSep=d;
+  }
+  document.getElementById('s-sep').textContent=minSep.toFixed(2);
 
-  let stage='Pre-training';
+  if(t>0.3){
+    let correct=0;
+    for(let i=0;i<tgtData.length;i++){
+      const p=new THREE.Vector3(tgtPos[i*3],tgtPos[i*3+1],tgtPos[i*3+2]);
+      let bestD=Infinity,bestC=-1;
+      for(let ci=0;ci<3;ci++){
+        const d=p.distanceTo(tgtMeans[ci].position);
+        if(d<bestD){bestD=d;bestC=ci}
+      }
+      if(bestC===tgtData[i].c)correct++;
+    }
+    document.getElementById('s-acc').textContent=Math.round(correct/tgtData.length*100)+'%';
+  }else{
+    document.getElementById('s-acc').textContent='-';
+  }
+
+  let stage='Pre-training: features scattered';
   if(t>0.05&&t<=0.3)stage='Training: clusters forming';
   else if(t>0.3&&t<=0.6)stage='NC1: within-class collapse';
-  else if(t>0.6&&t<=0.85)stage='NC2: means separating';
-  else if(t>0.85)stage='Few-shot: NCC classifies';
-  document.getElementById('s-stage').textContent=stage;
+  else if(t>0.6&&t<=0.85)stage='NC2: means maximally separated';
+  else if(t>0.85)stage='Transfer: NCC classifies few-shot';
+  document.getElementById('stage').textContent=stage;
 }
 
-update();
+function computeCDNV(pos,data,nC){
+  const means=[];
+  for(let c=0;c<nC;c++){
+    let mx=0,my=0,mz=0,n=0;
+    for(let i=0;i<data.length;i++){if(data[i].c===c){mx+=pos[i*3];my+=pos[i*3+1];mz+=pos[i*3+2];n++}}
+    means.push(n>0?{x:mx/n,y:my/n,z:mz/n}:{x:0,y:0,z:0});
+  }
+  let tv=0;
+  for(let c=0;c<nC;c++){
+    let v=0,n=0;
+    for(let i=0;i<data.length;i++){
+      if(data[i].c===c){v+=(pos[i*3]-means[c].x)**2+(pos[i*3+1]-means[c].y)**2+(pos[i*3+2]-means[c].z)**2;n++}
+    }
+    if(n>0)tv+=v/n;
+  }
+  tv/=nC;
+  let md=Infinity;
+  for(let i=0;i<nC;i++)for(let j=i+1;j<nC;j++){
+    const d=(means[i].x-means[j].x)**2+(means[i].y-means[j].y)**2+(means[i].z-means[j].z)**2;
+    if(d<md)md=d;
+  }
+  return md>1e-10?tv/md:99;
+}
+
+slider.addEventListener('input',e=>{t=e.target.value/200;document.getElementById('v-ep').textContent=e.target.value});
+
+let isDragging=false,prevX=0,prevY=0,rotX=0.3,rotY=0;
+canvas.addEventListener('pointerdown',e=>{isDragging=true;prevX=e.clientX;prevY=e.clientY});
+window.addEventListener('pointerup',()=>isDragging=false);
+canvas.addEventListener('pointermove',e=>{
+  if(!isDragging)return;
+  rotY+=(e.clientX-prevX)*0.008;
+  rotX+=(e.clientY-prevY)*0.008;
+  rotX=Math.max(-Math.PI/2,Math.min(Math.PI/2,rotX));
+  prevX=e.clientX;prevY=e.clientY;
+});
+
+let autoRot=0;
+function animate(){
+  requestAnimationFrame(animate);
+  autoRot+=0.002;
+  pivot.rotation.set(rotX,rotY+autoRot,0);
+  updateScene();
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=canvas.clientWidth/canvas.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(canvas.clientWidth,canvas.clientHeight);
+});
+})();
 </script>
 </body>
 </html>
