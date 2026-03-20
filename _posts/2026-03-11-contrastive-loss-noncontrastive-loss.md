@@ -206,7 +206,7 @@ $$
 \|\Sigma_T^{\mathrm{CL}}-\Sigma_T^{\mathrm{NS}}\|_F \lesssim \frac{e^{2/\tau}}{\tau C \sqrt{B}} \cdot \exp\left(\frac{1}{2\tau^2 B}\sum_{t=0}^{T-1}\eta_t\right)\cdot \left(\sum_{t=0}^{T-1}\eta_t\right).
 $$
 
-The right-hand side gets smaller when the number of classes is larger, the batch size is larger, the temperature is higher, and the cumulative step size is more moderate. The same regimes that make the loss gap small also keep the representations aligned.
+The right-hand side gets smaller when the number of classes $C$ is larger, the batch size $B$ is larger, the temperature $\tau$ is higher, and the cumulative step size $\sum_{t=0}^{T-1}\eta_t$ is more moderate. The same regimes that make the loss gap small also keep the representations aligned.
 
 This immediately yields lower bounds on CKA and RSA:
 
