@@ -202,7 +202,7 @@ To formalize the argument, the paper proves that the transfer error $\mathcal{L}
 <div class="math-block">
 
 $$
-\mathcal L_{\mathcal D}(f) \;\lesssim\; (k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j) + \frac{k\,\mathcal{C}(f)}{\min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|} \left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{\ell}}\right),
+\mathcal L_{\mathcal D}(f) \;\lesssim\; k\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j) + \frac{k\,\mathcal{C}(f)}{\min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|} \left(\frac{n^2}{\sqrt{m}}+\frac{1}{\sqrt{\ell}}\right),
 $$
 
 </div>
@@ -211,13 +211,13 @@ where $\mathcal{C}(f)$ is some notion of complexity of the pre-trained model $f$
 
 ### What each term means
 
-**The geometric term** $(k-1)\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j)$ is small when the source training classes are tightly clustered relative to their separation. This is the observable signature of good few-shot transfer geometry.
+**The geometric term** $k\,\operatorname{Avg}_{i\neq j} V_f(\tilde S_i,\tilde S_j)$ is small when the source training classes are tightly clustered relative to their separation. This is the observable signature of good few-shot transfer geometry.
 
 **The $1/\sqrt{m}$ term** is the first generalization step. It says that with more samples per source class, the empirical clustering on $\tilde S_i$ better reflects the true geometry of the underlying source-class distributions $\tilde P_i$.
 
 **The $1/\sqrt{\ell}$ term** is the second generalization step. It says that with more source classes, the average geometry seen on the observed source classes better reflects the geometry of the full population of classes $\mathcal D$. This is exactly the term that lets the argument extend to unseen target classes.
 
-**The minimal class-distance term** $\min_{i\neq j}|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)|$ is the minimum pairwise distance between the empirical source class means in feature space. It captures the worst-case separation between classes: the larger this quantity is, the easier it is to distinguish classes by nearest-center classification, and the stronger the transfer guarantee becomes. Under neural collapse, the class means become more uniformly and maximally separated, which makes this term large.
+**The minimal class-distance term** $\min_{i\neq j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|$ is the minimum pairwise distance between the empirical source class means in feature space. It captures the worst-case separation between classes: the larger this quantity is, the easier it is to distinguish classes by nearest-center classification, and the stronger the transfer guarantee becomes. Under neural collapse, the class means become more uniformly and maximally separated, which makes this term large.
 
 So the theorem mirrors the conceptual story: many samples per class let you generalize from training points to the source-class distributions, and many source classes let you generalize from seen classes to unseen classes.
 
