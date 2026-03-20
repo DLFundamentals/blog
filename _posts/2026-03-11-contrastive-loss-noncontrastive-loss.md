@@ -105,6 +105,14 @@ Since NSCL is the supervised bridge, it is natural to ask what its optimal solut
 2. **Within-class collapse:** all samples from the same class share a single representation.
 3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame—a maximally separated, symmetric configuration on the unit sphere.
 
+<div class="interactive-figure">
+  <iframe
+    src="{{ site.baseurl }}/assets/figures/cl-nscl/neural_collapse_3d_visualization.html"
+    title="3D visualization of neural collapse"
+    loading="lazy">
+  </iframe>
+</div>
+
 This is the same geometric structure that arises at the global optima of supervised losses such as cross-entropy and mean squared error, the phenomenon known as **neural collapse**. The fact that NSCL shares these optimal solutions is not a coincidence: it reflects the tight connection between the self-supervised and supervised objectives.
 
 ## Part II: The representations are close
