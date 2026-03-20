@@ -121,10 +121,9 @@ Since NSCL is the supervised bridge, it is natural to ask what its optimal solut
   <div class="embed-wrap">
     <iframe
       src="{{ '/assets/figures/cl-nscl/neural_collapse_3d_visualization.html' | relative_url }}"
-      height="380"
+      height="350"
       loading="lazy"
-      title="3D visualization of neural collapse"
-      style="transform: scale(0.85); transform-origin: top center; height: 440px;">
+      title="3D visualization of neural collapse">
     </iframe>
   </div>
   <div class="figcaption">
