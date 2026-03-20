@@ -200,7 +200,7 @@ So rather than thinking of CL as a completely different form of learning that my
   <p style="margin-bottom: 1rem;">Contrastive learning is more supervised than it looks. This appears in three layers:</p>
   <ol>
     <li><strong>The losses are close.</strong> The standard self-supervised contrastive loss approximates the NSCL loss, with a gap that shrinks as $O(1/C)$.</li>
-    <li><strong>The geometry is the same.</strong> NSCL minimizers exhibit the same simplex ETF structure as supervised losses: augmentation collapse, within-class collapse, and maximally separated class centers.</li>
+    <li><strong>Elegant geometry.</strong> NSCL minimizers exhibit the same simplex ETF structure as supervised losses: augmentation collapse, within-class collapse, and maximally separated class centers.</li>
     <li><strong>The representations stay aligned.</strong> Under shared training randomness, the learned representations of CL and NSCL remain closely aligned, even as their parameters diverge.</li>
   </ol>
   <p style="margin-top: 1rem; margin-bottom: 0;">The semantic behavior of self-supervised contrastive learning is not as mysterious as it first seems. The objective is already close to supervised learning, its optimal geometry matches supervised learning, and the learned representations track supervised learning throughout training.</p>
