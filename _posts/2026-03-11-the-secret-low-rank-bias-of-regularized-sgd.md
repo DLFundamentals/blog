@@ -13,19 +13,17 @@ tags:
 excerpt: "Why mini-batch SGD with weight decay naturally pushes neural networks toward low-rank structure."
 ---
 
-*This post is based on: T. Galanti, Z. Siegel, A. Gupte, T. Poggio. "SGD and Weight Decay Secretly Minimize the Rank of Your Neural Network", CPAL 2025.*
+*This post is based on: T. Galanti, Z. Siegel, A. Gupte, T. Poggio. ["SGD and Weight Decay Secretly Minimize the Rank of Your Neural Network"](https://arxiv.org/abs/2404.09610), CPAL 2025.*
 
-Deep networks are heavily overparameterized, yet the solutions found in practice are far from arbitrary. Even when many parameter settings can fit the training data, stochastic gradient methods often converge to highly structured models.
+---
 
-One particularly striking form of structure is **low rank**.
+Deep networks are heavily overparameterized, yet the solutions found in practice are far from arbitrary. Even when many parameter settings can fit the training data, stochastic gradient methods often converge to highly structured models. One particularly striking form of structure is **low rank**: across many architectures, trained weight matrices are far more compressible than their ambient dimension would suggest.
 
-Across many architectures, trained weight matrices are far more compressible than their ambient dimension would suggest. This appears in pruning, distillation, and post-hoc low-rank approximations of trained networks. Empirically, low-rank structure is everywhere. But why should training produce it in the first place?
-
-Much of the existing theory explains low-rank behavior only in cleaner settings than modern practice: linear models, highly specialized losses, exact symmetries, or global optimality arguments. What is still missing is a simple structural explanation for the regime practitioners actually use every day:
+Much of the existing theory explains low-rank behavior only in cleaner settings than modern practice: linear models, specialized losses, exact symmetries, or global optimality arguments. What is missing is a structural explanation for the regime practitioners actually use:
 
 **mini-batch SGD with weight decay.**
 
-The main message of this post is the following:
+The main message of this post is:
 
 > <span style="color:#1e6bd6; font-weight:600;">
 > Mini-batch SGD with weight decay creates a strong pressure toward low-rank layers. This pressure becomes stronger with smaller batch size, larger learning rate, and stronger weight decay.
@@ -65,31 +63,33 @@ The main message of this post is the following:
 
 <br>
 
-The mechanism is simple:
+The mechanism has three parts, each developed in a section below:
 
-1. each stochastic gradient step writes only a low-rank update,
-2. weight decay prevents the layer from retaining too much of the distant past,
-3. so the current weight matrix is dominated by a relatively short history of low-rank corrections.
+1. **Each stochastic gradient is low rank** — a single-example gradient is rank 1, so a mini-batch gradient has rank at most $B$.
+2. **Weight decay limits memory** — it exponentially suppresses old updates, so only a short window of past gradients contributes to the current weight matrix.
+3. **The combination produces low-rank layers** — the current matrix is dominated by a short history of low-rank corrections, yielding an effective rank of roughly $B / (\mu\lambda)$.
 
 <div style="text-align:center; margin: 2rem 0;">
   <img src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_mechanism.png' | relative_url }}" style="width:100%; max-width:950px;">
 </div>
 
-That is the core mechanism. The rest of the post just makes it precise.
+<div style="margin-top: 0.5rem; font-size: 1.02rem; line-height: 1.5; text-align: left;">
+  <strong>Figure 2.</strong>
+  <strong>The low-rank mechanism.</strong>
+  Each mini-batch gradient $G_t$ has rank $\le B$. Weight decay exponentially suppresses older updates (fading blocks). The current matrix $W_T$ is dominated by a short effective memory window of recent low-rank corrections.
+</div>
 
-## A local view of one layer
+## Part I: Stochastic gradients are low rank
 
-To isolate the idea, fix all parameters except one trainable matrix $W$. Locally around that layer, the network can be written as
+### A local view of one layer
+
+Fix all parameters except one trainable matrix $W$. Locally around that layer, the network can be written as
 
 $$
-h_W(x) = g(Wf(x)).
+h_W(x) = g(Wf(x)),
 $$
 
-Here, $f(x)$ is the representation entering the layer, $W$ is the matrix we want to study, and $g$ collects everything that happens afterward.
-
-This is the simplest setting, and it already reveals the essential phenomenon. Later we will return to shared operators such as convolutions and attention, where the same matrix is reused multiple times within a single example.
-
-We train with the regularized empirical loss
+where $f(x)$ is the representation entering the layer and $g$ collects everything afterward. We train with the regularized loss
 
 $$
 L_S^\lambda(W) = \frac{1}{m}\sum_{i=1}^m \ell_i(h_W(x_i)) + \lambda \|W\|_F^2.
@@ -98,250 +98,99 @@ $$
 Under mini-batch SGD with weight decay, the update is
 
 $$
-W_{t+1} = W_t - \mu \nabla_W L_{\tilde S_t}(W_t) - 2\mu\lambda W_t,
-$$
-
-where $\mu$ is the learning rate, $\lambda$ is the weight decay coefficient, and $\tilde S_t$ is the mini-batch at step $t$.
-
-Equivalently,
-
-$$
 W_{t+1} = (1 - 2\mu\lambda)W_t - \mu G_t,
 $$
 
-where
+where $G_t := \nabla_W L_{\tilde S_t}(W_t)$ is the mini-batch gradient. The previous matrix is shrunk by $1 - 2\mu\lambda$, and a fresh stochastic gradient is added. So the key question is: **what kind of matrix is $G_t$?**
+
+### One example gives a rank-1 gradient
+
+For a single training example $x$, the chain rule gives
 
 $$
-G_t := \nabla_W L_{\tilde S_t}(W_t).
+\nabla_W \ell(h_W(x)) = \delta(x) f(x)^\top,
 $$
 
-This already points to the answer. The previous weight matrix is shrunk by the factor $1 - 2\mu\lambda$, and then a fresh stochastic gradient is added. So the key question becomes:
-
-> **What kind of matrix is $G_t$?**
-
-## One example gives a rank-1 gradient
-
-Consider a single training example $x$. Since
-
-$$
-h_W(x) = g(Wf(x)),
-$$
-
-the chain rule gives
-
-$$
-\nabla_W \ell(h_W(x)) = \Big(J_g(Wf(x))^\top \nabla_h \ell(h_W(x))\Big) f(x)^\top.
-$$
-
-Define
-
-$$
-\delta(x) := J_g(Wf(x))^\top \nabla_h \ell(h_W(x)).
-$$
-
-Then
-
-$$
-\nabla_W \ell(h_W(x)) = \delta(x) f(x)^\top.
-$$
-
-This is an outer product of two vectors. Therefore,
+where $\delta(x) := J_g(Wf(x))^\top \nabla_h \ell(h_W(x))$. This is an outer product of two vectors, so
 
 $$
 \operatorname{rank}\big(\nabla_W \ell(h_W(x))\big) \le 1.
 $$
 
-So for a layer that is used once along the computation path, the gradient contributed by a single example is rank $1$.
+A single-example gradient is not an arbitrary full-rank matrix. It has the simplest possible form: one left direction times one right direction.
 
-This is the key structural fact. A single-example gradient is not an arbitrary full-rank matrix. It has the simplest possible form: one left direction times one right direction.
+### A mini-batch gives a rank-$B$ update
 
-## A mini-batch still gives a low-rank update
-
-Now let the mini-batch size be $B$. The stochastic gradient is the average of $B$ single-example gradients:
+The mini-batch gradient is the average of $B$ rank-1 terms:
 
 $$
-G_t = \frac{1}{B}\sum_{i=1}^B \delta_i f_i^\top.
+G_t = \frac{1}{B}\sum_{i=1}^B \delta_i f_i^\top, \qquad \operatorname{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, B).
 $$
 
-Since each term has rank at most $1$, we get
+So every SGD step writes only a low-rank correction. Smaller batch sizes make this restriction stronger; larger batch sizes relax it.
+
+But low-rank updates alone are not enough. If we accumulated them forever with no forgetting, their sum could become high rank. The second ingredient is weight decay.
+
+## Part II: Weight decay limits memory
+
+Unrolling the recursion $W_{t+1} = (1 - 2\mu\lambda)W_t - \mu G_t$ for $n$ steps gives the identity at the heart of the argument:
 
 $$
-\operatorname{rank}(G_t) \le B.
+W_T = \underbrace{(1 - 2\mu\lambda)^n W_{T-n}}_{\text{decayed past}} - \mu \underbrace{\sum_{j=1}^n (1 - 2\mu\lambda)^{j-1} G_{T-j}}_{\text{recent low-rank updates}}.
 $$
 
-More precisely, if $W \in \mathbb{R}^{d_{\mathrm{out}} \times d_{\mathrm{in}}}$, then
-
-$$
-\operatorname{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, B).
-$$
-
-So every SGD step writes only a low-rank correction.
-
-This already explains why mini-batch SGD is special. It does not update a layer with an arbitrary matrix. At each step, it can only write a small number of directions. Smaller batch sizes make this restriction stronger, while larger batch sizes relax it.
-
-But this is only half of the story. If we kept accumulating low-rank updates forever with no forgetting, their sum could still become high rank. The second half of the mechanism is weight decay.
-
-## Weight decay limits memory
-
-Return to the recursion
-
-$$
-W_{t+1} = (1 - 2\mu\lambda)W_t - \mu G_t.
-$$
-
-Unrolling it for $n$ steps gives
-
-$$
-W_T = (1 - 2\mu\lambda)^n W_{T-n} - \mu \sum_{j=1}^n (1 - 2\mu\lambda)^{j-1} G_{T-j}.
-$$
-
-This identity is the heart of the argument.
-
-It shows that the current matrix $W_T$ is made of two pieces:
-
-1. a decayed memory of the distant past,
-2. a weighted sum of recent stochastic gradients.
-
-The first term,
-
-$$
-(1 - 2\mu\lambda)^n W_{T-n},
-$$
-
-shrinks exponentially in $n$. So if we look far enough into the past, its contribution becomes negligible.
-
-The second term is a sum of recent mini-batch gradients, each of which is low rank.
-
-So after enough training, the current matrix is well approximated by a weighted sum of only **recent low-rank updates**.
-
-That is the mechanism.
-
-Another way to say it is:
+The first term shrinks exponentially in $n$. The second is a weighted sum of recent mini-batch gradients, each of rank at most $B$. So after enough training, the current matrix is well approximated by a **short moving memory of low-rank corrections**. That is the mechanism:
 
 - SGD writes only a few directions per step,
 - weight decay prevents too many old directions from remaining active,
-- so the layer behaves like a short moving memory of low-rank corrections.
+- so the layer behaves like a sliding window of low-rank updates.
 
-## A simple effective-rank heuristic
+### A simple effective-rank heuristic
 
-The previous identity suggests a crude but useful effective-rank estimate.
-
-Choose $n$ so that the old-memory term is at most an $\varepsilon$-fraction of the current matrix:
-
-$$
-\|(1 - 2\mu\lambda)^n W_{T-n}\| \le \varepsilon \|W_T\|.
-$$
-
-Since $(1 - 2\mu\lambda)^n \approx e^{-2\mu\lambda n}$, this happens for $n \approx \frac{\log(1/\varepsilon)}{\mu\lambda}$.
-
-Now the recent-history term is a sum of $n$ gradients, each with rank at most $B$. Therefore its rank is at most $nB$. This suggests the heuristic bound
+Choose $n$ so the old-memory term is negligible: $(1-2\mu\lambda)^n \approx e^{-2\mu\lambda n} \le \varepsilon$, giving $n \approx \frac{\log(1/\varepsilon)}{\mu\lambda}$. The recent term is a sum of $n$ gradients of rank at most $B$, so
 
 $$
 \operatorname{rank}_\varepsilon(W_T) \lesssim \frac{B \log(1/\varepsilon)}{\mu\lambda}.
 $$
 
-Here $\operatorname{rank}_\varepsilon(A)$ denotes the minimum rank of a matrix that approximates $\frac{A}{\|A\|}$ up to error $\varepsilon$.
+This bound captures the right qualitative dependencies: smaller batch size, larger learning rate, or larger weight decay all shorten the effective memory and produce lower effective rank. These trends should be interpreted within a regime where training remains stable.
 
-This bound is not meant to be sharp. Its value is conceptual. It captures the right qualitative dependencies:
+## Part III: Shared operators
 
-- smaller batch size $\Rightarrow$ lower effective rank,
-- larger learning rate $\Rightarrow$ shorter memory $\Rightarrow$ lower effective rank,
-- larger weight decay $\Rightarrow$ shorter memory $\Rightarrow$ lower effective rank.
-
-These trends should be interpreted within a regime where training remains stable and achieves comparable optimization quality.
-
-## Why this local decomposition is natural
-
-The representation
+The rank-1 statement changes when the same matrix $W$ is reused multiple times within a single example. This happens in convolutions (same kernel at many spatial locations), self-attention projections ($W_Q$, $W_K$, $W_V$ applied to many tokens), and any shared linear operator. In that case,
 
 $$
-h_W(x) = g(Wf(x))
+h_W(x) = g(Wf_1(x), \dots, Wf_R(x)),
 $$
 
-may look specialized at first, but it is the natural local view of a broad family of layers.
-
-The idea is simple: fix all parameters except one matrix $W$, and isolate the place in the computation where that matrix acts. Then $f(x)$ is whatever enters that linear map, $Wf(x)$ is its output, and everything after that can be absorbed into a downstream function.
-
-For a standard fully connected layer, this is immediate.
-
-For a residual block, the same local picture still applies. Even if the full block includes a skip connection, the dependence on $W$ still enters through the term $Wf(x)$. For a fixed example $x$, the gradient with respect to $W$ therefore has the same outer-product structure.
-
-So the one-use model is not an artificial simplification. It is the basic local geometry of backpropagation through a single matrix.
-
-## Shared operators: convolutions and attention
-
-The rank-$1$ statement changes only when the same matrix $W$ is reused multiple times within a single example.
-
-This happens in several important settings:
-
-- convolutions, where the same kernel is applied at many spatial locations,
-- self-attention projections ($W_Q$, $W_K$, and $W_V$), where the same matrix is applied to many tokens,
-- more generally, any shared linear operator.
-
-In that case, the right local description is
+and the chain rule gives
 
 $$
-h_W(x) = g(Wf_1(x), \dots, Wf_{R}(x)).
+\nabla_W \ell(h_W(x)) = \sum_{r=1}^R \delta_r(x) f_r(x)^\top, \qquad \operatorname{rank}\big(\nabla_W \ell(h_W(x))\big) \le R.
 $$
 
-The chain rule then gives
+For a mini-batch, $\operatorname{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, BR)$. The rest of the argument is unchanged: weight decay still exponentially suppresses old updates, so the current matrix remains close to a weighted sum of recent low-rank gradients. The one-use setting $R = 1$ is simply the cleanest case.
 
-$$
-\nabla_W \ell(h_W(x)) = \sum_{r=1}^R \delta_r(x) f_r(x)^\top.
-$$
+### Why the local view is natural
 
-Therefore,
+The representation $h_W(x) = g(Wf(x))$ is not an artificial simplification. It is the natural local view of any layer: fix all other parameters, isolate the place where $W$ acts, and absorb everything before it into $f$ and everything after it into $g$. For fully connected layers this is immediate. For residual blocks, the dependence on $W$ still enters through $Wf(x)$, so the outer-product structure of the gradient is preserved.
 
-$$
-\operatorname{rank}\big(\nabla_W \ell(h_W(x))\big) \le R.
-$$
+## What this does and does not say
 
-So a single-example gradient is no longer necessarily rank $1$, but it is still low rank. Its rank is controlled by the number of times that $W$ is used within that example.
+This argument does **not** imply that every trained layer must be exactly low rank. It does not bypass the influence of architecture, normalization, or data geometry.
 
-For a mini-batch of size $B$, this becomes
+What it *does* give is a broad structural reason that low-rank behavior should often appear in practice. Low rank is not an accident, and it is not merely a pattern discovered afterward by compression—it is built into the model during training by the interaction of stochastic gradients and weight decay.
 
-$$
-\operatorname{rank}(G_t) \le BR,
-$$
-
-or more precisely,
-
-$$
-\operatorname{rank}(G_t) \le \min(d_{\mathrm{out}}, d_{\mathrm{in}}, BR).
-$$
-
-The rest of the argument is unchanged. Weight decay still exponentially suppresses old updates, so the current matrix remains close to a weighted sum of only recent low-rank gradients.
-
-The one-use setting $R = 1$ is simply the cleanest case.
-
-## What this explanation does and does not say
-
-It is worth being clear about what has and has not been shown.
-
-This argument does **not** imply that every trained layer must be exactly low rank. It is not a universal convergence theorem, and it does not bypass the influence of architecture, normalization, data geometry, or other aspects of optimization.
-
-What it *does* give is a broad structural reason that low-rank behavior should often appear in practice:
-
-- SGD writes low-rank updates,
-- weight decay gives the layer only finite effective memory,
-- so the current matrix is governed primarily by a short window of low-rank corrections.
-
-Seen this way, low rank is not an accident, and it is not merely a pattern discovered afterward by compression. It is often already being built into the model during training.
-
-This perspective also clarifies why post-training low-rank compression is so effective: in many cases, it is not inventing structure, but extracting structure that the training dynamics had already encouraged.
+This also clarifies why **post-training low-rank compression** is so effective: in many cases, it is not inventing structure but extracting structure that the training dynamics had already encouraged.
 
 ## Takeaway
 
-SGD with weight decay does more than optimize the loss. It quietly pushes layers toward low-rank structure.
+SGD with weight decay does more than optimize the loss. It quietly pushes layers toward low-rank structure. The mechanism operates in three parts:
 
-The mechanism is simple and very general:
+1. **Low-rank updates.** Each stochastic gradient is low rank—rank 1 per example, rank $B$ per mini-batch, rank $BR$ for shared operators.
 
-1. each stochastic gradient is low rank,
-2. weight decay exponentially forgets old updates,
-3. so the current weight matrix is dominated by a short history of low-rank corrections.
+2. **Finite memory.** Weight decay exponentially forgets old updates, limiting the effective memory to roughly $1/(\mu\lambda)$ steps.
 
-For layers used once per example, a single-example gradient is rank $1$.
+3. **Low-rank layers.** The current weight matrix is dominated by a short history of low-rank corrections, yielding an effective rank of roughly $B\log(1/\varepsilon)/(\mu\lambda)$.
 
-For shared operators such as convolutions and attention projections, the same idea still holds, with the rank controlled by the number of local uses of the matrix.
-
-So low-rank structure in trained neural networks is not just an empirical curiosity. It is a natural consequence of how SGD with weight decay writes and forgets directions over time.
+Low-rank structure in trained neural networks is not just an empirical curiosity. It is a natural consequence of how SGD with weight decay writes and forgets directions over time.
