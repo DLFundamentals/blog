@@ -58,7 +58,7 @@ So source and target classes are different, but they come from the same underlyi
 <div class="col-wide">
   <div class="embed-wrap">
     <iframe
-      src="{{ '/assets/figures/pretrained-classifiers/fewshot_sampling_process.html' | relative_url }}"
+      src="{{ '/assets/figures/pretrained-classifiers/sampling_process.html' | relative_url }}"
       height="440"
       loading="lazy"
       title="Class sampling process">
