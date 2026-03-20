@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Theory/Simplified
+title: ""
 ---
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
