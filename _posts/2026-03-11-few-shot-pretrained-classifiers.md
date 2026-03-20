@@ -37,36 +37,36 @@ The explanation has three parts, each developed in a section below:
 .task-block {
   margin: 2rem 0;
 }
+
 .task-title {
   font-weight: 700;
   font-size: 1.05rem;
   margin: 1.2rem 0 0.6rem 0;
 }
-.task-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 1.2rem;
+
+.task-full-figure {
+  margin: 0 0 1.6rem 0;
 }
-.task-grid figure {
-  margin: 0;
-  text-align: center;
-}
-.task-grid img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 10px;
+
+.task-full-figure img {
   display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
 }
-.task-grid figcaption {
+
+.task-full-figure figcaption {
   margin-top: 0.45rem;
   font-size: 0.95rem;
   color: #555;
+  text-align: center;
 }
+
 @media (max-width: 700px) {
-  .task-grid {
-    grid-template-columns: 1fr;
+  .task-full-figure img {
+    max-width: 100%;
   }
 }
 </style>
@@ -81,18 +81,14 @@ There is an unknown distribution $\mathcal D$ over a collection $\mathcal E$ of 
 
 <div class="task-block">
   <div class="task-title">Source task</div>
-  <div class="task-grid">
-    <figure>
-      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/source_classes.png" alt="Source classes">
-    </figure>
-  </div>
+  <figure class="task-full-figure">
+    <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/source_classes.png" alt="Source classes">
+  </figure>
 
   <div class="task-title">Target task</div>
-  <div class="task-grid">
-    <figure>
-      <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/target_classes.png" alt="Target classes">
-    </figure>
-  </div>
+  <figure class="task-full-figure">
+    <img src="{{ site.baseurl }}/assets/figures/pretrained-classifiers/target_classes.png" alt="Target classes">
+  </figure>
 </div>
 
 This captures the intended use of pretrained representations: we train on many source classes that are representative of a broader population, then ask whether the learned features transfer to new classes drawn from that same population.
