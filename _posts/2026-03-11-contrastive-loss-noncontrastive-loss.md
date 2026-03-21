@@ -322,9 +322,11 @@ $$
 
 where $\rho_T$ and $r_T$ are normalized versions of the similarity-matrix discrepancy.
 
+<div class="col" markdown="1">
+
 ### Empirical confirmation: RSA and CKA are consistently high
 
-The theoretical bounds predict that representation geometry should remain aligned even as parameters diverge. To test this directly, we train DCL and NSCL models under exactly matched conditions — same initialization, same mini-batches, same augmentations, same hyperparameters — for 300 epochs, then measure CKA and RSA between the two learned representations. A score of 1.0 would mean identical geometry; 0 would mean no alignment.
+The theoretical bounds predict that representation geometry should remain aligned even as parameters diverge. To test this directly, we train DCL and NSCL models under exactly matched conditions - same initialization, same mini-batches, same augmentations, and same hyperparameters - for 300 epochs, then measure CKA and RSA between the two learned representations. A score of 1.0 would mean identical geometry; 0 would mean no alignment.
 
 </div>
 
@@ -342,11 +344,13 @@ The theoretical bounds predict that representation geometry should remain aligne
   </div>
 </div>
 
-<div class="col">
+<div class="col" markdown="1">
 
-Across all three datasets and both architectures, RSA and CKA exceed 0.81 — and for CIFAR-100, all four measurements hit 0.91. Two patterns stand out. First, alignment is strongest when the number of classes is largest (CIFAR-100 and mini-ImageNet), which is exactly what the theory predicts: more classes means a smaller loss gap, which means the optimization trajectories stay closer, which means the learned geometry remains more aligned. Second, the scores are nearly identical across ResNet-50 and ViT-Base, confirming that the DCL-NSCL duality is not an artifact of a particular architecture.
+Across all three datasets and both architectures, RSA and CKA exceed 0.81, and for CIFAR-100, all four measurements reach 0.91. Two patterns stand out. First, alignment is strongest when the number of classes is largest, as in CIFAR-100 and mini-ImageNet. This is exactly what the theory predicts: more classes means a smaller loss gap, which in turn keeps the optimization trajectories closer and the learned geometry more aligned. Second, the scores are nearly identical across ResNet-50 and ViT-Base, confirming that the DCL-NSCL duality is not an artifact of a particular architecture.
 
-These numbers should be read against the theoretical prediction. The bound on representation divergence scales as $1/(\tau C \sqrt{B})$ — so with $C = 100$ classes and batch size $B = 1024$, the predicted divergence is small, and the empirical alignment is correspondingly high. The fact that CKA and RSA both stay above 0.8 even for CIFAR-10 ($C = 10$) suggests that the bound, while not tight, captures the right qualitative dependence.
+These numbers should be read alongside the theoretical prediction. The bound on representation divergence scales as $1/(\tau C \sqrt{B})$, so with $C = 100$ classes and batch size $B = 1024$, the predicted divergence is small and the empirical alignment is correspondingly high. The fact that CKA and RSA both stay above 0.8 even for CIFAR-10 ($C = 10$) suggests that the bound, while not tight, captures the correct qualitative dependence.
+
+</div>
 
 ### But weights can still diverge
 
