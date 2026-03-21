@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#fff; color:#1a1a1a; padding:20px; }
+@media (prefers-color-scheme:dark) { body { background:#1a1a1a; color:#e0e0e0; } }
+.tabs { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
+.tab { padding:6px 14px; border:1px solid #ddd; border-radius:6px; background:transparent; font-size:12px; cursor:pointer; transition:all .15s; color:inherit; }
+.tab:hover { background:rgba(0,0,0,.05); }
+.tab.active { background:#1e6bd6; color:#fff; border-color:#1e6bd6; }
+@media (prefers-color-scheme:dark) { .tab { border-color:#444; } .tab:hover { background:rgba(255,255,255,.08); } }
+.chart-area { position:relative; width:100%; height:320px; }
+canvas { width:100%!important; height:100%!important; }
+.caption { font-size:12px; color:#666; margin-top:10px; line-height:1.5; }
+@media (prefers-color-scheme:dark) { .caption { color:#999; } }
+h3 { font-size:16px; font-weight:600; margin-bottom:4px; }
+.sub { font-size:13px; color:#666; margin-bottom:12px; }
+@media (prefers-color-scheme:dark) { .sub { color:#999; } }
+</style>
+</head>
+<body>
+<h3>Length generalization: train at n=10, test at n=10…100</h3>
+<p class="sub">All methods trained on 200 examples at input length 10. LLM-PV synthesizes programs that work at <em>any</em> length.</p>
+<div class="tabs" id="tabs"></div>
+<div class="chart-area"><canvas id="chart"></canvas></div>
+<p class="caption" id="caption"></p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme:dark)').matches;
+const gridColor = isDark ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.06)';
+const txtColor = isDark ? '#aaa' : '#666';
+
+const datasets = {
+  "IsPalindrome": {
+    sgd: [98.2,54.8,46.9,50.2,49.9,50.0],
+    ft: [52.4,52.1,51.3,51.1,50.2,49.7],
+    pv: [100,100,49.2,70.3,69.7,69.6],
+    caption: "SGD fits perfectly at n=10 but collapses to chance for longer inputs. LLM-PV partially generalizes — its synthesized program handles some but not all lengths perfectly."
+  },
+  "Pattern matching": {
+    sgd: [98.6,55.7,52.5,51.3,50.2,50.0],
+    ft: [69.4,69.4,66.1,66.2,65.7,57.2],
+    pv: [100,100,100,100,100,100],
+    caption: "LLM-PV synthesizes a dimension-invariant program (a simple loop checking for the motif), achieving 100% at every length. SGD memorizes the training distribution and fails as n grows."
+  },
+  "Random 3-parity": {
+    sgd: [58.4,55.2,53.9,53.1,50.8,50.2],
+    ft: [50.9,50.9,50.7,53.3,51.0,51.0],
+    pv: [100,100,100,100,100,100],
+    caption: "The XOR rule over 3 specific bits is length-invariant. LLM-PV discovers exactly this rule and generalizes perfectly. SGD never escapes chance-level performance beyond n=10."
+  }
+};
+const lengths = [10,20,25,30,50,100];
+
+const tabContainer = document.getElementById('tabs');
+let chart = null;
+
+function renderChart(key) {
+  const d = datasets[key];
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.key===key));
+  document.getElementById('caption').textContent = d.caption;
+  if (chart) chart.destroy();
+  chart = new Chart(document.getElementById('chart'), {
+    type:'line',
+    data: {
+      labels: lengths.map(l=>'n='+l),
+      datasets: [
+        { label:'LLM-PV', data:d.pv, borderColor:'#0ea553', backgroundColor:'rgba(14,165,83,.12)', fill:true, borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#0ea553', tension:.3 },
+        { label:'SGD (best 1B)', data:d.sgd, borderColor:'#e6a117', backgroundColor:'transparent', borderWidth:2, pointRadius:4, pointBackgroundColor:'#e6a117', borderDash:[6,3], tension:.3 },
+        { label:'Fine-tune (best)', data:d.ft, borderColor:'#ec4899', backgroundColor:'transparent', borderWidth:2, pointRadius:4, pointBackgroundColor:'#ec4899', borderDash:[3,3], tension:.3 },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      animation:{ duration:600, easing:'easeOutCubic' },
+      plugins: {
+        legend:{ display:true, position:'top', labels:{ font:{size:11}, color:txtColor, usePointStyle:true, pointStyle:'circle', padding:14 } },
+        tooltip:{ backgroundColor:isDark?'#333':'#fff', titleColor:isDark?'#eee':'#111', bodyColor:isDark?'#ccc':'#333', borderColor:isDark?'#555':'#ddd', borderWidth:1, cornerRadius:6, padding:10, bodyFont:{size:12} }
+      },
+      scales: {
+        y:{ min:40, max:105, grid:{color:gridColor}, ticks:{color:txtColor, font:{size:11}, callback:v=>v+'%'}, title:{display:false} },
+        x:{ grid:{color:gridColor}, ticks:{color:txtColor, font:{size:11}} }
+      }
+    }
+  });
+}
+
+Object.keys(datasets).forEach((key,i) => {
+  const btn = document.createElement('button');
+  btn.className = 'tab' + (i===0?' active':'');
+  btn.textContent = key;
+  btn.dataset.key = key;
+  btn.onclick = () => renderChart(key);
+  tabContainer.appendChild(btn);
+});
+renderChart(Object.keys(datasets)[0]);
+</script>
+</body>
+</html>
