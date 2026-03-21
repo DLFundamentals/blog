@@ -13,6 +13,13 @@ tags:
 excerpt: "Contrastive learning is often much closer to supervised contrastive learning than it first appears, both at the level of the objective and at the level of the learned representation geometry."
 ---
 
+<style>
+.figure + .col,
+.col-wide + .col {
+  margin-top: 0.85rem;
+}
+</style>
+
 <div class="col" markdown="1">
 
 *This post is based on two papers:*
@@ -346,8 +353,6 @@ The theoretical bounds predict that representation geometry should remain aligne
 </div>
 
 <div class="col" markdown="1">
-
-<br>
 
 Across all three datasets and both architectures, RSA and CKA exceed 0.81, and for CIFAR-100, all four measurements reach 0.91. Two patterns stand out. First, alignment is strongest when the number of classes is largest, as in CIFAR-100 and mini-ImageNet. This is exactly what the theory predicts: more classes means a smaller loss gap, which in turn keeps the optimization trajectories closer and the learned geometry more aligned. Second, the scores are nearly identical across ResNet-50 and ViT-Base, confirming that the DCL-NSCL duality is not an artifact of a particular architecture.
 
