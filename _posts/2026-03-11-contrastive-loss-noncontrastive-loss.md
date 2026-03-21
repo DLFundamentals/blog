@@ -322,6 +322,32 @@ $$
 
 where $\rho_T$ and $r_T$ are normalized versions of the similarity-matrix discrepancy.
 
+### Empirical confirmation: RSA and CKA are consistently high
+
+The theoretical bounds predict that representation geometry should remain aligned even as parameters diverge. To test this directly, we train DCL and NSCL models under exactly matched conditions — same initialization, same mini-batches, same augmentations, same hyperparameters — for 300 epochs, then measure CKA and RSA between the two learned representations. A score of 1.0 would mean identical geometry; 0 would mean no alignment.
+
+</div>
+
+<div class="col-wide">
+  <div class="embed-wrap">
+    <iframe
+      src="{{ '/assets/figures/cl-nscl/rsa_cka_alignment.html' | relative_url }}"
+      height="220"
+      loading="lazy"
+      title="RSA and CKA alignment between DCL and NSCL">
+    </iframe>
+  </div>
+  <div class="figcaption">
+    <strong>Figure 8.</strong> Representation similarity between DCL and NSCL models trained with matched initialization and mini-batch order. RSA and CKA values are consistently above 0.81 across all datasets and both architectures, confirming near-identical representation geometry despite training with different objectives.
+  </div>
+</div>
+
+<div class="col">
+
+Across all three datasets and both architectures, RSA and CKA exceed 0.81 — and for CIFAR-100, all four measurements hit 0.91. Two patterns stand out. First, alignment is strongest when the number of classes is largest (CIFAR-100 and mini-ImageNet), which is exactly what the theory predicts: more classes means a smaller loss gap, which means the optimization trajectories stay closer, which means the learned geometry remains more aligned. Second, the scores are nearly identical across ResNet-50 and ViT-Base, confirming that the DCL-NSCL duality is not an artifact of a particular architecture.
+
+These numbers should be read against the theoretical prediction. The bound on representation divergence scales as $1/(\tau C \sqrt{B})$ — so with $C = 100$ classes and batch size $B = 1024$, the predicted divergence is small, and the empirical alignment is correspondingly high. The fact that CKA and RSA both stay above 0.8 even for CIFAR-10 ($C = 10$) suggests that the bound, while not tight, captures the right qualitative dependence.
+
 ### But weights can still diverge
 
 In contrast, parameter-space coupling is far less stable. A typical bound on parameter divergence takes the form
