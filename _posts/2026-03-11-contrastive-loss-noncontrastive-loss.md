@@ -35,6 +35,9 @@ In this post, we argue that contrastive learning is much closer to supervised co
   <p style="margin: 1rem 0 0 0;">
     2. Under shared training randomness, the learned representations of the two methods remain closely aligned throughout training, even as their parameters diverge.
   </p>
+  <p style="margin: 0;">
+    3. Minimizing the supervised variant leads to complete neural collapse at global optimum.
+  </p>
 </div>
 
 </div>
