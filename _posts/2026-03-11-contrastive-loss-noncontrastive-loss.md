@@ -100,7 +100,7 @@ In this post, we argue that contrastive learning is much closer to supervised co
   </div>
 
   <div class="figcaption">
-    <strong>Figure 1.</strong> UMAP visualizations on mini-ImageNet across training. <strong>Top row:</strong> DCL (self-supervised) progressively forms semantic clusters without ever seeing labels. <strong>Bottom row:</strong> NSCL (supervised) yields tighter, more separable clusters, despite not explicitly pulling same-class samples together. Both start from the same random initialization. The resemblance between the two rows — especially by epoch 1000 — is the central observation of this post.
+    <strong>Figure 1.</strong> UMAP visualizations on mini-ImageNet across training. <strong>Top row:</strong> DCL (self-supervised) progressively forms semantic clusters without ever seeing labels. <strong>Bottom row:</strong> NSCL (supervised) yields tighter, more separable clusters, despite not explicitly pulling same-class samples together. Both start from the same random initialization. The resemblance between the two rows is a key mystery in self-supervised learning.
   </div>
 </div>
 
