@@ -35,7 +35,7 @@ In this post, we argue that contrastive learning is much closer to supervised co
   </p>
 </div>
 
-<div class="figure col-wide">
+<!-- <div class="figure col-wide">
   <div class="figure-grid" style="grid-template-columns: repeat(3, 1fr);">
     <div class="figure-grid-item">
       <img src="{{ '/assets/figures/cl-nscl/weight_space_angle.png' | relative_url }}" alt="Weight space alignment">
@@ -53,7 +53,7 @@ In this post, we argue that contrastive learning is much closer to supervised co
   <div class="figcaption">
     <strong>Figure 1.</strong> CL and NSCL can separate in weight space while remaining closely aligned in representation space. The objectives are related, the learned geometry stays similar, but the parameter trajectories need not coincide.
   </div>
-</div>
+</div> -->
 
 <hr class="section-rule">
 
