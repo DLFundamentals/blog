@@ -13,7 +13,7 @@ tags:
 excerpt: "Contrastive learning is often much closer to supervised contrastive learning than it first appears, both at the level of the objective and at the level of the learned representation geometry."
 ---
 
-<div class="col">
+<div class="col" markdown="1">
 
 *This post is based on two papers:*
 
@@ -40,27 +40,71 @@ In this post, we argue that contrastive learning is much closer to supervised co
 </div>
 
 <!-- UMAP visualizations: DCL vs NSCL clustering -->
+<!-- UMAP progression: DCL vs NSCL across training epochs -->
 <div class="figure col-wide">
-  <div class="figure-grid" style="grid-template-columns: repeat(3, 1fr);">
+
+  <div style="font-family:var(--font-ui,'DM Sans',sans-serif);font-size:0.78rem;color:#6b7280;margin-bottom:0.3rem;padding-left:0.2rem"><strong>DCL</strong> (self-supervised)</div>
+  <div class="figure-grid" style="grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 0.6rem;">
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_cifar10_random.png' | relative_url }}" alt="Random initialization">
-      <div class="label"><strong>(a)</strong> Initialization</div>
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_random.png' | relative_url }}" alt="Random init">
+      <div class="label">Init</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_cifar10_dcl.png' | relative_url }}" alt="DCL trained">
-      <div class="label"><strong>(b)</strong> DCL (self-supervised)</div>
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch10.png' | relative_url }}" alt="DCL epoch 10">
+      <div class="label">Epoch 10</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_cifar10_nscl.png' | relative_url }}" alt="NSCL trained">
-      <div class="label"><strong>(c)</strong> NSCL (supervised)</div>
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch100.png' | relative_url }}" alt="DCL epoch 100">
+      <div class="label">Epoch 100</div>
+    </div>
+    <div class="figure-grid-item">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch500.png' | relative_url }}" alt="DCL epoch 500">
+      <div class="label">Epoch 500</div>
+    </div>
+    <div class="figure-grid-item">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1000.png' | relative_url }}" alt="DCL epoch 1000">
+      <div class="label">Epoch 1000</div>
+    </div>
+    <div class="figure-grid-item">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1900.png' | relative_url }}" alt="DCL epoch 2000">
+      <div class="label">Epoch 2000</div>
     </div>
   </div>
+
+  <div style="font-family:var(--font-ui,'DM Sans',sans-serif);font-size:0.78rem;color:#6b7280;margin-bottom:0.3rem;padding-left:0.2rem"><strong>NSCL</strong> (supervised)</div>
+  <div class="figure-grid" style="grid-template-columns: repeat(6, 1fr); gap: 8px;">
+    <div class="figure-grid-item">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_random.png' | relative_url }}" alt="Random init">
+      <div class="label">Init</div>
+    </div>
+    <div class="figure-grid-item">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch10.png' | relative_url }}" alt="NSCL epoch 10">
+      <div class="label">Epoch 10</div>
+    </div>
+    <div class="figure-grid-item">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch100.png' | relative_url }}" alt="NSCL epoch 100">
+      <div class="label">Epoch 100</div>
+    </div>
+    <div class="figure-grid-item">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch500.png' | relative_url }}" alt="NSCL epoch 500">
+      <div class="label">Epoch 500</div>
+    </div>
+    <div class="figure-grid-item">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1000.png' | relative_url }}" alt="NSCL epoch 1000">
+      <div class="label">Epoch 1000</div>
+    </div>
+    <div class="figure-grid-item">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1900.png' | relative_url }}" alt="NSCL epoch 2000">
+      <div class="label">Epoch 2000</div>
+    </div>
+  </div>
+
   <div class="figcaption">
-    <strong>Figure 1.</strong> UMAP visualizations of learned representations on CIFAR-10. DCL forms semantic clusters without label supervision, while NSCL yields tighter, more separable clusters — despite not explicitly pulling same-class samples together. Both start from the same random initialization.
+    <strong>Figure 1.</strong> UMAP visualizations on mini-ImageNet across training. <strong>Top row:</strong> DCL (self-supervised) progressively forms semantic clusters without ever seeing labels. <strong>Bottom row:</strong> NSCL (supervised) yields tighter, more separable clusters, despite not explicitly pulling same-class samples together. Both start from the same random initialization. The resemblance between the two rows — especially by epoch 1000 — is the central observation of this post.
   </div>
 </div>
 
-<div class="col">
+<div class="col" markdown="1">
 
 <hr class="section-rule">
 
@@ -92,7 +136,7 @@ Suppose the dataset is balanced, with $C$ classes and $n$ samples per class, so 
 
 This can be made precise:
 
-<div class="math-block">
+<div class="math-block" markdown="1">
 
 $$
 \mathcal{L}^{\mathrm{NSCL}}(f) \le \mathcal{L}^{\mathrm{DCL}}(f) \le \mathcal{L}^{\mathrm{NSCL}}(f) + \frac{e^2}{C-1}.
@@ -119,7 +163,7 @@ The bound is both label-agnostic and architecture-independent: it holds for any 
   </div>
 </div>
 
-<div class="col">
+<div class="col" markdown="1">
 
 ### Validating the bound during training
 
@@ -177,7 +221,7 @@ We train models using SimCLR to minimize the DCL loss and track both losses thro
   </div>
 </div>
 
-<div class="col">
+<div class="col" markdown="1">
 
 The DCL loss consistently upper bounds the NSCL loss, and the two become closer for tasks with more classes. When $C$ is large (e.g., $C=100$), the bound is very tight. Moreover, the NSCL losses of DCL-trained and NSCL-trained models are comparable at convergence, indicating that optimizing DCL leads to representations that are similarly clustered.
 
@@ -206,7 +250,7 @@ The DCL loss consistently upper bounds the NSCL loss, and the two become closer 
   </div>
 </div>
 
-<div class="col">
+<div class="col" markdown="1">
 
 ### What NSCL minimizers look like
 
@@ -233,7 +277,7 @@ Since NSCL is the supervised bridge, it is natural to ask what its optimal solut
   </div>
 </div>
 
-<div class="col">
+<div class="col" markdown="1">
 
 <hr class="section-rule">
 
@@ -265,7 +309,7 @@ The right-hand side gets smaller when the number of classes $C$ is larger, the b
 
 This immediately yields lower bounds on CKA and RSA:
 
-<div class="math-block">
+<div class="math-block" markdown="1">
 
 $$
 \mathrm{CKA}_T \ge \frac{1-\rho_T}{1+\rho_T}, \qquad \mathrm{RSA}_T \ge \frac{1-r_T}{1+r_T},
@@ -288,6 +332,8 @@ Although both bounds grow exponentially, the exponent in the similarity-matrix b
 This is not paradoxical. In deep networks, parameter space is highly redundant. Two models can follow very different paths in weight space and still induce very similar representation geometry.
 
 </div>
+
+<div class="col" markdown="1">
 
 <hr class="section-rule">
 
