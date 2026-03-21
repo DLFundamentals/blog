@@ -235,43 +235,6 @@ Since NSCL is the supervised bridge, it is natural to ask what its optimal solut
 
 <div class="col">
 
-### The same behavior holds for MoCo
-
-The duality between DCL and NSCL is not specific to SimCLR. We observe the same pattern with MoCo training: the losses are tightly correlated, and minimizing DCL implicitly drives down the NSCL loss.
-
-</div>
-
-<!-- MoCo losses and corollary -->
-<div class="figure col-wide">
-  <div class="figure-grid" style="grid-template-columns: repeat(2, 1fr);">
-    <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/cifar10_moco_losses.png' | relative_url }}" alt="CIFAR10 MoCo losses">
-      <div class="label"><strong>(a)</strong> CIFAR-10 — MoCo losses</div>
-    </div>
-    <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/cifar100_moco_losses.png' | relative_url }}" alt="CIFAR100 MoCo losses">
-      <div class="label"><strong>(b)</strong> CIFAR-100 — MoCo losses</div>
-    </div>
-  </div>
-</div>
-<div class="figure col-wide">
-  <div class="figure-grid" style="grid-template-columns: repeat(2, 1fr);">
-    <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/cifar10_moco_nscl_corollary.png' | relative_url }}" alt="CIFAR10 MoCo corollary">
-      <div class="label"><strong>(c)</strong> CIFAR-10 — DCL vs NSCL trained</div>
-    </div>
-    <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/cifar100_moco_nscl_corollary.png' | relative_url }}" alt="CIFAR100 MoCo corollary">
-      <div class="label"><strong>(d)</strong> CIFAR-100 — DCL vs NSCL trained</div>
-    </div>
-  </div>
-  <div class="figcaption">
-    <strong>Figure 6.</strong> The DCL-NSCL duality holds for MoCo as well. <strong>(a–b)</strong> Losses during MoCo training mirror the SimCLR results: DCL upper bounds NSCL and the bound is tight. <strong>(c–d)</strong> The NSCL losses of DCL-trained and NSCL-trained MoCo models are comparable, confirming that the implicit minimization of NSCL is not architecture- or method-specific.
-  </div>
-</div>
-
-<div class="col">
-
 <hr class="section-rule">
 
 ## Part II: The representations are close
@@ -325,25 +288,6 @@ Although both bounds grow exponentially, the exponent in the similarity-matrix b
 This is not paradoxical. In deep networks, parameter space is highly redundant. Two models can follow very different paths in weight space and still induce very similar representation geometry.
 
 </div>
-
-<!-- UMAP: CIFAR-100 comparison -->
-<div class="figure col-wide">
-  <div class="figure-grid" style="grid-template-columns: 1fr 1fr;">
-    <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_cifar100_dcl.png' | relative_url }}" alt="CIFAR100 DCL UMAP">
-      <div class="label"><strong>(a)</strong> DCL on CIFAR-100</div>
-    </div>
-    <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_cifar10_nscl.png' | relative_url }}" alt="CIFAR10 NSCL UMAP">
-      <div class="label"><strong>(b)</strong> NSCL on CIFAR-10</div>
-    </div>
-  </div>
-  <div class="figcaption">
-    <strong>Figure 7.</strong> UMAP visualizations show that both DCL and NSCL produce semantically organized representations, with NSCL achieving tighter clusters as expected from its label-aware objective. The qualitative similarity between the two confirms that the self-supervised and supervised geometries remain close.
-  </div>
-</div>
-
-<div class="col">
 
 <hr class="section-rule">
 
