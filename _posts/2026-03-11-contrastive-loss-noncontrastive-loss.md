@@ -254,7 +254,7 @@ The DCL loss consistently upper bounds the NSCL loss, and the two become closer 
 
 ### What NSCL minimizers look like
 
-Since NSCL is the supervised bridge, it is natural to ask what its optimal solutions look like. Any global minimizer of the NSCL loss exhibits three structural properties:
+Beyond simply being a supervised loss, NSCL gives us a tractable bridge for understanding the geometry induced by contrastive learning. This raises a natural question: what kind of representations are learned by minimizing NSCL? Since NSCL serves as the supervised counterpart of DCL, understanding its global minimizers helps reveal the structure that self-supervised contrastive learning is implicitly approaching. In particular, any global minimizer of the NSCL loss exhibits three striking properties:
 
 1. **Augmentation collapse:** all augmented views of the same sample map to the same point.
 2. **Within-class collapse:** all samples from the same class share a single representation.
