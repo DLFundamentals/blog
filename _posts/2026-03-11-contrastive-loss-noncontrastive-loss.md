@@ -42,34 +42,33 @@ In this post, we argue that contrastive learning is much closer to supervised co
 
 </div>
 
-<!-- UMAP visualizations: DCL vs NSCL clustering -->
 <!-- UMAP progression: DCL vs NSCL across training epochs -->
 <div class="figure col-wide">
 
   <div style="font-family:var(--font-ui,'DM Sans',sans-serif);font-size:0.78rem;color:#6b7280;margin-bottom:0.3rem;padding-left:0.2rem"><strong>DCL</strong> (self-supervised)</div>
   <div class="figure-grid" style="grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 0.6rem;">
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_random.png' | relative_url }}" alt="Random init">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_random.png' | relative_url }}" alt="Random initialization">
       <div class="label">Init</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch10.png' | relative_url }}" alt="DCL epoch 10">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch10.png' | relative_url }}" alt="DCL at epoch 10">
       <div class="label">Epoch 10</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch100.png' | relative_url }}" alt="DCL epoch 100">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch100.png' | relative_url }}" alt="DCL at epoch 100">
       <div class="label">Epoch 100</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch500.png' | relative_url }}" alt="DCL epoch 500">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch500.png' | relative_url }}" alt="DCL at epoch 500">
       <div class="label">Epoch 500</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1000.png' | relative_url }}" alt="DCL epoch 1000">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1000.png' | relative_url }}" alt="DCL at epoch 1000">
       <div class="label">Epoch 1000</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1900.png' | relative_url }}" alt="DCL epoch 2000">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1900.png' | relative_url }}" alt="DCL at epoch 2000">
       <div class="label">Epoch 2000</div>
     </div>
   </div>
@@ -77,33 +76,33 @@ In this post, we argue that contrastive learning is much closer to supervised co
   <div style="font-family:var(--font-ui,'DM Sans',sans-serif);font-size:0.78rem;color:#6b7280;margin-bottom:0.3rem;padding-left:0.2rem"><strong>NSCL</strong> (supervised)</div>
   <div class="figure-grid" style="grid-template-columns: repeat(6, 1fr); gap: 8px;">
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_random.png' | relative_url }}" alt="Random init">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_random.png' | relative_url }}" alt="Random initialization">
       <div class="label">Init</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch10.png' | relative_url }}" alt="NSCL epoch 10">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch10.png' | relative_url }}" alt="NSCL at epoch 10">
       <div class="label">Epoch 10</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch100.png' | relative_url }}" alt="NSCL epoch 100">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch100.png' | relative_url }}" alt="NSCL at epoch 100">
       <div class="label">Epoch 100</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch500.png' | relative_url }}" alt="NSCL epoch 500">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch500.png' | relative_url }}" alt="NSCL at epoch 500">
       <div class="label">Epoch 500</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1000.png' | relative_url }}" alt="NSCL epoch 1000">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1000.png' | relative_url }}" alt="NSCL at epoch 1000">
       <div class="label">Epoch 1000</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1900.png' | relative_url }}" alt="NSCL epoch 2000">
+      <img src="{{ '/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1900.png' | relative_url }}" alt="NSCL at epoch 2000">
       <div class="label">Epoch 2000</div>
     </div>
   </div>
 
   <div class="figcaption">
-    <strong>Figure 1.</strong> UMAP visualizations on mini-ImageNet across training. <strong>Top row:</strong> DCL (self-supervised) progressively forms semantic clusters without ever seeing labels. <strong>Bottom row:</strong> NSCL (supervised) yields tighter, more separable clusters, despite not explicitly pulling same-class samples together. Both start from the same random initialization. The resemblance between the two rows is a key mystery in self-supervised learning.
+    <strong>Figure 1.</strong> UMAP visualizations on mini-ImageNet across training. <strong>Top row:</strong> DCL (self-supervised) progressively forms semantic clusters without ever seeing labels. <strong>Bottom row:</strong> NSCL (supervised) yields tighter, more separable clusters, despite not explicitly pulling same-class samples together. Both start from the same random initialization. The resemblance between the two rows is a central observation of this post.
   </div>
 </div>
 
@@ -182,11 +181,11 @@ We train models using SimCLR to minimize the DCL loss and track both losses thro
       <div class="label"><strong>(a)</strong> SVHN</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/cifar10_simclr_losses.png' | relative_url }}" alt="CIFAR10 losses">
+      <img src="{{ '/assets/figures/cl-nscl/cifar10_simclr_losses.png' | relative_url }}" alt="CIFAR-10 losses">
       <div class="label"><strong>(b)</strong> CIFAR-10</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/cifar100_simclr_losses.png' | relative_url }}" alt="CIFAR100 losses">
+      <img src="{{ '/assets/figures/cl-nscl/cifar100_simclr_losses.png' | relative_url }}" alt="CIFAR-100 losses">
       <div class="label"><strong>(c)</strong> CIFAR-100</div>
     </div>
     <div class="figure-grid-item">
@@ -195,7 +194,7 @@ We train models using SimCLR to minimize the DCL loss and track both losses thro
     </div>
   </div>
   <div class="figcaption">
-    <strong>Figure 3 (top).</strong> DCL loss, NSCL loss, and the theoretical bound tracked during SimCLR training on train and test sets. All three quantities are highly correlated. The gap between DCL and NSCL becomes tighter as the number of classes increases (compare CIFAR-10 vs CIFAR-100).
+    <strong>Figure 3 (top).</strong> DCL loss, NSCL loss, and the theoretical bound tracked during SimCLR training on train and test sets. All three quantities are highly correlated. The gap between DCL and NSCL becomes tighter as the number of classes increases, compare CIFAR-10 with CIFAR-100.
   </div>
 </div>
 
@@ -207,11 +206,11 @@ We train models using SimCLR to minimize the DCL loss and track both losses thro
       <div class="label"><strong>(a)</strong> SVHN</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/cifar10_simclr_nscl_corollary.png' | relative_url }}" alt="CIFAR10 corollary">
+      <img src="{{ '/assets/figures/cl-nscl/cifar10_simclr_nscl_corollary.png' | relative_url }}" alt="CIFAR-10 corollary">
       <div class="label"><strong>(b)</strong> CIFAR-10</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/cifar100_simclr_nscl_corollary.png' | relative_url }}" alt="CIFAR100 corollary">
+      <img src="{{ '/assets/figures/cl-nscl/cifar100_simclr_nscl_corollary.png' | relative_url }}" alt="CIFAR-100 corollary">
       <div class="label"><strong>(c)</strong> CIFAR-100</div>
     </div>
     <div class="figure-grid-item">
@@ -220,13 +219,13 @@ We train models using SimCLR to minimize the DCL loss and track both losses thro
     </div>
   </div>
   <div class="figcaption">
-    <strong>Figure 3 (bottom).</strong> Comparing the NSCL loss of two models: one trained with DCL and the other with NSCL. The resulting NSCL losses are comparable regardless of training objective — minimizing DCL implicitly brings the NSCL loss close to the value achieved by direct NSCL minimization.
+    <strong>Figure 3 (bottom).</strong> Comparing the NSCL loss of two models, one trained with DCL and the other with NSCL. The resulting NSCL losses are comparable regardless of training objective, suggesting that minimizing DCL implicitly brings the NSCL loss close to the value achieved by direct NSCL minimization.
   </div>
 </div>
 
 <div class="col" markdown="1">
 
-The DCL loss consistently upper bounds the NSCL loss, and the two become closer for tasks with more classes. When $C$ is large (e.g., $C=100$), the bound is very tight. Moreover, the NSCL losses of DCL-trained and NSCL-trained models are comparable at convergence, indicating that optimizing DCL leads to representations that are similarly clustered.
+The DCL loss consistently upper bounds the NSCL loss, and the two become closer for tasks with more classes. When $C$ is large, for example $C=100$, the bound is very tight. Moreover, the NSCL losses of DCL-trained and NSCL-trained models are comparable at convergence, indicating that optimizing DCL leads to representations that are similarly clustered.
 
 ### The gap scales as predicted with $C$
 
@@ -236,15 +235,15 @@ The DCL loss consistently upper bounds the NSCL loss, and the two become closer 
 <div class="figure col-wide">
   <div class="figure-grid" style="grid-template-columns: repeat(3, 1fr);">
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/th1_exp2_cifar10.png' | relative_url }}" alt="CIFAR10 gap vs C">
+      <img src="{{ '/assets/figures/cl-nscl/th1_exp2_cifar10.png' | relative_url }}" alt="CIFAR-10 gap versus C">
       <div class="label"><strong>(a)</strong> CIFAR-10</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/th1_exp2_cifar100.png' | relative_url }}" alt="CIFAR100 gap vs C">
+      <img src="{{ '/assets/figures/cl-nscl/th1_exp2_cifar100.png' | relative_url }}" alt="CIFAR-100 gap versus C">
       <div class="label"><strong>(b)</strong> CIFAR-100</div>
     </div>
     <div class="figure-grid-item">
-      <img src="{{ '/assets/figures/cl-nscl/th1_exp2_imagenet.png' | relative_url }}" alt="mini-ImageNet gap vs C">
+      <img src="{{ '/assets/figures/cl-nscl/th1_exp2_imagenet.png' | relative_url }}" alt="mini-ImageNet gap versus C">
       <div class="label"><strong>(c)</strong> mini-ImageNet</div>
     </div>
   </div>
@@ -261,7 +260,7 @@ Beyond simply being a supervised loss, NSCL gives us a tractable bridge for unde
 
 1. **Augmentation collapse:** all augmented views of the same sample map to the same point.
 2. **Within-class collapse:** all samples from the same class share a single representation.
-3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame — a maximally separated, symmetric configuration on the unit sphere.
+3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame, a maximally separated, symmetric configuration on the unit sphere.
 
 </div>
 
@@ -276,7 +275,7 @@ Beyond simply being a supervised loss, NSCL gives us a tractable bridge for unde
     </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 5.</strong> Neural collapse geometry: class centers form a simplex equiangular tight frame on the unit sphere. Drag the epoch slider to watch scattered features collapse into tight clusters at the ETF vertices. This is the same structure that arises at global optima of supervised losses such as cross-entropy — the fact that NSCL shares these optimal solutions reflects the tight connection between the self-supervised and supervised objectives.
+    <strong>Figure 5.</strong> Neural collapse geometry: class centers form a simplex equiangular tight frame on the unit sphere. Drag the epoch slider to watch scattered features collapse into tight clusters at the ETF vertices. This is the same structure that arises at global optima of supervised losses such as cross-entropy. The fact that NSCL shares these optimal solutions reflects the tight connection between the self-supervised and supervised objectives.
   </div>
 </div>
 
@@ -322,11 +321,13 @@ $$
 
 where $\rho_T$ and $r_T$ are normalized versions of the similarity-matrix discrepancy.
 
+</div>
+
 <div class="col" markdown="1">
 
 ### Empirical confirmation: RSA and CKA are consistently high
 
-The theoretical bounds predict that representation geometry should remain aligned even as parameters diverge. To test this directly, we train DCL and NSCL models under exactly matched conditions - same initialization, same mini-batches, same augmentations, and same hyperparameters - for 300 epochs, then measure CKA and RSA between the two learned representations. A score of 1.0 would mean identical geometry; 0 would mean no alignment.
+The theoretical bounds predict that representation geometry should remain aligned even as parameters diverge. To test this directly, we train DCL and NSCL models under exactly matched conditions, same initialization, same mini-batches, same augmentations, and same hyperparameters, for 300 epochs, then measure CKA and RSA between the two learned representations. A score of 1.0 would mean identical geometry; 0 would mean no alignment.
 
 </div>
 
@@ -340,7 +341,7 @@ The theoretical bounds predict that representation geometry should remain aligne
     </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 8.</strong> Representation similarity between DCL and NSCL models trained with matched initialization and mini-batch order. RSA and CKA values are consistently above 0.81 across all datasets and both architectures, confirming near-identical representation geometry despite training with different objectives.
+    <strong>Figure 6.</strong> Representation similarity between DCL and NSCL models trained with matched initialization and mini-batch order. RSA and CKA values are consistently above 0.81 across all datasets and both architectures, confirming near-identical representation geometry despite training with different objectives.
   </div>
 </div>
 
@@ -349,8 +350,6 @@ The theoretical bounds predict that representation geometry should remain aligne
 Across all three datasets and both architectures, RSA and CKA exceed 0.81, and for CIFAR-100, all four measurements reach 0.91. Two patterns stand out. First, alignment is strongest when the number of classes is largest, as in CIFAR-100 and mini-ImageNet. This is exactly what the theory predicts: more classes means a smaller loss gap, which in turn keeps the optimization trajectories closer and the learned geometry more aligned. Second, the scores are nearly identical across ResNet-50 and ViT-Base, confirming that the DCL-NSCL duality is not an artifact of a particular architecture.
 
 These numbers should be read alongside the theoretical prediction. The bound on representation divergence scales as $1/(\tau C \sqrt{B})$, so with $C = 100$ classes and batch size $B = 1024$, the predicted divergence is small and the empirical alignment is correspondingly high. The fact that CKA and RSA both stay above 0.8 even for CIFAR-10 ($C = 10$) suggests that the bound, while not tight, captures the correct qualitative dependence.
-
-</div>
 
 ### But weights can still diverge
 
