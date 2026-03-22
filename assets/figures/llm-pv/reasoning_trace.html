@@ -5,120 +5,110 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#fff; color:#1a1a1a; padding:20px; }
-@media (prefers-color-scheme:dark) { body { background:#1a1a1a; color:#e0e0e0; } }
-h3 { font-size:16px; font-weight:600; margin-bottom:4px; }
-.sub { font-size:13px; color:#666; margin-bottom:16px; }
-@media (prefers-color-scheme:dark) { .sub { color:#999; } }
-.stepper { position:relative; }
-.progress-bar { display:flex; gap:3px; margin-bottom:18px; }
-.pip { flex:1; height:4px; border-radius:2px; background:rgba(0,0,0,.08); cursor:pointer; transition:background .2s; }
-.pip.done { background:#1e6bd6; }
-.pip.current { background:#0ea553; }
-@media (prefers-color-scheme:dark) { .pip { background:rgba(255,255,255,.1); } }
-.step-card { border:1px solid #e5e5e5; border-radius:10px; padding:18px 20px; margin-bottom:12px; animation:fadeIn .3s ease; }
-@media (prefers-color-scheme:dark) { .step-card { border-color:#333; } }
-@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-.step-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.step-num { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; flex-shrink:0; }
-.step-title { font-size:14px; font-weight:600; }
-.step-type { font-size:10px; padding:2px 8px; border-radius:4px; font-weight:600; text-transform:uppercase; letter-spacing:.3px; }
-.type-candidate { background:#e0f2fe; color:#0369a1; }
-.type-analysis { background:#ede9fe; color:#6d28d9; }
-.type-refinement { background:#fff7ed; color:#c2410c; }
-.type-hypothesis { background:#fce7f3; color:#be185d; }
-.type-verification { background:#d1fae5; color:#047857; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:transparent; color:#111; padding:20px; }
+@media (prefers-color-scheme:dark) { body { color:#e0ddd5; } }
+h3 { font-size:15px; font-weight:600; margin-bottom:4px; letter-spacing:-.2px; }
+.sub { font-size:12.5px; color:#555; margin-bottom:14px; }
+@media (prefers-color-scheme:dark) { .sub { color:#a09e94; } }
+.progress-bar { display:flex; gap:3px; margin-bottom:16px; }
+.pip { flex:1; height:3px; border-radius:1.5px; background:rgba(128,128,128,.2); cursor:pointer; transition:background .25s; }
+@media (prefers-color-scheme:dark) { .pip { background:rgba(255,255,255,.12); } }
+.pip.done { background:#7cc4aa; }
+.pip.current { background:#2d8a66; }
+@media (prefers-color-scheme:dark) { .pip.done { background:rgba(124,196,170,.5); } .pip.current { background:#7cc4aa; } }
+.step-card { border:1px solid #ddd; border-radius:10px; padding:16px 18px; margin-bottom:10px; animation:fadeIn .25s ease; }
+@media (prefers-color-scheme:dark) { .step-card { border-color:rgba(255,255,255,.1); } }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+.step-header { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.step-num { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
+.step-title { font-size:13.5px; font-weight:600; }
+.step-type { font-size:9.5px; padding:2px 8px; border-radius:10px; font-weight:600; text-transform:uppercase; letter-spacing:.4px; }
+.type-candidate { background:#dbe8f0; color:#3a6a8a; }
+.type-analysis { background:#e4daea; color:#6a4e8a; }
+.type-refinement { background:#f0e0d0; color:#8a5e30; }
+.type-hypothesis { background:#eadae2; color:#7a4a62; }
+.type-verification { background:#d4ece4; color:#2a7a5e; }
 @media (prefers-color-scheme:dark) {
-  .type-candidate { background:#0c4a6e; color:#7dd3fc; }
-  .type-analysis { background:#3b0764; color:#c4b5fd; }
-  .type-refinement { background:#431407; color:#fdba74; }
-  .type-hypothesis { background:#500724; color:#f9a8d4; }
-  .type-verification { background:#022c22; color:#6ee7b7; }
+  .type-candidate { background:rgba(90,140,180,.2); color:#8ec0e0; }
+  .type-analysis { background:rgba(140,100,180,.2); color:#c0a8d8; }
+  .type-refinement { background:rgba(200,140,80,.2); color:#dab888; }
+  .type-hypothesis { background:rgba(180,100,140,.2); color:#d4a0b8; }
+  .type-verification { background:rgba(80,170,140,.2); color:#8ad4b4; }
 }
-.step-body { font-size:13px; line-height:1.6; color:#444; }
-@media (prefers-color-scheme:dark) { .step-body { color:#bbb; } }
-.step-body code { background:rgba(0,0,0,.06); padding:1px 5px; border-radius:3px; font-size:12px; }
+.step-body { font-size:12.5px; line-height:1.6; color:#333; }
+@media (prefers-color-scheme:dark) { .step-body { color:#c0bdb5; } }
+.step-body code { background:rgba(128,128,128,.12); padding:1px 5px; border-radius:3px; font-size:11.5px; }
 @media (prefers-color-scheme:dark) { .step-body code { background:rgba(255,255,255,.1); } }
-.accuracy { display:inline-block; margin-top:6px; padding:3px 10px; border-radius:4px; font-size:12px; font-weight:600; }
-.acc-low { background:#fef2f2; color:#dc2626; }
-.acc-mid { background:#fffbeb; color:#d97706; }
-.acc-high { background:#ecfdf5; color:#059669; }
-.acc-perfect { background:#d1fae5; color:#047857; }
+.accuracy { display:inline-block; margin-top:6px; padding:2px 9px; border-radius:10px; font-size:11px; font-weight:600; }
+.acc-low { background:#f2dcd8; color:#a04840; }
+.acc-mid { background:#f0e4cc; color:#906820; }
+.acc-high { background:#d4ece4; color:#2a7a5e; }
+.acc-perfect { background:#c4e8d8; color:#1a6a4e; }
 @media (prefers-color-scheme:dark) {
-  .acc-low { background:#450a0a; color:#fca5a5; }
-  .acc-mid { background:#451a03; color:#fcd34d; }
-  .acc-high { background:#022c22; color:#6ee7b7; }
-  .acc-perfect { background:#022c22; color:#6ee7b7; }
+  .acc-low { background:rgba(200,90,80,.18); color:#e09888; }
+  .acc-mid { background:rgba(200,160,80,.18); color:#dac080; }
+  .acc-high { background:rgba(80,170,140,.18); color:#8ad4b4; }
+  .acc-perfect { background:rgba(80,170,140,.25); color:#9ae0c0; }
 }
-.nav { display:flex; gap:8px; margin-top:4px; }
-.nav-btn { padding:7px 18px; border:1px solid #ddd; border-radius:6px; background:transparent; font-size:12px; cursor:pointer; color:inherit; transition:all .15s; }
-.nav-btn:hover:not(:disabled) { background:rgba(0,0,0,.05); }
-.nav-btn:disabled { opacity:.3; cursor:default; }
-.nav-btn.primary { background:#1e6bd6; color:#fff; border-color:#1e6bd6; }
-.nav-btn.primary:hover:not(:disabled) { background:#1557b0; }
-@media (prefers-color-scheme:dark) { .nav-btn { border-color:#444; } .nav-btn:hover:not(:disabled) { background:rgba(255,255,255,.08); } }
-.rationale { margin-top:8px; padding:8px 12px; border-left:3px solid #1e6bd6; background:rgba(30,107,214,.04); border-radius:0 6px 6px 0; font-size:12px; color:#555; }
-@media (prefers-color-scheme:dark) { .rationale { background:rgba(30,107,214,.1); color:#aaa; } }
+.rationale { margin-top:7px; padding:7px 11px; border-left:2.5px solid #7cc4aa; background:rgba(61,158,122,.06); border-radius:0 6px 6px 0; font-size:11.5px; color:#555; }
+@media (prefers-color-scheme:dark) { .rationale { background:rgba(88,166,140,.08); border-left-color:#5aa88a; color:#a09e94; } }
+.nav { display:flex; gap:8px; align-items:center; margin-top:2px; }
+.nav-btn { padding:6px 16px; border:1px solid #ccc; border-radius:8px; background:transparent; font-size:11.5px; cursor:pointer; color:#444; transition:all .15s; }
+.nav-btn:hover:not(:disabled) { background:rgba(128,128,128,.06); }
+.nav-btn:disabled { opacity:.25; cursor:default; }
+.nav-btn.primary { background:rgba(61,158,122,.1); color:#2d7a5e; border-color:#3d9e7a; }
+.nav-btn.primary:hover:not(:disabled) { background:rgba(61,158,122,.18); }
+@media (prefers-color-scheme:dark) { .nav-btn { border-color:#555; color:#b0aea4; } .nav-btn.primary { color:#7cc4aa; background:rgba(88,166,140,.15); border-color:#5aa88a; } .nav-btn.primary:hover:not(:disabled) { background:rgba(88,166,140,.25); } }
+#counter { font-size:11px; color:#888; }
+@media (prefers-color-scheme:dark) { #counter { color:#8a887e; } }
 </style>
 </head>
 <body>
 <h3>Reasoning trace: learning primality from 100 examples</h3>
-<p class="sub">GPT-5-Thinking progressively refines its hypothesis from simple digit heuristics to a full Miller–Rabin test.</p>
-<div class="stepper">
-  <div class="progress-bar" id="pips"></div>
-  <div id="card"></div>
-  <div class="nav">
-    <button class="nav-btn" id="prev" onclick="go(-1)">← Previous</button>
-    <span id="counter" style="font-size:12px;color:#888;line-height:32px;"></span>
-    <button class="nav-btn primary" id="next" onclick="go(1)">Next →</button>
-  </div>
+<p class="sub">GPT-5-Thinking progressively refines from digit heuristics to a full Miller–Rabin test</p>
+<div class="progress-bar" id="pips"></div>
+<div id="card"></div>
+<div class="nav">
+  <button class="nav-btn" id="prev" onclick="go(-1)">← Previous</button>
+  <span id="counter"></span>
+  <button class="nav-btn primary" id="next" onclick="go(1)">Next →</button>
 </div>
-
 <script>
-const steps = [
-  { num:1, type:"candidate", title:"Parity & digit-sum baselines", body:"The model starts with the simplest possible rules: <code>parity of digit sum</code> and <code>digit-sum threshold</code>. Both hover around chance — the label has nothing to do with whether the digit sum is odd or even.", acc:"~50%", accClass:"acc-low", rationale:"No signal from shallow digit statistics. Need to look at the number itself." },
-  { num:2, type:"refinement", title:"Digit-sum sweep", body:"Sweep a threshold <code>t</code>: predict 1 if the sum of digits ≥ t. The best threshold reaches only 54% — digit sums don't separate primes from composites.", acc:"54%", accClass:"acc-low", rationale:"Digit sums are nearly uniform across primes and composites for large n. Need position-specific or arithmetic features." },
-  { num:3, type:"candidate", title:"Single-position equality", body:"Try <code>ŷ = 1 if x[i] = v</code> for every position i and value v. The best single feature reaches 60% — a hint that some positions matter more than others (e.g., last digit).", acc:"60%", accClass:"acc-low", rationale:"A single digit predicts weakly. But last-digit structure is real: primes >5 end in {1,3,7,9}." },
-  { num:4, type:"candidate", title:"Single-position threshold", body:"Check <code>ŷ = 1 if x[0] ≥ t</code> — the leading digit provides 67% accuracy. The model is discovering that digit-level statistics carry some information, but not enough.", acc:"67%", accClass:"acc-mid", rationale:"Marginal improvement. Pivot from digit-level rules to arithmetic structure." },
-  { num:5, type:"analysis", title:"GF(2) fit on digit parities", body:"Attempt a linear fit over GF(2): solve <code>Aw = y (mod 2)</code> where A encodes digit parities. The system is inconsistent — primality isn't a linear function of digit parities.", acc:"n/a", accClass:"acc-low", rationale:"Primality has no XOR structure. Try coarser summaries." },
-  { num:6, type:"candidate", title:"Half-sum and difference features", body:"Split the digits into two halves, compute <code>S₁ = Σ first 50</code>, <code>S₂ = Σ last 50</code>. Try <code>S₁ > S₂</code> and <code>(S₁ − S₂) is odd</code>. Both are near chance (45–49%).", acc:"45–49%", accClass:"acc-low", rationale:"Half-sums don't capture divisibility. Pivot to modular arithmetic." },
-  { num:7, type:"candidate", title:"Mod-3 divisibility test", body:"The model tries <code>ŷ = 1 if x mod 3 ≠ 0</code>. This jumps to 75% — a real signal! Composites divisible by 3 are common, and this single test eliminates a third of them.", acc:"75%", accClass:"acc-mid", rationale:"Modular structure works. Look for a sharper modulus-based rule." },
-  { num:8, type:"analysis", title:"Residue-class classifier", body:"Sweep moduli <code>m ∈ [2, 300]</code>, build a majority-vote classifier for each <code>x mod m</code>. The best residue-class predictor reaches 98% training accuracy — the model has discovered that divisibility tests are the right lens.", acc:"98%", accClass:"acc-high", rationale:"This strongly suggests a sieve-like decision rule. The target is primality." },
-  { num:9, type:"refinement", title:"Divisibility probe", body:"Combine divisibility checks: <code>ŷ = 1 if ¬(3|x) ∧ ¬(7|x)</code>. Accuracy is 84% — better than any single divisor, but the model realizes it needs all small primes, not just two.", acc:"84%", accClass:"acc-mid", rationale:"A mini-sieve works but isn't enough. Need a proper primality test." },
-  { num:10, type:"verification", title:"Miller–Rabin primality test", body:"The model hypothesizes that the label <em>is</em> primality, and writes a full <strong>Miller–Rabin primality test</strong> using bases 2 through 37. It achieves 100% on training and validation.", acc:"100%", accClass:"acc-perfect", rationale:"Hypothesis confirmed. The synthesized program is a correct primality test — executable, inspectable, and exact." },
+const dk=matchMedia('(prefers-color-scheme:dark)').matches;
+const nc={candidate:dk?'#5a8ab4':'#3a6a8a',analysis:dk?'#8a6eaa':'#6a4e8a',refinement:dk?'#c08050':'#8a5e30',hypothesis:dk?'#aa6482':'#7a4a62',verification:dk?'#3d9e7a':'#2a7a5e'};
+const steps=[
+  {n:1,type:"candidate",title:"Parity & digit-sum baselines",body:"The model starts with the simplest possible rules: <code>parity of digit sum</code> and <code>digit-sum threshold</code>. Both hover around chance — the label has nothing to do with whether the digit sum is odd or even.",acc:"~50%",ac:"acc-low",rat:"No signal from shallow digit statistics. Need to look at the number itself."},
+  {n:2,type:"refinement",title:"Digit-sum sweep",body:"Sweep a threshold <code>t</code>: predict 1 if the sum of digits ≥ t. The best threshold reaches only 54%.",acc:"54%",ac:"acc-low",rat:"Digit sums are nearly uniform across primes and composites. Need position-specific or arithmetic features."},
+  {n:3,type:"candidate",title:"Single-position equality",body:"Try <code>ŷ = 1 if x[i] = v</code> for every position i and value v. The best single feature reaches 60%.",acc:"60%",ac:"acc-low",rat:"A single digit predicts weakly. But last-digit structure is real: primes >5 end in {1,3,7,9}."},
+  {n:4,type:"candidate",title:"Single-position threshold",body:"Check <code>ŷ = 1 if x[0] ≥ t</code> — the leading digit provides 67% accuracy.",acc:"67%",ac:"acc-mid",rat:"Marginal improvement. Pivot from digit-level rules to arithmetic structure."},
+  {n:5,type:"analysis",title:"GF(2) fit on digit parities",body:"Attempt a linear fit over GF(2): solve <code>Aw = y (mod 2)</code> where A encodes digit parities. The system is inconsistent — primality isn't a linear function of digit parities.",acc:"n/a",ac:"acc-low",rat:"Primality has no XOR structure. Try coarser summaries."},
+  {n:6,type:"candidate",title:"Half-sum and difference features",body:"Split the digits into two halves, compute S₁ = Σ first 50, S₂ = Σ last 50. Try S₁ > S₂ and (S₁ − S₂) is odd. Both near chance.",acc:"45–49%",ac:"acc-low",rat:"Half-sums don't capture divisibility. Pivot to modular arithmetic."},
+  {n:7,type:"candidate",title:"Mod-3 divisibility test",body:"The model tries <code>ŷ = 1 if x mod 3 ≠ 0</code>. Jumps to 75% — composites divisible by 3 are common.",acc:"75%",ac:"acc-mid",rat:"Modular structure works. Look for a sharper modulus-based rule."},
+  {n:8,type:"analysis",title:"Residue-class classifier",body:"Sweep moduli m ∈ [2, 300], build a majority-vote classifier for each x mod m. The best reaches 98% — divisibility tests are the right lens.",acc:"98%",ac:"acc-high",rat:"Strongly suggests a sieve-like decision rule. The target is primality."},
+  {n:9,type:"refinement",title:"Divisibility probe",body:"Combine checks: <code>ŷ = 1 if ¬(3|x) ∧ ¬(7|x)</code>. Accuracy 84% — better, but needs all small primes.",acc:"84%",ac:"acc-mid",rat:"A mini-sieve works but isn't enough. Need a proper primality test."},
+  {n:10,type:"verification",title:"Miller–Rabin primality test",body:"The model writes a full <strong>Miller–Rabin primality test</strong> using bases 2–37. 100% on training and validation.",acc:"100%",ac:"acc-perfect",rat:"Hypothesis confirmed. The synthesized program is a correct primality test."},
 ];
-
-let idx = 0;
-const pips = document.getElementById('pips');
-const card = document.getElementById('card');
-steps.forEach((_,i) => {
-  const d = document.createElement('div');
-  d.className = 'pip';
-  d.onclick = () => { idx=i; render(); };
-  pips.appendChild(d);
-});
-
-function render() {
-  const s = steps[idx];
-  const colors = { candidate:'#0369a1', analysis:'#6d28d9', refinement:'#c2410c', hypothesis:'#be185d', verification:'#047857' };
-  document.querySelectorAll('.pip').forEach((p,i) => {
-    p.className = 'pip' + (i<idx?' done':'') + (i===idx?' current':'');
-  });
-  card.innerHTML = `<div class="step-card">
+let idx=0;
+const pips=document.getElementById('pips'),card=document.getElementById('card');
+steps.forEach((_,i)=>{const d=document.createElement('div');d.className='pip';d.onclick=()=>{idx=i;render()};pips.appendChild(d)});
+function render(){
+  const s=steps[idx];
+  document.querySelectorAll('.pip').forEach((p,i)=>{p.className='pip'+(i<idx?' done':'')+(i===idx?' current':'')});
+  card.innerHTML=`<div class="step-card">
     <div class="step-header">
-      <div class="step-num" style="background:${colors[s.type]}">${s.num}</div>
+      <div class="step-num" style="background:${nc[s.type]}">${s.n}</div>
       <div class="step-title">${s.title}</div>
       <div class="step-type type-${s.type}">${s.type}</div>
     </div>
     <div class="step-body">${s.body}</div>
-    ${s.acc ? `<div class="accuracy ${s.accClass}">Train accuracy: ${s.acc}</div>` : ''}
-    <div class="rationale">${s.rationale}</div>
+    ${s.acc?`<div class="accuracy ${s.ac}">Train accuracy: ${s.acc}</div>`:''}
+    <div class="rationale">${s.rat}</div>
   </div>`;
-  document.getElementById('prev').disabled = idx===0;
-  document.getElementById('next').disabled = idx===steps.length-1;
-  document.getElementById('counter').textContent = `${idx+1} / ${steps.length}`;
+  document.getElementById('prev').disabled=idx===0;
+  document.getElementById('next').disabled=idx===steps.length-1;
+  document.getElementById('counter').textContent=`${idx+1} / ${steps.length}`;
 }
-function go(d) { idx = Math.max(0,Math.min(steps.length-1,idx+d)); render(); }
+function go(d){idx=Math.max(0,Math.min(steps.length-1,idx+d));render()}
 render();
 </script>
 </body>
