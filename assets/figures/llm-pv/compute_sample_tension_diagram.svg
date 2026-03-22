@@ -1,33 +1,20 @@
-<svg width="100%" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+<svg width="100%" viewBox="0 0 680 310" xmlns="http://www.w3.org/2000/svg" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
 
-<ellipse cx="230" cy="175" rx="188" ry="138" fill="none" stroke="#c47060" stroke-width="1.5" stroke-opacity="0.5"/>
-<ellipse cx="230" cy="175" rx="188" ry="138" fill="#c47060" fill-opacity="0.06"/>
+<ellipse cx="228" cy="155" rx="185" ry="135" fill="none" stroke="#c47060" stroke-width="1.5" stroke-opacity="0.45"/>
+<ellipse cx="228" cy="155" rx="185" ry="135" fill="#c47060" fill-opacity="0.06"/>
 
-<ellipse cx="450" cy="175" rx="188" ry="138" fill="none" stroke="#5a8ab4" stroke-width="1.5" stroke-opacity="0.5"/>
-<ellipse cx="450" cy="175" rx="188" ry="138" fill="#5a8ab4" fill-opacity="0.06"/>
+<ellipse cx="452" cy="155" rx="185" ry="135" fill="none" stroke="#5a8ab4" stroke-width="1.5" stroke-opacity="0.45"/>
+<ellipse cx="452" cy="155" rx="185" ry="135" fill="#5a8ab4" fill-opacity="0.06"/>
 
-<ellipse cx="340" cy="175" rx="42" ry="52" fill="none" stroke="#3d9e7a" stroke-width="2" stroke-opacity="0.7"/>
-<ellipse cx="340" cy="175" rx="42" ry="52" fill="#3d9e7a" fill-opacity="0.1"/>
+<text x="145" y="72" text-anchor="middle" font-size="16" font-weight="500" fill="#c47060">Compute-efficient</text>
+<text x="145" y="98" text-anchor="middle" font-size="14" fill="#111">SGD, gradient methods</text>
+<text x="145" y="120" text-anchor="middle" font-size="12" fill="#111">Cheap per step</text>
+<text x="145" y="136" text-anchor="middle" font-size="12" fill="#111">May need many samples</text>
 
-<text x="148" y="88" text-anchor="middle" font-size="17" font-weight="500" fill="#c47060">SGD</text>
-<text x="148" y="108" text-anchor="middle" font-size="12" fill="currentColor">Compute-efficient</text>
-<text x="148" y="124" text-anchor="middle" font-size="12" fill="currentColor">Sample-hungry</text>
+<text x="535" y="72" text-anchor="middle" font-size="16" font-weight="500" fill="#5a8ab4">Sample-efficient</text>
+<text x="535" y="98" text-anchor="middle" font-size="14" fill="#111">ERM, program search</text>
+<text x="535" y="120" text-anchor="middle" font-size="12" fill="#111">Few examples suffice</text>
+<text x="535" y="136" text-anchor="middle" font-size="12" fill="#111">Search is exponential</text>
 
-<text x="532" y="88" text-anchor="middle" font-size="17" font-weight="500" fill="#5a8ab4">ERM</text>
-<text x="532" y="108" text-anchor="middle" font-size="12" fill="currentColor">Sample-efficient</text>
-<text x="532" y="124" text-anchor="middle" font-size="12" fill="currentColor">Search-expensive</text>
-
-<text x="340" y="170" text-anchor="middle" font-size="14" font-weight="500" fill="#2d8a66">LLM-PV</text>
-<text x="340" y="186" text-anchor="middle" font-size="11" fill="#3d9e7a">Both efficient</text>
-
-<line x1="148" y1="268" x2="148" y2="288" stroke="currentColor" stroke-width="0.5" stroke-dasharray="3 3" stroke-opacity="0.3"/>
-<text x="148" y="308" text-anchor="middle" font-size="12" fill="currentColor">Ω(<tspan font-style="italic">n</tspan><tspan dy="-5" font-size="9" font-style="italic">k</tspan><tspan font-size="9">/2</tspan><tspan dy="5" font-size="12">) samples</tspan></text>
-<text x="148" y="328" text-anchor="middle" font-size="12" fill="currentColor">𝒪(1) per step</text>
-
-<line x1="532" y1="268" x2="532" y2="288" stroke="currentColor" stroke-width="0.5" stroke-dasharray="3 3" stroke-opacity="0.3"/>
-<text x="532" y="308" text-anchor="middle" font-size="12" fill="currentColor">𝒪(<tspan font-style="italic">k</tspan> log <tspan font-style="italic">n</tspan>) samples</text>
-<text x="532" y="328" text-anchor="middle" font-size="12" fill="currentColor">𝒪(|Σ|<tspan dy="-5" font-size="9" font-style="italic">L</tspan><tspan dy="5" font-size="12">) search</tspan></text>
-
-<line x1="340" y1="288" x2="340" y2="338" stroke="currentColor" stroke-width="0.5" stroke-dasharray="3 3" stroke-opacity="0.3"/>
-<text x="340" y="363" text-anchor="middle" font-size="12" font-weight="500" fill="#2d8a66">𝒪(<tspan font-style="italic">k</tspan> log <tspan font-style="italic">n</tspan>) samples · <tspan font-style="italic">T</tspan> trials</text>
+<text x="340" y="160" text-anchor="middle" font-size="13" font-weight="500" fill="#111">Can we get both?</text>
 </svg>
