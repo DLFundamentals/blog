@@ -5,18 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:transparent; color:#2a2a2a; padding:20px; }
-@media (prefers-color-scheme:dark) { body { color:#c8c6be; } }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:transparent; color:#111; padding:20px; }
+@media (prefers-color-scheme:dark) { body { color:#e0ddd5; } }
 h3 { font-size:15px; font-weight:600; margin-bottom:4px; letter-spacing:-.2px; }
-.sub { font-size:12.5px; opacity:.55; margin-bottom:12px; }
+.sub { font-size:12.5px; color:#555; margin-bottom:12px; }
+@media (prefers-color-scheme:dark) { .sub { color:#a09e94; } }
 .tabs { display:flex; gap:5px; margin-bottom:14px; flex-wrap:wrap; }
-.tab { padding:4px 13px; border:1px solid rgba(128,128,128,.2); border-radius:16px; background:transparent; font-size:11px; cursor:pointer; transition:all .15s; color:inherit; opacity:.55; }
-.tab:hover { opacity:.8; background:rgba(128,128,128,.08); }
-.tab.active { opacity:1; border-color:rgba(88,166,140,.45); color:#58a68c; background:rgba(88,166,140,.08); }
-@media (prefers-color-scheme:dark) { .tab.active { color:#7cc4aa; background:rgba(88,166,140,.12); border-color:rgba(88,166,140,.3); } }
+.tab { padding:4px 13px; border:1px solid #ccc; border-radius:16px; background:transparent; font-size:11px; cursor:pointer; transition:all .15s; color:#444; }
+.tab:hover { background:rgba(128,128,128,.08); }
+.tab.active { border-color:#3d9e7a; color:#2d7a5e; background:rgba(61,158,122,.08); }
+@media (prefers-color-scheme:dark) { .tab { border-color:#555; color:#b0aea4; } .tab:hover { background:rgba(255,255,255,.05); } .tab.active { color:#7cc4aa; border-color:#5aa88a; background:rgba(88,166,140,.12); } }
 .chart-area { position:relative; width:100%; height:280px; }
-.highlight-box { margin-top:10px; padding:10px 14px; border-radius:8px; background:rgba(88,166,140,.05); border:1px solid rgba(88,166,140,.12); font-size:12px; line-height:1.5; opacity:.7; }
-@media (prefers-color-scheme:dark) { .highlight-box { background:rgba(88,166,140,.06); border-color:rgba(88,166,140,.1); } }
+.highlight-box { margin-top:10px; padding:10px 14px; border-radius:8px; background:rgba(61,158,122,.06); border:1px solid rgba(61,158,122,.15); font-size:12px; line-height:1.5; color:#333; }
+@media (prefers-color-scheme:dark) { .highlight-box { background:rgba(88,166,140,.08); border-color:rgba(88,166,140,.15); color:#c0bdb5; } }
 </style>
 </head>
 <body>
@@ -28,17 +29,15 @@ h3 { font-size:15px; font-weight:600; margin-bottom:4px; letter-spacing:-.2px; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const dk=matchMedia('(prefers-color-scheme:dark)').matches;
-const gc=dk?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)';
-const tc=dk?'#7a786e':'#999';
+const gc=dk?'rgba(255,255,255,.08)':'rgba(0,0,0,.06)';
+const tc=dk?'#a09e94':'#666';
 const labels=['10','100','200','1k','10k','100k'];
-
 const colors={
-  sgd_train: dk?'#c9a87a':'#b8894e',
-  sgd_test: dk?'#c47070':'#a85050',
-  pac: dk?'#849cc4':'#6a80aa',
-  pv: dk?'#6db89e':'#3d9e7a',
+  sgd_train: dk?'#d4b080':'#a87840',
+  sgd_test: dk?'#d49088':'#a04840',
+  pac: dk?'#8ea8d0':'#4e6e9e',
+  pv: dk?'#7cc4aa':'#2d8a66',
 };
-
 const tasks={
   "10-Parity":{
     sgd_train:[100,100,100,100,99.9,99.8],sgd_test:[49.9,49.1,49.7,49.9,50.1,50.7],
@@ -58,7 +57,6 @@ const tasks={
 };
 const tabC=document.getElementById('tabs');
 let chart=null;
-
 function renderChart(key){
   const d=tasks[key];
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.key===key));
@@ -80,7 +78,7 @@ function renderChart(key){
       animation:{duration:450},
       plugins:{
         legend:{display:true,position:'top',labels:{font:{size:10.5},color:tc,usePointStyle:true,padding:12,boxWidth:8}},
-        tooltip:{backgroundColor:dk?'rgba(40,40,36,.92)':'rgba(255,255,255,.95)',titleColor:dk?'#d4d2ca':'#333',bodyColor:dk?'#aaa':'#555',borderColor:dk?'rgba(255,255,255,.1)':'rgba(0,0,0,.08)',borderWidth:1,cornerRadius:8,padding:10}
+        tooltip:{backgroundColor:dk?'rgba(50,48,42,.95)':'rgba(255,255,255,.97)',titleColor:dk?'#e0ddd5':'#222',bodyColor:dk?'#c0bdb5':'#444',borderColor:dk?'rgba(255,255,255,.12)':'rgba(0,0,0,.1)',borderWidth:1,cornerRadius:8,padding:10}
       },
       scales:{
         y:{min:0,max:105,grid:{color:gc},ticks:{color:tc,font:{size:10.5},callback:v=>v+'%'},border:{display:false}},
@@ -89,7 +87,6 @@ function renderChart(key){
     }
   });
 }
-
 Object.keys(tasks).forEach((key,i)=>{
   const btn=document.createElement('button');
   btn.className='tab'+(i===0?' active':'');
