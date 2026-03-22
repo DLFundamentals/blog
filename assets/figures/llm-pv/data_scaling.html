@@ -5,103 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#fff; color:#1a1a1a; padding:20px; }
-@media (prefers-color-scheme:dark) { body { background:#1a1a1a; color:#e0e0e0; } }
-h3 { font-size:16px; font-weight:600; margin-bottom:4px; }
-.sub { font-size:13px; color:#666; margin-bottom:14px; }
-@media (prefers-color-scheme:dark) { .sub { color:#999; } }
-.tabs { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
-.tab { padding:6px 14px; border:1px solid #ddd; border-radius:6px; background:transparent; font-size:12px; cursor:pointer; transition:all .15s; color:inherit; }
-.tab:hover { background:rgba(0,0,0,.05); }
-.tab.active { background:#1e6bd6; color:#fff; border-color:#1e6bd6; }
-@media (prefers-color-scheme:dark) { .tab { border-color:#444; } .tab:hover { background:rgba(255,255,255,.08); } }
-.chart-area { position:relative; width:100%; height:300px; }
-.note { font-size:12px; color:#666; margin-top:10px; line-height:1.5; }
-@media (prefers-color-scheme:dark) { .note { color:#999; } }
-.highlight-box { margin-top:14px; padding:12px 16px; border-radius:8px; background:rgba(14,165,83,.06); border:1px solid rgba(14,165,83,.2); font-size:13px; line-height:1.5; }
-@media (prefers-color-scheme:dark) { .highlight-box { background:rgba(14,165,83,.1); border-color:rgba(14,165,83,.3); } }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:transparent; color:#2a2a2a; padding:20px; }
+@media (prefers-color-scheme:dark) { body { color:#c8c6be; } }
+h3 { font-size:15px; font-weight:600; margin-bottom:4px; letter-spacing:-.2px; }
+.sub { font-size:12.5px; opacity:.55; margin-bottom:12px; }
+.tabs { display:flex; gap:5px; margin-bottom:14px; flex-wrap:wrap; }
+.tab { padding:4px 13px; border:1px solid rgba(128,128,128,.2); border-radius:16px; background:transparent; font-size:11px; cursor:pointer; transition:all .15s; color:inherit; opacity:.55; }
+.tab:hover { opacity:.8; background:rgba(128,128,128,.08); }
+.tab.active { opacity:1; border-color:rgba(88,166,140,.45); color:#58a68c; background:rgba(88,166,140,.08); }
+@media (prefers-color-scheme:dark) { .tab.active { color:#7cc4aa; background:rgba(88,166,140,.12); border-color:rgba(88,166,140,.3); } }
+.chart-area { position:relative; width:100%; height:280px; }
+.highlight-box { margin-top:10px; padding:10px 14px; border-radius:8px; background:rgba(88,166,140,.05); border:1px solid rgba(88,166,140,.12); font-size:12px; line-height:1.5; opacity:.7; }
+@media (prefers-color-scheme:dark) { .highlight-box { background:rgba(88,166,140,.06); border-color:rgba(88,166,140,.1); } }
 </style>
 </head>
 <body>
 <h3>More data doesn't fix SGD on algorithmic tasks</h3>
-<p class="sub">BLOOM-75M trained with up to 100k examples. LLM-PV needs only 200.</p>
+<p class="sub">BLOOM-75M trained with up to 100k examples · LLM-PV needs only 200</p>
 <div class="tabs" id="tabs"></div>
 <div class="chart-area"><canvas id="chart"></canvas></div>
-<div class="highlight-box" id="highlight"></div>
-
+<div class="highlight-box" id="hl"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const isDark = matchMedia('(prefers-color-scheme:dark)').matches;
-const gridColor = isDark ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.06)';
-const txtColor = isDark ? '#aaa' : '#666';
-const labels = ['10','100','200','1k','10k','100k'];
+const dk=matchMedia('(prefers-color-scheme:dark)').matches;
+const gc=dk?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)';
+const tc=dk?'#7a786e':'#999';
+const labels=['10','100','200','1k','10k','100k'];
 
-const tasks = {
-  "10-Parity": {
-    sgd_train: [100,100,100,100,99.9,99.8],
-    sgd_test:  [49.9,49.1,49.7,49.9,50.1,50.7],
-    pv_test:   [49.3,100,100,null,null,null],
-    pac_ascii: [0,0,0,46.7,94.7,99.5],
-    note: "10-Parity has a 30-character Python implementation. The PAC bound guarantees >99% accuracy at 100k samples — yet SGD stays at chance. LLM-PV solves it with just 100 examples."
-  },
-  "CA Parity": {
-    sgd_train: [100,100,100,100,99.6,99.9],
-    sgd_test:  [50.1,50.4,50.4,50.0,50.0,50.4],
-    pv_test:   [50.3,50.1,100,null,null,null],
-    pac_ascii: [0,0,0,0,85.5,98.5],
-    note: "Cellular Automata Parity composes a local nonlinear update with global parity. SGD cannot escape chance even at 100k samples. LLM-PV needs 200."
-  },
-  "IsPrime": {
-    sgd_train: [100,100,100,100,100,100],
-    sgd_test:  [50.9,50.2,51.3,56.4,59.7,59.9],
-    pv_test:   [50.5,100,100,null,null,null],
-    pac_ascii: [0,0,0,22.9,92.3,99.2],
-    note: "Primality has a compact Miller–Rabin implementation. SGD gains marginally at 100k, reaching ~60% — far below the >99% PAC guarantee. LLM-PV achieves 100% from 100 examples."
-  }
+const colors={
+  sgd_train: dk?'#c9a87a':'#b8894e',
+  sgd_test: dk?'#c47070':'#a85050',
+  pac: dk?'#849cc4':'#6a80aa',
+  pv: dk?'#6db89e':'#3d9e7a',
 };
 
-const tabContainer = document.getElementById('tabs');
-let chart = null;
+const tasks={
+  "10-Parity":{
+    sgd_train:[100,100,100,100,99.9,99.8],sgd_test:[49.9,49.1,49.7,49.9,50.1,50.7],
+    pv_test:[49.3,100,100,null,null,null],pac_ascii:[0,0,0,46.7,94.7,99.5],
+    note:"10-Parity has a 30-character Python implementation. The PAC bound guarantees >99% at 100k — yet SGD stays at chance. LLM-PV solves it with 100 examples."
+  },
+  "CA Parity":{
+    sgd_train:[100,100,100,100,99.6,99.9],sgd_test:[50.1,50.4,50.4,50,50,50.4],
+    pv_test:[50.3,50.1,100,null,null,null],pac_ascii:[0,0,0,0,85.5,98.5],
+    note:"Cellular Automata Parity composes a local nonlinear update with global parity. SGD cannot escape chance even at 100k. LLM-PV needs 200."
+  },
+  "IsPrime":{
+    sgd_train:[100,100,100,100,100,100],sgd_test:[50.9,50.2,51.3,56.4,59.7,59.9],
+    pv_test:[50.5,100,100,null,null,null],pac_ascii:[0,0,0,22.9,92.3,99.2],
+    note:"Primality has a compact Miller–Rabin implementation. SGD reaches ~60% at 100k — far below the >99% PAC guarantee. LLM-PV achieves 100% from 100 examples."
+  }
+};
+const tabC=document.getElementById('tabs');
+let chart=null;
 
-function renderChart(key) {
-  const d = tasks[key];
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.key===key));
-  document.getElementById('highlight').textContent = d.note;
-  if (chart) chart.destroy();
-  const pvData = d.pv_test.map((v,i) => v!==null ? {x:labels[i], y:v} : null).filter(Boolean);
-  chart = new Chart(document.getElementById('chart'), {
+function renderChart(key){
+  const d=tasks[key];
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.key===key));
+  document.getElementById('hl').textContent=d.note;
+  if(chart)chart.destroy();
+  chart=new Chart(document.getElementById('chart'),{
     type:'line',
-    data: {
-      labels: labels,
-      datasets: [
-        { label:'SGD train acc', data:d.sgd_train, borderColor:'#e6a117', backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#e6a117', borderDash:[4,4], tension:.3 },
-        { label:'SGD test acc', data:d.sgd_test, borderColor:'#dc2626', backgroundColor:'rgba(220,38,38,.06)', fill:true, borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#dc2626', tension:.3 },
-        { label:'PAC bound (ERM)', data:d.pac_ascii, borderColor:'#8b5cf6', backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:'#8b5cf6', borderDash:[8,4], tension:.3, pointStyle:'triangle' },
-        { label:'LLM-PV test acc', data:d.pv_test, borderColor:'#0ea553', backgroundColor:'rgba(14,165,83,.1)', fill:true, borderWidth:2.5, pointRadius:7, pointBackgroundColor:'#0ea553', tension:.3, pointStyle:'rectRot', spanGaps:false },
+    data:{
+      labels:labels,
+      datasets:[
+        {label:'SGD train',data:d.sgd_train,borderColor:colors.sgd_train,backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,pointBackgroundColor:colors.sgd_train,borderDash:[4,4],tension:.3,pointBorderWidth:0},
+        {label:'SGD test',data:d.sgd_test,borderColor:colors.sgd_test,backgroundColor:'transparent',fill:false,borderWidth:2.2,pointRadius:4,pointBackgroundColor:colors.sgd_test,tension:.3,pointBorderWidth:0},
+        {label:'PAC bound (ERM)',data:d.pac_ascii,borderColor:colors.pac,backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,pointBackgroundColor:colors.pac,borderDash:[8,4],tension:.3,pointStyle:'triangle',pointBorderWidth:0},
+        {label:'LLM-PV test',data:d.pv_test,borderColor:colors.pv,backgroundColor:'transparent',fill:false,borderWidth:2.5,pointRadius:5.5,pointBackgroundColor:colors.pv,tension:.3,pointStyle:'rectRot',spanGaps:false,pointBorderWidth:0},
       ]
     },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      animation:{ duration:500 },
-      plugins: {
-        legend:{ display:true, position:'top', labels:{ font:{size:11}, color:txtColor, usePointStyle:true, padding:12 } },
-        tooltip:{ backgroundColor:isDark?'#333':'#fff', titleColor:isDark?'#eee':'#111', bodyColor:isDark?'#ccc':'#333', borderColor:isDark?'#555':'#ddd', borderWidth:1, cornerRadius:6, padding:10 }
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:450},
+      plugins:{
+        legend:{display:true,position:'top',labels:{font:{size:10.5},color:tc,usePointStyle:true,padding:12,boxWidth:8}},
+        tooltip:{backgroundColor:dk?'rgba(40,40,36,.92)':'rgba(255,255,255,.95)',titleColor:dk?'#d4d2ca':'#333',bodyColor:dk?'#aaa':'#555',borderColor:dk?'rgba(255,255,255,.1)':'rgba(0,0,0,.08)',borderWidth:1,cornerRadius:8,padding:10}
       },
-      scales: {
-        y:{ min:0, max:105, grid:{color:gridColor}, ticks:{color:txtColor, font:{size:11}, callback:v=>v+'%'} },
-        x:{ title:{display:true, text:'Training examples', color:txtColor, font:{size:11}}, grid:{color:gridColor}, ticks:{color:txtColor, font:{size:11}} }
+      scales:{
+        y:{min:0,max:105,grid:{color:gc},ticks:{color:tc,font:{size:10.5},callback:v=>v+'%'},border:{display:false}},
+        x:{title:{display:true,text:'Training examples',color:tc,font:{size:10.5}},grid:{color:gc},ticks:{color:tc,font:{size:10.5}},border:{display:false}}
       }
     }
   });
 }
 
-Object.keys(tasks).forEach((key,i) => {
-  const btn = document.createElement('button');
-  btn.className = 'tab'+(i===0?' active':'');
-  btn.textContent = key;
-  btn.dataset.key = key;
-  btn.onclick = () => renderChart(key);
-  tabContainer.appendChild(btn);
+Object.keys(tasks).forEach((key,i)=>{
+  const btn=document.createElement('button');
+  btn.className='tab'+(i===0?' active':'');
+  btn.textContent=key;
+  btn.dataset.key=key;
+  btn.onclick=()=>renderChart(key);
+  tabC.appendChild(btn);
 });
 renderChart(Object.keys(tasks)[0]);
 </script>
