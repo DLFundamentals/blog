@@ -18,20 +18,36 @@ excerpt: "Contrastive learning is often much closer to supervised contrastive le
 .col-wide + .col {
   margin-top: 0.85rem;
 }
+
+.flush-list ul,
+.flush-list ol {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  list-style-position: inside;
+}
+
+.flush-list li {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
 </style>
 
 <div class="col" markdown="1">
 
 *This post is based on two papers:*
 
+<div class="flush-list" markdown="1">
+
 - *A. Luthra, T. Yang, T. Galanti. ["Self-Supervised Contrastive Learning is Approximately Supervised Contrastive Learning"](https://arxiv.org/abs/2506.04411), NeurIPS 2025.*
 - *A. Luthra, T. Yang, T. Galanti. ["On the Alignment Between Supervised and Self-Supervised Contrastive Learning"](https://arxiv.org/abs/2510.08852), ICLR 2025.*
+
+</div>
 
 ---
 
 ## Introduction
 
-Self-supervised contrastive learning trains on unlabeled data, yet the learned features often look remarkably semantic: same-class samples cluster together, linear probes perform well, and downstream transfer can approach supervised pre-training. That raises a basic question: **how can a method that never sees labels learn representations that look so class-aware?**
+Self-supervised contrastive learning trains on unlabeled data, yet the learned features often look remarkably semantic: same-class samples cluster together, linear probes perform well, and downstream transfer can approach supervised pretraining. That raises a basic question: **how can a method that never sees labels learn representations that look so class-aware?**
 
 In this post, we argue that contrastive learning is much closer to supervised contrastive learning than its name suggests. This closeness operates at two levels, each addressed by one of the papers above.
 
@@ -201,7 +217,7 @@ We train models using SimCLR to minimize the DCL loss and track both losses thro
     </div>
   </div>
   <div class="figcaption">
-    <strong>Figure 3 (top).</strong> DCL loss, NSCL loss, and the theoretical bound tracked during SimCLR training on train and test sets. All three quantities are highly correlated. The gap between DCL and NSCL becomes tighter as the number of classes increases, compare CIFAR-10 with CIFAR-100.
+    <strong>Figure 3 (top).</strong> DCL loss, NSCL loss, and the theoretical bound tracked during SimCLR training on train and test sets. All three quantities are highly correlated. The gap between DCL and NSCL becomes tighter as the number of classes increases; compare CIFAR-10 with CIFAR-100.
   </div>
 </div>
 
@@ -265,9 +281,13 @@ The DCL loss consistently upper bounds the NSCL loss, and the two become closer 
 
 Beyond simply being a supervised loss, NSCL gives us a tractable bridge for understanding the geometry induced by contrastive learning. This raises a natural question: what kind of representations are learned by minimizing NSCL? Since NSCL serves as the supervised counterpart of DCL, understanding its global minimizers helps reveal the structure that self-supervised contrastive learning is implicitly approaching. In particular, any global minimizer of the NSCL loss exhibits three striking properties:
 
-1. **Augmentation collapse:** all augmented views of the same sample map to the same point.
-2. **Within-class collapse:** all samples from the same class share a single representation.
-3. **Simplex ETF structure:** the resulting class centers form a simplex equiangular tight frame, a maximally separated, symmetric configuration on the unit sphere.
+<div class="flush-list">
+  <ol>
+    <li><strong>Augmentation collapse:</strong> all augmented views of the same sample map to the same point.</li>
+    <li><strong>Within-class collapse:</strong> all samples from the same class share a single representation.</li>
+    <li><strong>Simplex ETF structure:</strong> the resulting class centers form a simplex equiangular tight frame, a maximally separated, symmetric configuration on the unit sphere.</li>
+  </ol>
+</div>
 
 </div>
 
@@ -325,8 +345,6 @@ $$
 $$
 
 </div>
-
-where $\rho_T$ and $r_T$ are normalized versions of the similarity-matrix discrepancy.
 
 </div>
 
@@ -386,7 +404,7 @@ So rather than thinking of CL as a completely different form of learning that my
 
 <hr class="section-rule">
 
-<div class="takeaway">
+<div class="takeaway flush-list">
   <div class="takeaway-label">Takeaway</div>
   <p style="margin-bottom: 1rem;">Contrastive learning is more supervised than it looks. This appears in three layers:</p>
   <ol>
