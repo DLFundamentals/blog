@@ -34,7 +34,7 @@ excerpt: "Contrastive learning is often much closer to supervised contrastive le
 
 <div class="col" markdown="1">
 
-*This post is based on two papers:*
+*Based on:*
 
 <div class="flush-list" markdown="1">
 
