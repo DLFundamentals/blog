@@ -53,7 +53,7 @@ A useful way to think about this phenomenon is that standard contrastive learnin
 
 <div class="key-message">
   <p style="margin: 0;">
-    <strong>1. The objectives are close.</strong> The standard self-supervised contrastive loss is close to a supervised variant that excludes same-class negatives, with a gap that shrinks as \(O(1/C)\) in the number of classes.
+    <strong>1. The objectives are close.</strong> The standard self-supervised contrastive loss is close to a supervised variant that excludes same-class negatives, with a gap that shrinks as $O(1/C)$ in the number of classes.
   </p>
   <p style="margin: 1rem 0 0 0;">
     <strong>2. The induced geometry is close.</strong> Under shared training randomness, the learned representations remain strongly aligned throughout training, even when the parameters themselves diverge.
@@ -139,7 +139,7 @@ Taken together, these results suggest a more precise picture of why contrastive 
 
 ### The setup
 
-Consider a labeled dataset \(S = \{(x_i,y_i)\}_{i=1}^N\), but suppose that during self-supervised training we only use the inputs \(x_i\), not the labels \(y_i\). For each sample \(x_i\), we generate \(K\) augmentations and map them through an encoder \(f\): \(z_i^l = f(\alpha_l(x_i))\).
+Consider a labeled dataset $S = \{(x_i,y_i)\}_{i=1}^N$, but suppose that during self-supervised training we only use the inputs $x_i$, not the labels $y_i$. For each sample $x_i$, we generate $K$ augmentations and map them through an encoder $f$: $z_i^l = f(\alpha_l(x_i))$.
 
 A standard **decoupled contrastive loss** (DCL) takes the form
 
@@ -170,9 +170,9 @@ That single change turns out to account for a great deal.
 
 ### Why the gap is small
 
-Suppose the dataset is balanced, with \(C\) classes and \(n\) samples per class, so \(N = Cn\). Fix an anchor. In DCL, the denominator sums over all \(N-1\) other samples. In NSCL, it sums over only the \(N-n = n(C-1)\) different-class samples. The only terms that appear in DCL but not in NSCL are the \(n-1\) same-class samples.
+Suppose the dataset is balanced, with $C$ classes and $n$ samples per class, so $N = Cn$. Fix an anchor. In DCL, the denominator sums over all $N-1$ other samples. In NSCL, it sums over only the $N-n = n(C-1)$ different-class samples. The only terms that appear in DCL but not in NSCL are the $n-1$ same-class samples.
 
-So the discrepancy between the two objectives is controlled by a very simple quantity: the fraction of the denominator occupied by same-class samples. In a balanced \(C\)-class problem, that fraction is roughly \(1/C\). As the number of classes grows, the two denominators become increasingly similar.
+So the discrepancy between the two objectives is controlled by a very simple quantity: the fraction of the denominator occupied by same-class samples. In a balanced $C$-class problem, that fraction is roughly $1/C$. As the number of classes grows, the two denominators become increasingly similar.
 
 This can be made precise:
 
@@ -184,9 +184,9 @@ $$
 
 </div>
 
-The bound is clean and quite general. It holds for any encoder \(f\), without assumptions on the data distribution or the model class. The gap shrinks as \(O(1/C)\), which means that for problems with many semantic classes, DCL is already very close to NSCL.
+The bound is clean and quite general. It holds for any encoder $f$, without assumptions on the data distribution or the model class. The gap shrinks as $O(1/C)$, which means that for problems with many semantic classes, DCL is already very close to NSCL.
 
-So one useful conclusion is the following: for large-\(C\) problems, standard self-supervised contrastive learning is optimizing an objective that is already quite near a natural supervised contrastive counterpart.
+So one useful conclusion is the following: for large-$C$ problems, standard self-supervised contrastive learning is optimizing an objective that is already quite near a natural supervised contrastive counterpart.
 
 </div>
 
@@ -201,7 +201,7 @@ So one useful conclusion is the following: for large-\(C\) problems, standard se
     </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 2.</strong> Interactive visualization of the CL-NSCL loss gap. The grid shows what each method's denominator includes: DCL sums over all other samples, including same-class negatives in red, while NSCL excludes them. The chart shows both the gap bound and the same-class fraction shrinking as \(C\) grows.
+    <strong>Figure 2.</strong> Interactive visualization of the CL-NSCL loss gap. The grid shows what each method's denominator includes: DCL sums over all other samples, including same-class negatives in red, while NSCL excludes them. The chart shows both the gap bound and the same-class fraction shrinking as $C$ grows.
   </div>
 </div>
 
@@ -268,9 +268,9 @@ To examine this behavior empirically, we train models using SimCLR to minimize t
 
 <div class="col" markdown="1">
 
-The DCL loss consistently upper bounds the NSCL loss, and the two become closer for tasks with more classes. When \(C\) is large, for example \(C = 100\), the bound becomes quite tight. Moreover, the NSCL losses of DCL-trained and NSCL-trained models are comparable at convergence, indicating that optimizing DCL already leads to a representation regime close to the one favored by NSCL.
+The DCL loss consistently upper bounds the NSCL loss, and the two become closer for tasks with more classes. When $C$ is large, for example $C = 100$, the bound becomes quite tight. Moreover, the NSCL losses of DCL-trained and NSCL-trained models are comparable at convergence, indicating that optimizing DCL already leads to a representation regime close to the one favored by NSCL.
 
-### The gap scales as predicted with \(C\)
+### The gap scales as predicted with $C$
 
 </div>
 
@@ -291,7 +291,7 @@ The DCL loss consistently upper bounds the NSCL loss, and the two become closer 
     </div>
   </div>
   <div class="figcaption">
-    <strong>Figure 4.</strong> The gap \(\mathcal{L}^{\mathrm{DCL}} - \mathcal{L}^{\mathrm{NSCL}}\) as a function of the number of classes \(C\), compared with the theoretical bound \(\log(1 + e^2/(C-1))\). The gap shrinks with \(C\) and is highly correlated with the bound at all training epochs. Models were trained from scratch for each value of \(C\) using randomly sampled class subsets.
+    <strong>Figure 4.</strong> The gap $\mathcal{L}^{\mathrm{DCL}} - \mathcal{L}^{\mathrm{NSCL}}$ as a function of the number of classes $C$, compared with the theoretical bound $\log(1 + e^2/(C-1))$. The gap shrinks with $C$ and is highly correlated with the bound at all training epochs. Models were trained from scratch for each value of $C$ using randomly sampled class subsets.
   </div>
 </div>
 
@@ -358,7 +358,7 @@ $$
 \|\Sigma_T^{\mathrm{CL}}-\Sigma_T^{\mathrm{NS}}\|_F \lesssim \frac{e^{2/\tau}}{\tau C \sqrt{B}} \cdot \exp\left(\frac{1}{2\tau^2 B}\sum_{t=0}^{T-1}\eta_t\right)\cdot \left(\sum_{t=0}^{T-1}\eta_t\right).
 $$
 
-The right-hand side becomes smaller when the number of classes \(C\) is larger, the batch size \(B\) is larger, the temperature \(\tau\) is higher, and the cumulative step size \(\sum_{t=0}^{T-1}\eta_t\) is more moderate. So the same regimes that make the loss gap small also tend to keep the learned geometries aligned.
+The right-hand side becomes smaller when the number of classes $C$ is larger, the batch size $B$ is larger, the temperature $\tau$ is higher, and the cumulative step size $\sum_{t=0}^{T-1}\eta_t$ is more moderate. So the same regimes that make the loss gap small also tend to keep the learned geometries aligned.
 
 This immediately yields lower bounds on CKA and RSA:
 
@@ -402,7 +402,7 @@ First, alignment is strongest when the number of classes is largest, as in CIFAR
 
 Second, the scores are nearly identical across ResNet-50 and ViT-Base, indicating that the DCL-NSCL relationship is not an artifact of a particular architecture.
 
-These results are also consistent with the form of the theoretical bound. The divergence scales as \(1/(\tau C \sqrt{B})\), so when \(C = 100\) and \(B = 1024\), the predicted discrepancy is small and the empirical alignment is correspondingly high. The fact that CKA and RSA both stay above 0.8 even for CIFAR-10 suggests that the bound is not tight, but does capture the correct qualitative dependence.
+These results are also consistent with the form of the theoretical bound. The divergence scales as $1/(\tau C \sqrt{B})$, so when $C = 100$ and $B = 1024$, the predicted discrepancy is small and the empirical alignment is correspondingly high. The fact that CKA and RSA both stay above 0.8 even for CIFAR-10 suggests that the bound is not tight, but does capture the correct qualitative dependence.
 
 ### But weights can still diverge
 
@@ -412,7 +412,7 @@ $$
 \|w_T^{\mathrm{CL}}-w_T^{\mathrm{NS}}\| \lesssim \frac{G e^{2/\tau}}{\beta\tau C} \cdot \left(\exp\left(\beta\sum_{t=0}^{T-1}\eta_t\right)-1\right).
 $$
 
-Although both bounds grow exponentially, the exponent in the similarity-matrix bound is much milder: it is scaled by \(1/B\), whereas the weight-space bound has no analogous batch-size moderation. Thus, representation-level alignment can remain stable even when parameter-space divergence becomes large.
+Although both bounds grow exponentially, the exponent in the similarity-matrix bound is much milder: it is scaled by $1/B$, whereas the weight-space bound has no analogous batch-size moderation. Thus, representation-level alignment can remain stable even when parameter-space divergence becomes large.
 
 This is not especially surprising. Deep networks have substantial parameter redundancy, so two models can follow very different paths in weight space while still inducing very similar representation geometry.
 
@@ -438,7 +438,7 @@ This does not mean that self-supervised and supervised learning are identical, n
   <div class="takeaway-label">Takeaway</div>
   <p style="margin-bottom: 1rem;">The main point is not merely that self-supervised and supervised contrastive learning are related. It is that the relation is surprisingly tight and structurally clean.</p>
   <ol>
-    <li><strong>The objectives are close.</strong> The standard self-supervised contrastive loss approximates the NSCL loss, with a gap that shrinks as \(O(1/C)\).</li>
+    <li><strong>The objectives are close.</strong> The standard self-supervised contrastive loss approximates the NSCL loss, with a gap that shrinks as $O(1/C)$.</li>
     <li><strong>The nearby supervised problem has elegant geometry.</strong> NSCL minimizers exhibit augmentation collapse, within-class collapse, and simplex ETF structure.</li>
     <li><strong>The learned representations stay aligned.</strong> Under shared training randomness, DCL and NSCL produce highly similar representation geometry, even when their parameters diverge.</li>
   </ol>
