@@ -15,13 +15,27 @@ excerpt: "A geometric explanation for why ordinary supervised pretraining can tr
 
 *Based on: T. Galanti, A. György, M. Hutter. ["Generalization Bounds for Few-Shot Transfer Learning with Pretrained Classifiers"](https://arxiv.org/abs/2212.12532), arXiv 2022.*
 
+<style>
+  .flush-list ul,
+  .flush-list ol {
+    margin-left: 0;
+    padding-left: 0;
+    list-style-position: inside;
+  }
+
+  .flush-list li {
+    margin-left: 0;
+    padding-left: 0;
+  }
+</style>
+
 ---
 
 ## Introduction
 
 Deep networks trained on large classification benchmarks such as ImageNet often transfer surprisingly well to new tasks. Train a classifier on a large source dataset, keep the learned representation, fit a simple head on a handful of labeled examples from new classes, and it works. Practitioners rely on this all the time.
 
-But from a theoretical perspective, the phenomenon is puzzling. A classifier trained on ImageNet is optimized to separate the ImageNet classes. Why should the same representation also make it easy to separate **new** classes that never appeared during training? And why should only a handful of labeled examples be enough?
+But from a theoretical perspective, this phenomenon is puzzling. A classifier trained on ImageNet is optimized to separate the ImageNet classes. Why should the same representation also make it easy to separate **new** classes that never appeared during training? And why should only a handful of labeled examples be enough?
 
 <div class="key-message">
 The key idea is geometric. If pretraining makes same-class features tightly clustered and different class means well separated on the source task, then this geometry first generalizes to fresh samples from those source classes, and then it also extends to new unseen classes. Once that happens, a nearest-center classifier can learn the new classes from only a few examples.
@@ -29,9 +43,13 @@ The key idea is geometric. If pretraining makes same-class features tightly clus
 
 The explanation has three steps:
 
-1. **Model classes as i.i.d. random draws** from a common population, so transfer to unseen classes becomes a well-posed question.
-2. **Measure clustering relative to separation** using the class-distance normalized variance (CDNV).
-3. **Show that small CDNV on the source task generalizes twice**: first from source training samples to source-class population geometry, and then from source classes to unseen target classes.
+<div class="flush-list">
+  <ol>
+    <li><strong>Model classes as i.i.d. random draws</strong> from a common population, so transfer to unseen classes becomes a well-posed question.</li>
+    <li><strong>Measure clustering relative to separation</strong> using the class-distance normalized variance (CDNV).</li>
+    <li><strong>Show that small CDNV on the source task generalizes twice</strong>: first from source training samples to source-class population geometry, and then from source classes to unseen target classes.</li>
+  </ol>
+</div>
 
 <hr class="section-rule">
 
@@ -65,7 +83,7 @@ So source and target classes are different, but they come from the same underlyi
     </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 1.</strong> The class-sampling process. Click through to watch source and target classes drawn independently from the population $\mathcal{D}$. Source classes receive $m = 18$ samples each (dense clusters); target classes receive only $n = 4$ (sparse, outlined dots). The representation learned from the source must generalize to classify the target from these few examples alone.
+    <strong>Figure 1.</strong> The class-sampling process. Click through to watch source and target classes drawn independently from the population $\mathcal{D}$. Source classes receive $m = 18$ samples each (dense clusters); target classes receive only $n = 4$ (sparse, outlined dots). The representation learned from the source must generalize well enough to classify the target from these few examples alone.
   </div>
 </div>
 
@@ -139,8 +157,12 @@ Small CDNV is exactly the favorable regime for transfer: samples from the same c
 
 Few-shot learning with a nearest-center classifier succeeds only if a small number of labeled samples is enough to estimate each target class center accurately. That requires two things at once:
 
-1. **Low within-class variability**: same-class samples must stay close to their class mean.
-2. **Large between-class separation**: different class means must be far apart.
+<div class="flush-list">
+  <ol>
+    <li><strong>Low within-class variability.</strong> Same-class samples must stay close to their class mean.</li>
+    <li><strong>Large between-class separation.</strong> Different class means must be far apart.</li>
+  </ol>
+</div>
 
 CDNV combines these two requirements into a single scale-free quantity. If $V_f(Q_i,Q_j)$ is small, then the noise within class $Q_i$ is small relative to its separation from class $Q_j$. In that regime, empirical class centers are stable, and nearest-center classification becomes reliable even from a few labeled examples.
 
@@ -179,7 +201,7 @@ That is the logic behind transfer: clustering on source training data generalize
 <div class="card-stack">
   <div class="card">
     <div class="card-title">Step 1: source samples cluster</div>
-    <p>As training proceeds, source training samples concentrate around their class means. This is the empirical geometry you can see directly during pretraining.</p>
+    <p>As training proceeds, source training samples concentrate around their class means. This is the empirical geometry you can observe directly during pretraining.</p>
   </div>
   <div class="card">
     <div class="card-title">Step 2: source-class geometry generalizes</div>
@@ -207,7 +229,7 @@ $$
 
 </div>
 
-where $\mathcal{C}(f)$ is some notion of complexity of the pre-trained model $f$.
+where $\mathcal{C}(f)$ is some notion of complexity of the pretrained model $f$.
 
 ### What each term means
 
@@ -233,11 +255,11 @@ Once the representation makes unseen classes form tight, well-separated clusters
 
 This theory does **not** say that every pretrained classifier transfers well to every target task, or that exact neural collapse must hold perfectly, or that source and target can come from unrelated populations.
 
-What it does say is precise: if the learned representation exhibits small class-distance normalized variance on many source training classes, then this geometry first generalizes to the underlying source-class distributions and then, because classes are i.i.d. draws from a common population, to unseen target classes. That is why few-shot nearest-center classification can succeed.
+What it *does* say is precise: if the learned representation exhibits small class-distance normalized variance on many source training classes, then this geometry first generalizes to the underlying source-class distributions and then, because classes are i.i.d. draws from a common population, to unseen target classes. That is why few-shot nearest-center classification can succeed.
 
 <hr class="section-rule">
 
-<div class="takeaway">
+<div class="takeaway flush-list">
   <div class="takeaway-label">Takeaway</div>
   <p style="margin-bottom: 1rem;">Few-shot transfer works because pretraining learns a feature space whose geometry generalizes twice:</p>
   <ol>
