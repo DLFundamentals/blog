@@ -1,0 +1,257 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  canvas { display: block; width: 100%; }
+  .cr { display: flex; gap: 10px; align-items: center; justify-content: center; margin: 8px 0 4px; flex-wrap: wrap; }
+  .cr button { padding: 5px 14px; font-size: 13px; cursor: pointer; border-radius: var(--border-radius-md); min-width: 56px; }
+  .sl { display: flex; align-items: center; gap: 6px; }
+  .sl label { font-size: 12px; color: var(--color-text-secondary); min-width: 56px; text-align: right; }
+  .sl input[type=range] { width: 100px; }
+  .sl .v { font-size: 12px; font-weight: 500; min-width: 28px; color: var(--color-text-primary); }
+  .sls { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 4px 0 0; }
+</style>
+<canvas id="c"></canvas>
+<div class="cr">
+  <button onclick="reset()">Reset</button>
+  <button onclick="stepOnce()">Step</button>
+  <button id="pb" onclick="togglePlay()">Play</button>
+  <button onclick="for(let i=0;i<10;i++)doStep();draw()">+10</button>
+</div>
+<div class="sls">
+  <div class="sl"><label>Batch B</label><input type="range" min="1" max="8" value="2" step="1" id="sB" oninput="updP()"><span class="v" id="vB">2</span></div>
+  <div class="sl"><label>Rate &mu;</label><input type="range" min="2" max="20" value="8" step="1" id="sL" oninput="updP()"><span class="v" id="vL">0.08</span></div>
+  <div class="sl"><label>Decay &lambda;</label><input type="range" min="1" max="20" value="5" step="1" id="sW" oninput="updP()"><span class="v" id="vW">0.05</span></div>
+</div>
+<script>
+const DIM=8,MAX_H=20;
+const cv=document.getElementById('c'),cx=cv.getContext('2d');
+const CW=680,CH=540;
+let dpr=window.devicePixelRatio||1;
+cv.width=CW*dpr;cv.height=CH*dpr;
+cv.style.width=CW+'px';cv.style.height=CH+'px';
+cx.setTransform(dpr,0,0,dpr,0,0);
+
+let B=2,lr=0.08,wd=0.05,step=0,playing=false,pid=null;
+let W=Array.from({length:DIM},()=>Array(DIM).fill(0));
+let hist=[];
+
+function rn(){let u=0,v;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function makeG(b){
+  const G=Array.from({length:DIM},()=>Array(DIM).fill(0));
+  for(let k=0;k<b;k++){const d=Array.from({length:DIM},()=>rn()),f=Array.from({length:DIM},()=>rn());
+    for(let i=0;i<DIM;i++)for(let j=0;j<DIM;j++)G[i][j]+=d[i]*f[j]/b;}
+  return{G,B:b};
+}
+function doStep(){
+  const decay=Math.max(0,1-2*lr*wd);
+  const g=makeG(B);
+  for(let i=0;i<DIM;i++)for(let j=0;j<DIM;j++)W[i][j]=decay*W[i][j]-lr*g.G[i][j];
+  hist.push(g);if(hist.length>MAX_H)hist.shift();step++;
+}
+function svd(M){
+  const n=M.length;const Mt=Array.from({length:n},()=>Array(n).fill(0));
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++)for(let k=0;k<n;k++)Mt[i][j]+=M[k][i]*M[k][j];
+  for(let it=0;it<80;it++)for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+    if(Math.abs(Mt[i][j])<1e-14)continue;
+    const tau=(Mt[j][j]-Mt[i][i])/(2*Mt[i][j]),t=Math.sign(tau)/(Math.abs(tau)+Math.sqrt(1+tau*tau)),
+    c=1/Math.sqrt(1+t*t),s=t*c;
+    for(let k=0;k<n;k++){const a=Mt[k][i],b2=Mt[k][j];Mt[k][i]=c*a-s*b2;Mt[k][j]=s*a+c*b2;}
+    for(let k=0;k<n;k++){const a=Mt[i][k],b2=Mt[j][k];Mt[i][k]=c*a-s*b2;Mt[j][k]=s*a+c*b2;}
+  }
+  const sv=[];for(let i=0;i<n;i++)sv.push(Math.sqrt(Math.max(0,Mt[i][i])));
+  sv.sort((a,b)=>b-a);return sv;
+}
+function effRank(sv){const t=sv.reduce((a,b)=>a+b,0);if(t<1e-10)return 0;let h=0;for(const s of sv){if(s/t>1e-10){const p=s/t;h-=p*Math.log(p);}}return Math.exp(h);}
+
+const dk=()=>matchMedia('(prefers-color-scheme:dark)').matches;
+
+function warmHeat(v,mx){
+  const t=Math.min(Math.abs(v)/(mx||1),1);
+  if(v>=0){return`rgb(${Math.round(255-t*12)},${Math.round(228-t*90)},${Math.round(200-t*155)})`;}
+  return`rgb(${Math.round(210-t*60)},${Math.round(215-t*30)},${Math.round(230-t*10)})`;
+}
+function stripeCol(idx,dark){
+  return(dark
+    ?['#F0997B','#FAC775','#5DCAA5','#ED93B1','#AFA9EC','#97C459','#85B7EB','#F09595']
+    :['#D85A30','#BA7517','#0F6E56','#993556','#534AB7','#3B6D11','#185FA5','#A32D2D'])[idx%8];
+}
+
+function draw(){
+  const dark=dk();
+  cx.clearRect(0,0,CW,CH);
+  const txtP=dark?'#e0ddd4':'#2c2c2a';
+  const txtS=dark?'#9c9a92':'#5f5e5a';
+  const txtT=dark?'#6b6963':'#a3a29c';
+  const bgSurf=dark?'#302e2a':'#f7f4ed';
+  const border=dark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.08)';
+  const accent=dark?'#F0997B':'#D85A30';
+  const accentSoft=dark?'rgba(240,153,123,':'rgba(216,90,48,';
+
+  const decay=Math.max(0,1-2*lr*wd);
+  const n=hist.length;
+
+  // --- GRADIENT TIMELINE ---
+  const tlY=40,tlH=90;
+  const pad=40;
+  const slabW=Math.floor((CW-2*pad-20)/(MAX_H));
+  const slabGap=2;
+  const actualSlabW=slabW-slabGap;
+  const totalW=MAX_H*slabW;
+  const tlX=pad+10;
+
+  cx.fillStyle=txtS;cx.font='500 13px sans-serif';cx.textAlign='center';
+  cx.fillText('Gradient history',CW/2,tlY-14);
+
+  // subtle track background
+  cx.fillStyle=dark?'rgba(255,255,255,0.015)':'rgba(0,0,0,0.015)';
+  cx.beginPath();cx.roundRect(tlX-6,tlY-4,totalW+12,tlH+8,8);cx.fill();
+  cx.strokeStyle=border;cx.lineWidth=0.5;
+  cx.beginPath();cx.roundRect(tlX-6,tlY-4,totalW+12,tlH+8,8);cx.stroke();
+
+  // direction labels below track
+  cx.font='11px sans-serif';cx.fillStyle=txtT;
+  cx.textAlign='left';cx.fillText('old',tlX,tlY+tlH+20);
+  cx.textAlign='right';cx.fillText('new',tlX+totalW,tlY+tlH+20);
+
+  // small arrow showing direction
+  const arrowY=tlY+tlH+17;
+  const arrowX1=tlX+20,arrowX2=tlX+totalW-20;
+  cx.strokeStyle=txtT;cx.lineWidth=0.5;
+  cx.beginPath();cx.moveTo(arrowX1,arrowY);cx.lineTo(arrowX2,arrowY);cx.stroke();
+  cx.beginPath();cx.moveTo(arrowX2-5,arrowY-3);cx.lineTo(arrowX2,arrowY);cx.lineTo(arrowX2-5,arrowY+3);cx.stroke();
+
+  for(let slot=0;slot<MAX_H;slot++){
+    const dataIdx=slot-(MAX_H-n);
+    const x=tlX+slot*slabW;
+    const y=tlY,h=tlH;
+
+    if(dataIdx<0||dataIdx>=n){
+      cx.fillStyle=dark?'rgba(255,255,255,0.02)':'rgba(0,0,0,0.018)';
+      cx.beginPath();cx.roundRect(x,y,actualSlabW,h,4);cx.fill();
+      continue;
+    }
+    const age=n-1-dataIdx;
+    const alpha=Math.pow(decay,age);
+    const entry=hist[dataIdx];
+    const bCount=entry.B;
+
+    // slab background
+    cx.fillStyle=dark?`rgba(48,46,42,${0.2+alpha*0.8})`:`rgba(255,252,245,${0.3+alpha*0.7})`;
+    cx.beginPath();cx.roundRect(x,y,actualSlabW,h,4);cx.fill();
+    cx.strokeStyle=`${accentSoft}${(0.04+alpha*0.25).toFixed(2)})`;cx.lineWidth=0.5;cx.stroke();
+
+    // rank stripes
+    const stripePad=3;
+    const stripeArea=h-2*stripePad;
+    for(let s=0;s<bCount;s++){
+      const sy=y+stripePad+s*(stripeArea/bCount);
+      const sh=stripeArea/bCount-1;
+      cx.globalAlpha=Math.max(0.03,alpha*0.9);
+      cx.fillStyle=stripeCol(s,dark);
+      cx.beginPath();cx.roundRect(x+2,sy,actualSlabW-4,Math.max(1,sh),2);cx.fill();
+    }
+    cx.globalAlpha=1;
+  }
+
+  // --- FLOW LINES to matrix ---
+  const flowTarget=tlY+tlH+54;
+  for(let slot=0;slot<MAX_H;slot++){
+    const dataIdx=slot-(MAX_H-n);
+    if(dataIdx<0||dataIdx>=n)continue;
+    const age=n-1-dataIdx;
+    const alpha=Math.pow(decay,age)*0.35;
+    if(alpha<0.01)continue;
+    const sx=tlX+slot*slabW+actualSlabW/2;
+    cx.strokeStyle=`${accentSoft}${alpha.toFixed(2)})`;
+    cx.lineWidth=Math.max(0.3,alpha*2);cx.setLineDash([2,3]);
+    cx.beginPath();cx.moveTo(sx,tlY+tlH+6);cx.quadraticCurveTo(sx,flowTarget-6,CW/2,flowTarget+10);cx.stroke();
+    cx.setLineDash([]);
+  }
+
+  cx.fillStyle=txtT;cx.font='11px sans-serif';cx.textAlign='center';
+  cx.fillText('weighted sum (decay fades old contributions)',CW/2,flowTarget+2);
+
+  // --- MATRIX + BARS ---
+  const botY=flowTarget+22;
+  const cs=28,matW=DIM*cs;
+  const matX=50,matY=botY+16;
+
+  let maxAbs=0;
+  for(let i=0;i<DIM;i++)for(let j=0;j<DIM;j++)maxAbs=Math.max(maxAbs,Math.abs(W[i][j]));
+  if(maxAbs<0.01)maxAbs=1;
+
+  cx.fillStyle=txtS;cx.font='500 13px sans-serif';cx.textAlign='center';
+  cx.fillText('Weight matrix W',matX+matW/2,matY-6);
+
+  for(let i=0;i<DIM;i++)for(let j=0;j<DIM;j++){
+    cx.fillStyle=warmHeat(W[i][j],maxAbs);
+    cx.beginPath();cx.roundRect(matX+j*cs,matY+i*cs,cs-2,cs-2,3);cx.fill();
+  }
+  cx.strokeStyle=border;cx.lineWidth=0.5;
+  cx.beginPath();cx.roundRect(matX-1,matY-1,matW,matW,4);cx.stroke();
+
+  // singular value bars
+  const sv=svd(W);
+  const maxSV=Math.max(...sv,0.01);
+  const barAreaX=matX+matW+50;
+  const barAreaW=CW-barAreaX-20;
+  const barW=Math.min(26,(barAreaW-DIM*4)/DIM);
+  const barMaxH=DIM*cs;
+  const barGroupW=DIM*(barW+4);
+  const barX0=barAreaX+(barAreaW-barGroupW)/2;
+
+  cx.fillStyle=txtS;cx.font='500 13px sans-serif';cx.textAlign='center';
+  cx.fillText('Singular values',barX0+barGroupW/2,matY-6);
+
+  for(let i=0;i<DIM;i++){
+    const bh=Math.max(2,(sv[i]/maxSV)*barMaxH);
+    const bx=barX0+i*(barW+4);
+    const by=matY+barMaxH-bh;
+    const t=sv[i]/maxSV;
+    const r=Math.round(dark?180+t*60:160+t*56);
+    const g=Math.round(dark?100+t*70:70+t*55);
+    const b=Math.round(dark?60+t*10:30+t*10);
+    cx.fillStyle=`rgb(${r},${g},${b})`;
+    cx.beginPath();cx.roundRect(bx,by,barW,bh,[4,4,0,0]);cx.fill();
+
+    cx.fillStyle=txtT;cx.font='11px sans-serif';cx.textAlign='center';
+    cx.fillText('\u03C3'+(i+1),bx+barW/2,matY+barMaxH+14);
+  }
+  cx.strokeStyle=border;cx.lineWidth=0.5;
+  cx.beginPath();cx.moveTo(barX0-4,matY+barMaxH);cx.lineTo(barX0+barGroupW+4,matY+barMaxH);cx.stroke();
+
+  // --- STATS ---
+  const eR=effRank(sv);
+  const memSteps=lr*wd>0.001?Math.round(Math.log(100)/(lr*wd)):'--';
+  const statY=matY+barMaxH+26;
+  const stats=[{l:'Step',v:''+step},{l:'Eff. rank',v:eR.toFixed(1)},{l:'Memory',v:memSteps+' steps'},{l:'Decay',v:decay.toFixed(3)}];
+  const statW=125,statH=34,statGap=8;
+  const stTotal=stats.length*statW+(stats.length-1)*statGap;
+  const stX0=CW/2-stTotal/2;
+  stats.forEach((s,i)=>{
+    const sx=stX0+i*(statW+statGap);
+    cx.fillStyle=bgSurf;cx.beginPath();cx.roundRect(sx,statY,statW,statH,6);cx.fill();
+    cx.fillStyle=txtP;cx.font='500 14px sans-serif';cx.textAlign='center';
+    cx.fillText(s.v,sx+statW/2,statY+14);
+    cx.fillStyle=txtT;cx.font='11px sans-serif';
+    cx.fillText(s.l,sx+statW/2,statY+28);
+  });
+}
+
+function updP(){
+  B=+document.getElementById('sB').value;
+  lr=+document.getElementById('sL').value/100;
+  wd=+document.getElementById('sW').value/100;
+  document.getElementById('vB').textContent=B;
+  document.getElementById('vL').textContent=lr.toFixed(2);
+  document.getElementById('vW').textContent=wd.toFixed(2);
+  draw();
+}
+function stepOnce(){doStep();draw();}
+function togglePlay(){
+  playing=!playing;document.getElementById('pb').textContent=playing?'Pause':'Play';
+  if(playing)pid=setInterval(()=>{doStep();draw();},200);else clearInterval(pid);
+}
+function reset(){if(playing)togglePlay();W=Array.from({length:DIM},()=>Array(DIM).fill(0));step=0;hist=[];draw();}
+draw();
+</script>
