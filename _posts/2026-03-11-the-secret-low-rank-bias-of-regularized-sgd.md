@@ -86,7 +86,7 @@ The mechanism has three parts, each developed in a section below:
 
 ## Interactive explorer
 
-Here is a live simulation of the mechanism. A $14 \times 14$ weight matrix is built step by step from rank-$B$ stochastic gradient updates under weight decay. Press **Play** to watch the dynamics unfold, or **Step** to advance one iteration at a time.
+Here is a live simulation of the mechanism. A $8 \times 8$ weight matrix is built step by step from rank-$B$ stochastic gradient updates under weight decay. Press **Play** to watch the dynamics unfold, or **Step** to advance one iteration at a time.
 
 <div class="col-wide">
   <div class="embed-wrap">
