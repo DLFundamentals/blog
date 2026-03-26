@@ -92,7 +92,8 @@ Here is a live simulation of the mechanism. A $14 \times 14$ weight matrix is bu
   <div class="embed-wrap">
     <iframe
       src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_pipeline_v4.html' | relative_url }}"
-      height="750"
+      height="700"
+      width="400"
       loading="lazy"
       title="Interactive low-rank bias explorer">
     </iframe>
