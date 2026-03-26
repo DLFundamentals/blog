@@ -91,14 +91,14 @@ Here is a live simulation of the mechanism. A $14 \times 14$ weight matrix is bu
 <div class="col-wide">
   <div class="embed-wrap">
     <iframe
-      src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_bias_stable.html' | relative_url }}"
+      src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_pipeline_v4.html' | relative_url }}"
       height="540"
       loading="lazy"
       title="Interactive low-rank bias explorer">
     </iframe>
   </div>
   <div class="figcaption">
-    <strong>Figure 3.</strong> Interactive simulation of the low-rank mechanism. The heatmap shows $W_T$ (warm = positive, cool = negative). Singular value bars reveal the rank structure. The memory window at the bottom shows how weight decay fades old gradient contributions. The sliders control batch size $B$, learning rate $\mu$, and weight decay $\lambda$.
+    <strong>Figure 3.</strong> Interactive simulation of the low-rank mechanism. Gradient slabs enter the timeline from the right; weight decay fades older contributions exponentially, so only a short window of recent updates shapes the current weight matrix $W_T$ (warm = positive, cool = negative). The singular value bars expose the resulting rank structure. Use the sliders to see how smaller batch size $B$, larger learning rate $\mu$, and stronger weight decay $\lambda$ each compress the effective rank.
   </div>
 </div>
 
