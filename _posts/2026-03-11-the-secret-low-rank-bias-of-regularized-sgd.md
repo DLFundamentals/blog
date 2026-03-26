@@ -91,7 +91,7 @@ Here is a live simulation of the mechanism. A $14 \times 14$ weight matrix is bu
 <div class="col-wide">
   <div class="embed-wrap">
     <iframe
-      src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_pipeline_v4.html' | relative_url }}"
+      src="{{ '/assets/figures/low-rank-bias/sgd_low_rank_pipeline_v5.html' | relative_url }}"
       height="680"
       width="800"
       loading="lazy"
