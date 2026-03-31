@@ -1,19 +1,16 @@
 ---
-
 layout: post
 title: "Why Claude-Style Generalist Agents Work So Well"
 date: 2026-03-31
 author: Tomer Galanti
 tags:
-
-* agents
-* claude-code
-* llms
-* tools
-* software-systems
-* reasoning
-  excerpt: "Claude-style agents work not because they follow one giant hard-coded plan, but because they repeatedly choose the next useful action, use tools, observe the result, and continue."
-
+  - agents
+  - claude-code
+  - llms
+  - tools
+  - software-systems
+  - reasoning
+excerpt: "Claude-style agents work well because they repeatedly choose the next useful action, use tools, observe the result, and continue."
 ---
 
 <style>
