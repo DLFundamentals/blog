@@ -31,7 +31,7 @@ excerpt: "Claude-style agents work well because they repeatedly choose the next 
 
 ## Introduction
 
-Why do Claude-style generalist agents feel so effective in practice?
+So Claude Code was leaked online, so I decided to learn, together with Claude's assistance, how it works from the inside.
 
 At first glance, it is tempting to imagine that there must be a large hand-written controller somewhere inside the system: first inspect the code, then run tests, then edit the file, then verify, then summarize. But the real picture is both simpler and more interesting.
 
