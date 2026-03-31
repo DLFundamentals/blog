@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Why Claude-Style Generalist Agents Work So Well — Source-Verified Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -166,18 +160,18 @@ article h3 {
   font-size: 12px;
   color: var(--teal);
   background: var(--teal-soft);
-  padding: 8px 14px;
+  padding: 10px 14px 10px 32px;
   border-radius: 6px;
   margin: 1rem 0 1.5rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  line-height: 1.5;
+  line-height: 1.6;
+  position: relative;
 }
 
 .source-note::before {
   content: "⬢";
-  flex-shrink: 0;
+  position: absolute;
+  left: 14px;
+  top: 10px;
 }
 
 code {
@@ -187,6 +181,13 @@ code {
   padding: 2px 6px;
   border-radius: 4px;
   color: var(--accent);
+  white-space: nowrap;
+}
+
+.source-note code {
+  background: rgba(26, 122, 92, 0.1);
+  color: #0f5e42;
+  white-space: normal;
 }
 
 pre {
@@ -450,8 +451,6 @@ pre code {
   transform: translateY(0);
 }
 </style>
-</head>
-<body>
 
 <header class="masthead">
   <div class="masthead-title">Theory / Simplified</div>
@@ -759,6 +758,3 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 </script>
-
-</body>
-</html>
