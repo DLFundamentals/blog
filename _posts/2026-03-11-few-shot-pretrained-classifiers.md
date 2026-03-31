@@ -110,7 +110,7 @@ canvas{display:block;border-radius:8px;background:var(--cream)}
 </style>
 
 <div class="hero">
-  <div class="hero-eyebrow">Deep Learning &middot; Few-Shot Learning &middot; Theory</div>
+  <div class="hero-eyebrow">Pre-Training &middot; Few-Shot Learning &middot; Neural Collapse</div>
   <h1>Why Pretrained Classifiers Work So Well in Few-Shot Learning</h1>
   <p class="hero-subtitle">A geometric explanation for why ordinary supervised pretraining can transfer remarkably well to new classes with only a few labeled examples — and the precise quantity that controls when this works.</p>
   <div class="hero-meta">
