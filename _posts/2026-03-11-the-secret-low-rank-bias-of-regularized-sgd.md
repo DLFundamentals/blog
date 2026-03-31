@@ -622,7 +622,7 @@ hr.section-rule {
 <!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">Deep Learning &middot; Theory &middot; SGD</div>
-  <h1>Why SGD Prefers Low-Rank Neural Networks</h1>
+  <h1>The Secret Low Rank Bias Of Regularized SGD</h1>
   <p class="hero-subtitle">Why do trained neural networks often end up low rank? Mini-batch SGD and weight decay together create a built-in pressure toward compressible layers. The mechanism is simple, general, and explains why post-training compression works so well.</p>
   <div class="hero-meta">
     <span>By Tomer Galanti</span>
