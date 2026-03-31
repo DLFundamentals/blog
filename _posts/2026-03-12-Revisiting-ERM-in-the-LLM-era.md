@@ -728,7 +728,7 @@ hr.section-rule {
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Machine Learning &middot; Program Synthesis &middot; Theory</div>
+  <div class="hero-eyebrow">Learning Theory &middot; Program Synthesis &middot; LLMs</div>
   <h1>Revisiting ERM in the LLM Era</h1>
   <p class="hero-subtitle">How pretrained LLMs can serve as search priors for empirical risk minimization over programs, recovering exact algorithmic rules from just a handful of examples — while SGD-trained models remain at chance.</p>
   <div class="hero-meta">
