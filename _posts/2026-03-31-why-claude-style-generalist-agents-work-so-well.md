@@ -452,17 +452,14 @@ pre code {
 }
 </style>
 
-<header class="masthead">
-  <div class="masthead-title">Theory / Simplified</div>
-  <div class="masthead-date">March 31, 2026</div>
-</header>
-
 <div class="hero">
   <div class="hero-eyebrow">Agents &middot; Architecture &middot; Verified</div>
   <h1>Why Claude-Style Generalist Agents Work So Well</h1>
   <p class="hero-subtitle">Claude-style agents work because they repeatedly choose the next useful action, execute it through tools, observe the result, and continue. This post explains why — and verifies the claims against real source code.</p>
   <div class="hero-meta">
     <span>By Tomer Galanti</span>
+    <span>&middot;</span>
+    <span>March 31, 2026</span>
     <span>&middot;</span>
     <span>15 min read</span>
     <span>&middot;</span>
