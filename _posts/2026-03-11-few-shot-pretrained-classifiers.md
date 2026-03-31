@@ -252,26 +252,6 @@ $$V_f(Q_i, Q_j) = \frac{\text{Var}_f(Q_i)}{\|\mu_f(Q_i) - \mu_f(Q_j)\|^2}$$
 
 <p>CDNV is closely connected to <strong>neural collapse</strong> geometry. The NC1 component says that features collapse toward their class mean (driving the numerator down). The NC2 component says class means become maximally separated, approaching a simplex equiangular tight frame (driving the denominator up). Neural collapse improves CDNV from both sides.</p>
 
-<h2>The two generalization steps</h2>
-
-<p>This is the conceptual heart of the story. Step through the visualization below to see how favorable geometry propagates from source training samples all the way to unseen target classes:</p>
-
-<div class="gen-stepper fade-in">
-  <div class="gen-tabs">
-    <button class="gen-tab active" onclick="showGen(0)">1. Source samples cluster</button>
-    <button class="gen-tab" onclick="showGen(1)">2. Source geometry generalizes</button>
-    <button class="gen-tab" onclick="showGen(2)">3. Target classes inherit</button>
-  </div>
-  <div class="gen-panel">
-    <canvas id="gen-canvas" width="640" height="260"></canvas>
-    <div class="gen-desc" id="gen-desc">During pretraining, source training samples concentrate around their class means. This is the empirical geometry we can observe directly. The colored dots are training points; the crosses mark empirical class centers.</div>
-  </div>
-</div>
-
-<div class="figcaption" style="margin-top:-.5rem;margin-bottom:2rem">
-  <strong>Figure 2.</strong> The double generalization. Step 1: source training points form tight clusters. Step 2: with enough samples per class, this reflects true source-class distributions (shown as ellipses). Step 3: because classes are i.i.d. from $\mathcal{D}$, new target classes inherit the same favorable geometry — and a few labeled examples suffice.
-</div>
-
 <h2>Part III: The transfer bound</h2>
 
 <h3>The main result</h3>
