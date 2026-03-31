@@ -453,7 +453,7 @@ pre code {
 </style>
 
 <div class="hero">
-  <div class="hero-eyebrow">Agents &middot; Architecture &middot; Verified</div>
+  <div class="hero-eyebrow">Agents &middot; LLMs &middot; Claude</div>
   <h1>Why Claude-Style Generalist Agents Work So Well</h1>
   <p class="hero-subtitle">Claude-style agents work because they repeatedly choose the next useful action, execute it through tools, observe the result, and continue. This post explains why — and verifies the claims against real source code.</p>
   <div class="hero-meta">
