@@ -1,6 +1,61 @@
-<header class="site-header">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500&display=swap');
+
+.ts-header{
+  border-top:none;
+  border-bottom:1px solid #e0dcd6;
+  background:#fff;
+  padding:1rem 0;
+  min-height:0;
+}
+
+.ts-brand{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:flex-start;
+  text-decoration:none !important;
+  line-height:1;
+}
+
+.ts-brand:hover{
+  text-decoration:none !important;
+}
+
+.ts-title{
+  font-family:'Newsreader', Georgia, serif;
+  font-weight:500;
+  font-size:1.35rem;
+  letter-spacing:-0.02em;
+  color:#1a1714;
+  line-height:1.1;
+}
+
+.ts-title-light{
+  font-weight:300;
+  color:#8a8680;
+}
+
+.ts-sub{
+  margin-top:8px;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  color:#8a8680;
+  line-height:1.2;
+}
+
+.site-nav{
+  display:none !important;
+}
+</style>
+
+<header class="site-header ts-header">
   <div class="wrapper">
-    <a class="site-title" href="{{ '/' | relative_url }}">Theory<span>/Simplified</span></a>
-    <div class="site-sub">DL Fundamentals Lab</div>
+    <a class="ts-brand" href="{{ '/' | relative_url }}">
+      <span class="ts-title">Theory<span class="ts-title-light">/Simplified</span></span>
+      <span class="ts-sub">DL Fundamentals Lab</span>
+    </a>
   </div>
 </header>
