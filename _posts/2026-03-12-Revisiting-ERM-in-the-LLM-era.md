@@ -1117,7 +1117,7 @@
     <p>Across 13 algorithmic tasks at input length $n = 100$, LLM-PV recovers exact or near-exact rules from only 200 labeled examples. The pattern is striking — and informative about when the method works and when it does not:</p>
 
     <div class="bar-chart fade-in" id="results-chart">
-      <div class="bar-chart-title">Test accuracy (%) — 200 training examples, $n = 100$</div>
+      <div class="bar-chart-title">Test accuracy (%) — 200 training examples, input length 100</div>
       <div class="filter-tabs">
         <button class="filter-tab active" onclick="filterBars(this, 'all')">All tasks</button>
         <button class="filter-tab" onclick="filterBars(this, 'perfect')">LLM-PV perfect</button>
