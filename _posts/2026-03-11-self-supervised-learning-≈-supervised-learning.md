@@ -2,6 +2,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
 :root {
   --ink:#1a1714;--ink-soft:#4a4640;--ink-muted:#8a8680;
@@ -17,16 +18,16 @@
 }
 
 .post-scope,
-.post-scope * ,
 .post-scope *::before,
 .post-scope *::after {
   box-sizing:border-box;
 }
 
 .post-scope{
-  font-family:var(--serif);
+  width:100%;
   background:var(--cream);
   color:var(--ink);
+  font-family:var(--serif);
   line-height:1.72;
   -webkit-font-smoothing:antialiased;
 }
@@ -34,6 +35,21 @@
 .post-scope ::selection{
   background:var(--accent-soft);
   color:var(--ink);
+}
+
+.post-scope a{
+  color:var(--accent);
+  text-decoration:none;
+}
+
+.post-scope a:hover{
+  text-decoration:underline;
+}
+
+.post-scope img{
+  max-width:100%;
+  height:auto;
+  display:block;
 }
 
 .post-scope .hero{
@@ -59,7 +75,7 @@
   font-weight:500;
   line-height:1.2;
   color:var(--ink);
-  margin-bottom:1.5rem;
+  margin:0 0 1.5rem 0;
   max-width:700px;
 }
 
@@ -68,6 +84,7 @@
   color:var(--ink-soft);
   max-width:620px;
   line-height:1.65;
+  margin:0;
 }
 
 .post-scope .hero-meta{
@@ -101,7 +118,7 @@
 
 .post-scope article p{
   font-size:1.05rem;
-  margin-bottom:1.5rem;
+  margin:0 0 1.5rem 0;
 }
 
 .post-scope article h2{
@@ -129,10 +146,13 @@
   margin:2rem 0;
   background:var(--accent-soft);
   border-radius:0 8px 8px 0;
-  font-style:italic;
   color:var(--ink-soft);
   font-size:1.05rem;
   line-height:1.65;
+}
+
+.post-scope .key-insight p:last-child{
+  margin-bottom:0;
 }
 
 .post-scope .math-display{
@@ -226,7 +246,7 @@
   font-family:var(--sans);
   font-size:14px;
   font-weight:600;
-  margin-bottom:6px;
+  margin:0 0 6px 0;
   color:var(--ink);
 }
 
@@ -255,7 +275,7 @@
   font-family:var(--sans);
   font-size:13px;
   font-weight:600;
-  margin-bottom:6px;
+  margin:0 0 6px 0;
 }
 
 .post-scope .compare-card p{
@@ -280,7 +300,7 @@
   letter-spacing:2px;
   text-transform:uppercase;
   color:var(--accent);
-  margin:0 0 1rem;
+  margin:0 0 1rem 0;
 }
 
 .post-scope .takeaway p{
@@ -308,6 +328,7 @@
   font-family:var(--sans);
   font-size:13px;
   color:var(--ink-muted);
+  margin:0;
 }
 
 .post-scope .post-footer a{
@@ -341,7 +362,212 @@
   margin-top:10px;
 }
 
-/* Explorer panels */
+.post-scope .fig-wide{
+  max-width:1120px;
+  margin:2rem auto;
+  padding:0 2rem;
+}
+
+.post-scope .fig-grid{
+  display:grid;
+  gap:14px;
+  align-items:start;
+}
+
+.post-scope .fig-grid > div{
+  min-width:0;
+}
+
+.post-scope .fig-grid img{
+  width:100%;
+  border:1px solid var(--rule);
+  border-radius:10px;
+  background:var(--paper);
+}
+
+.post-scope .fig-grid-label{
+  font-family:var(--sans);
+  font-size:12px;
+  color:var(--ink-muted);
+  line-height:1.4;
+  margin-top:8px;
+  text-align:center;
+}
+
+.post-scope .fig-row-label{
+  font-family:var(--sans);
+  font-size:13px;
+  color:var(--ink);
+  margin:0 0 8px 0;
+}
+
+.post-scope .denom-viz{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:18px;
+  align-items:start;
+}
+
+.post-scope .denom-panel{
+  min-width:0;
+}
+
+.post-scope .denom-label{
+  font-family:var(--sans);
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:8px;
+}
+
+.post-scope .denom-grid{
+  display:grid;
+  gap:4px;
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:10px;
+  min-height:120px;
+}
+
+.post-scope .denom-cell{
+  width:100%;
+  aspect-ratio:1/1;
+  border-radius:4px;
+}
+
+.post-scope .gap-chart{
+  margin-top:16px;
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:14px;
+}
+
+.post-scope .gap-bar-row{
+  display:grid;
+  grid-template-columns:56px 1fr 48px;
+  gap:10px;
+  align-items:center;
+  margin:8px 0;
+}
+
+.post-scope .gap-bar-label,
+.post-scope .gap-bar-val{
+  font-family:var(--sans);
+  font-size:12px;
+  color:var(--ink-muted);
+}
+
+.post-scope .gap-bar-track{
+  height:8px;
+  background:#efe9e2;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.post-scope .gap-bar-fill{
+  height:100%;
+  border-radius:999px;
+}
+
+.post-scope .collapse-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+  margin:1.5rem 0;
+}
+
+.post-scope .collapse-card{
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:1.25rem;
+  text-align:left;
+}
+
+.post-scope .collapse-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-family:var(--sans);
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.post-scope .collapse-card h4{
+  font-family:var(--sans);
+  font-size:14px;
+  margin:0 0 8px 0;
+  color:var(--ink);
+}
+
+.post-scope .collapse-card p{
+  margin:0;
+  font-size:13px;
+  color:var(--ink-soft);
+  line-height:1.55;
+}
+
+.post-scope .align-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.post-scope .align-card{
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:14px;
+}
+
+.post-scope .align-card-title{
+  font-family:var(--sans);
+  font-size:13px;
+  font-weight:600;
+  color:var(--ink);
+  margin-bottom:12px;
+}
+
+.post-scope .align-row{
+  display:grid;
+  grid-template-columns:92px 1fr 34px;
+  gap:8px;
+  align-items:center;
+  margin:8px 0;
+}
+
+.post-scope .align-row-label{
+  font-family:var(--sans);
+  font-size:12px;
+  color:var(--ink-muted);
+}
+
+.post-scope .align-bar-track{
+  height:8px;
+  background:#efe9e2;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.post-scope .align-bar-fill{
+  height:100%;
+  border-radius:999px;
+}
+
+.post-scope .align-val{
+  font-family:var(--sans);
+  font-size:12px;
+  font-weight:600;
+  text-align:right;
+}
+
 .post-scope .explorer{
   background:var(--paper);
   border:1px solid var(--rule);
@@ -449,14 +675,12 @@
   color:var(--ink);
 }
 
-/* Canvas */
 .post-scope canvas{
   display:block;
   border-radius:8px;
   background:var(--cream);
 }
 
-/* Generalization stepper */
 .post-scope .gen-stepper{
   margin:2rem 0;
 }
@@ -518,7 +742,6 @@
   margin-top:12px;
 }
 
-/* 3D Neural collapse viz */
 .post-scope .nc3d-wrap{
   position:relative;
   border-radius:12px;
@@ -532,6 +755,7 @@
   display:block;
   width:100%;
   height:100%;
+  background:#0a0a0a;
 }
 
 .post-scope .nc3d-legend{
@@ -566,7 +790,6 @@
   display:inline-block;
   border:2px solid;
   background:transparent;
-  box-sizing:border-box;
 }
 
 .post-scope .nc3d-info{
@@ -644,26 +867,64 @@
   cursor:pointer;
 }
 
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(16px)}
-  to{opacity:1;transform:translateY(0)}
+@media(max-width:900px){
+  .post-scope .align-grid{
+    grid-template-columns:1fr 1fr;
+  }
 }
 
 @media(max-width:700px){
-  .post-scope .mechanism-grid{grid-template-columns:1fr}
+  .post-scope .mechanism-grid,
+  .post-scope .collapse-grid{
+    grid-template-columns:1fr;
+  }
+
+  .post-scope .denom-viz{
+    grid-template-columns:1fr;
+  }
+
+  .post-scope .fig-wide{
+    padding:0 1rem;
+  }
 }
 
 @media(max-width:600px){
-  .post-scope .compare-grid{grid-template-columns:1fr}
+  .post-scope .compare-grid,
+  .post-scope .align-grid{
+    grid-template-columns:1fr;
+  }
+
+  .post-scope .fig-grid{
+    grid-template-columns:1fr 1fr !important;
+  }
 }
 
 @media(max-width:768px){
-  .post-scope .hero h1{font-size:2rem}
+  .post-scope .hero h1{
+    font-size:2rem;
+  }
 }
 
 @media(max-width:480px){
-  .post-scope .hero h1{font-size:1.7rem}
-  .post-scope .hero-meta{font-size:0.78rem}
+  .post-scope .hero{
+    padding:3rem 1rem 2rem;
+  }
+
+  .post-scope article{
+    padding:2rem 1rem 4rem;
+  }
+
+  .post-scope .hero h1{
+    font-size:1.7rem;
+  }
+
+  .post-scope .hero-meta{
+    font-size:0.78rem;
+  }
+
+  .post-scope .fig-grid{
+    grid-template-columns:1fr !important;
+  }
 }
 </style>
 
@@ -697,7 +958,7 @@
   <p><strong>3. The supervised counterpart is geometrically tractable.</strong> Its global minimizers exhibit augmentation collapse, within-class collapse, and simplex ETF structure.</p>
 </div>
 
-<p>Taken together, these results suggest a more precise picture: rather than viewing contrastive learning as a completely separate principle that somehow recovers class structure indirectly, it is often more accurate to view it as operating near a specific supervised contrastive objective — both at the level of the loss and at the level of the learned representation geometry.</p>
+<p>Taken together, these results suggest a more precise picture: rather than viewing contrastive learning as a completely separate principle that somehow recovers class structure indirectly, it is often more accurate to view it as operating near a specific supervised contrastive objective, both at the level of the loss and at the level of the learned representation geometry.</p>
 
 <div class="mechanism-grid fade-in">
   <div class="mechanism-card" style="border-top-color:var(--purple)">
@@ -719,7 +980,6 @@
 
 </article>
 
-<!-- UMAP progression: DCL vs NSCL across training epochs -->
 <div class="fig-wide">
   <div class="fig-row-label"><strong>DCL</strong> (self-supervised)</div>
   <div class="fig-grid" style="grid-template-columns:repeat(6,1fr)">
@@ -771,7 +1031,7 @@ $$\mathcal{L}^{\text{NSCL}}(f) = -\frac{1}{K^2 N}\sum_{l_1,l_2}\sum_{i} \log\fra
 <div class="compare-grid fade-in">
   <div class="compare-card" style="border-left:3px solid var(--coral)">
     <h4 style="color:var(--coral)">DCL (self-supervised)</h4>
-    <p>Treats <em>every</em> other sample as a negative — including same-class samples that ideally should be positives.</p>
+    <p>Treats <em>every</em> other sample as a negative, including same-class samples that ideally should be positives.</p>
   </div>
   <div class="compare-card" style="border-left:3px solid var(--teal)">
     <h4 style="color:var(--teal)">NSCL (supervised)</h4>
@@ -785,7 +1045,6 @@ $$\mathcal{L}^{\text{NSCL}}(f) = -\frac{1}{K^2 N}\sum_{l_1,l_2}\sum_{i} \log\fra
 
 </article>
 
-<!-- Interactive denominator visualization — full width -->
 <div class="fig-wide">
 <div class="explorer fade-in">
   <div class="explorer-title">DCL vs NSCL: what's in the denominator?</div>
@@ -835,7 +1094,6 @@ $$\mathcal{L}^{\text{NSCL}}(f) \;\le\; \mathcal{L}^{\text{DCL}}(f) \;\le\; \math
 
 </article>
 
-<!-- SimCLR loss tracking figures -->
 <div class="fig-wide">
   <div class="fig-grid" style="grid-template-columns:repeat(4,1fr)">
     <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/svhn_simclr_losses.png" alt="SVHN losses"><div class="fig-grid-label"><strong>(a)</strong> SVHN</div></div>
@@ -848,7 +1106,6 @@ $$\mathcal{L}^{\text{NSCL}}(f) \;\le\; \mathcal{L}^{\text{DCL}}(f) \;\le\; \math
   </div>
 </div>
 
-<!-- NSCL corollary: DCL-trained vs NSCL-trained -->
 <div class="fig-wide" style="margin-top:1rem">
   <div class="fig-grid" style="grid-template-columns:repeat(4,1fr)">
     <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/svhn_simclr_nscl_corollary.png" alt="SVHN corollary"><div class="fig-grid-label"><strong>(a)</strong> SVHN</div></div>
@@ -869,7 +1126,6 @@ $$\mathcal{L}^{\text{NSCL}}(f) \;\le\; \mathcal{L}^{\text{DCL}}(f) \;\le\; \math
 
 </article>
 
-<!-- Gap vs C plots -->
 <div class="fig-wide">
   <div class="fig-grid" style="grid-template-columns:repeat(3,1fr)">
     <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/th1_exp2_cifar10.png" alt="CIFAR-10 gap vs C"><div class="fig-grid-label"><strong>(a)</strong> CIFAR-10</div></div>
@@ -935,7 +1191,6 @@ $$\text{CKA}_T \;\ge\; \frac{1-\rho_T}{1+\rho_T}, \qquad \text{RSA}_T \;\ge\; \f
 
 </article>
 
-<!-- RSA/CKA alignment — styled summary -->
 <div class="fig-wide">
 
 <div class="align-grid fade-in">
@@ -1010,21 +1265,33 @@ $$\text{CKA}_T \;\ge\; \frac{1-\rho_T}{1+\rho_T}, \qquad \text{RSA}_T \;\ge\; \f
 <div class="post-footer">
   <p>Originally published on <a href="https://dlfundamentals.github.io/blog/">Theory/Simplified</a> &middot; Based on <a href="https://arxiv.org/abs/2506.04411">Luthra, Yang, Galanti — NeurIPS 2025</a> and <a href="https://arxiv.org/abs/2510.08852">Luthra, Mishra, Galanti — ICLR 2025</a></p>
 </div>
+</div>
 
 <script>
-var ki=setInterval(function(){if(typeof renderMathInElement!=='undefined'){clearInterval(ki);renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false})}},100);
+var scopeEl=document.querySelector('.post-scope');
 
-// ========== DENOMINATOR VISUALIZATION ==========
+var ki=setInterval(function(){
+  if(typeof renderMathInElement!=='undefined' && scopeEl){
+    clearInterval(ki);
+    renderMathInElement(scopeEl,{
+      delimiters:[
+        {left:'$$',right:'$$',display:true},
+        {left:'$',right:'$',display:false}
+      ],
+      throwOnError:false
+    });
+  }
+},100);
+
 function updateDenom(){
-  var C=parseInt(document.getElementById('c-slider').value);
+  var C=parseInt(document.getElementById('c-slider').value,10);
   document.getElementById('c-val').textContent=C;
 
-  var n=3; // samples per class for viz
+  var n=3;
   var N=C*n;
   var gridSize=Math.min(N-1,35);
   var cols=Math.ceil(Math.sqrt(gridSize));
 
-  // DCL grid
   var dclGrid=document.getElementById('dcl-grid');
   dclGrid.innerHTML='';
   dclGrid.style.gridTemplateColumns='repeat('+cols+',1fr)';
@@ -1038,29 +1305,26 @@ function updateDenom(){
   }
   document.getElementById('dcl-count').textContent='All '+(N-1)+' other samples';
 
-  // NSCL grid
   var nscGrid=document.getElementById('nscl-grid');
   nscGrid.innerHTML='';
   nscGrid.style.gridTemplateColumns='repeat('+cols+',1fr)';
   var nscCount=N-n;
-  for(var i=0;i<Math.min(nscCount,gridSize);i++){
-    var cell=document.createElement('div');
-    cell.className='denom-cell';
-    cell.style.background='var(--teal-soft)';
-    nscGrid.appendChild(cell);
+  for(var j=0;j<Math.min(nscCount,gridSize);j++){
+    var cell2=document.createElement('div');
+    cell2.className='denom-cell';
+    cell2.style.background='var(--teal-soft)';
+    nscGrid.appendChild(cell2);
   }
   document.getElementById('nscl-count').textContent=nscCount+' different-class only';
 
-  // Gap bars
   var gaps=[2,5,10,20,50,100];
   var barsHtml='';
   gaps.forEach(function(gc){
-    var gap=Math.exp(2)/(gc-1);
     var bound=Math.log(1+Math.exp(2)/(gc-1));
     var pct=Math.min(100,bound/2.5*100);
     var isActive=gc===C;
     barsHtml+='<div class="gap-bar-row">';
-    barsHtml+='<span class="gap-bar-label" style="'+(isActive?'font-weight:600;color:var(--ink)':'')+'">'+'C='+gc+'</span>';
+    barsHtml+='<span class="gap-bar-label" style="'+(isActive?'font-weight:600;color:var(--ink)':'')+'">C='+gc+'</span>';
     barsHtml+='<div class="gap-bar-track"><div class="gap-bar-fill" style="width:'+pct+'%;background:'+(isActive?'var(--accent)':'var(--ink-muted)')+';opacity:'+(isActive?1:0.3)+'"></div></div>';
     barsHtml+='<span class="gap-bar-val" style="'+(isActive?'font-weight:600;color:var(--ink)':'')+'">'+bound.toFixed(3)+'</span>';
     barsHtml+='</div>';
@@ -1069,11 +1333,17 @@ function updateDenom(){
 
   var frac=((n-1)/(N-1)*100).toFixed(1);
   var gapVal=(Math.exp(2)/(C-1)).toFixed(3);
-  document.getElementById('gap-insight').innerHTML='With <strong>C = '+C+'</strong> classes, same-class samples are <strong>'+frac+'%</strong> of DCL\'s denominator. The gap bound is <strong>'+gapVal+'</strong> — '+(C>=20?'negligibly small.':C>=10?'already quite small.':'noticeable but shrinking fast.');
+  document.getElementById('gap-insight').innerHTML='With <strong>C = '+C+'</strong> classes, same-class samples are <strong>'+frac+'%</strong> of DCL\\'s denominator. The gap bound is <strong>'+gapVal+'</strong> — '+(C>=20?'negligibly small.':C>=10?'already quite small.':'noticeable but shrinking fast.');
 }
 updateDenom();
 
-// Fade observer
-var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.15});
-document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el)});
+var obs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting)e.target.classList.add('visible');
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.post-scope .fade-in').forEach(function(el){
+  obs.observe(el);
+});
 </script>
