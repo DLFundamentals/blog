@@ -58,7 +58,7 @@
 .post-scope .hero{
   max-width:900px;
   margin:0 auto;
-  padding:4rem 2rem 3rem;
+  padding:3.4rem 2rem 2.35rem;
   border-bottom:1px solid var(--rule);
 }
 
@@ -69,7 +69,7 @@
   letter-spacing:2px;
   text-transform:uppercase;
   color:var(--accent);
-  margin-bottom:1.25rem;
+  margin-bottom:.95rem;
 }
 
 .post-scope .hero h1{
@@ -78,7 +78,7 @@
   font-weight:500;
   line-height:1.2;
   color:var(--ink);
-  margin:0 0 1.5rem 0;
+  margin:0 0 1.2rem 0;
   max-width:700px;
 }
 
@@ -116,21 +116,21 @@
 .post-scope article{
   max-width:680px;
   margin:0 auto;
-  padding:2.25rem 2rem 2rem;
+  padding:1.7rem 2rem 1.35rem;
 }
 
 .post-scope article p{
   font-size:1.05rem;
-  margin:0 0 1.5rem 0;
+  margin:0 0 1.2rem 0;
 }
 
 .post-scope article h2{
   font-family:var(--serif);
   font-size:1.6rem;
   font-weight:500;
-  margin:3rem 0 1.25rem;
+  margin:2.2rem 0 .95rem;
   color:var(--ink);
-  padding-top:2rem;
+  padding-top:1.45rem;
   border-top:1px solid var(--rule);
 }
 
@@ -138,15 +138,15 @@
   font-family:var(--sans);
   font-size:1rem;
   font-weight:600;
-  margin:2rem 0 .75rem;
+  margin:1.45rem 0 .6rem;
   color:var(--ink-soft);
   letter-spacing:.3px;
 }
 
 .post-scope .key-insight{
   border-left:3px solid var(--accent);
-  padding:1.25rem 1.5rem;
-  margin:2rem 0;
+  padding:1rem 1.2rem;
+  margin:1.2rem 0;
   background:var(--accent-soft);
   border-radius:0 8px 8px 0;
   color:var(--ink-soft);
@@ -176,7 +176,7 @@
   background:var(--amber-soft);
   border:1px solid #e8d5b0;
   border-radius:8px;
-  padding:1.25rem 1.5rem;
+  padding:1rem 1.2rem;
   margin:1.5rem 0;
   text-align:center;
   overflow-x:auto;
@@ -224,15 +224,15 @@
 .post-scope .mechanism-grid{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-  margin:1.5rem 0;
+  gap:10px;
+  margin:1.2rem 0;
 }
 
 .post-scope .mechanism-card{
   background:var(--paper);
   border:1px solid var(--rule);
   border-radius:8px;
-  padding:1.25rem;
+  padding:1rem;
   border-top:3px solid var(--rule);
 }
 
@@ -263,15 +263,15 @@
 .post-scope .compare-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
-  margin:1.5rem 0;
+  gap:10px;
+  margin:1.2rem 0;
 }
 
 .post-scope .compare-card{
   background:var(--paper);
   border:1px solid var(--rule);
   border-radius:8px;
-  padding:1rem 1.25rem;
+  padding:.9rem 1rem;
 }
 
 .post-scope .compare-card h4{
@@ -291,9 +291,9 @@
 .post-scope .takeaway{
   background:var(--ink);
   color:var(--cream);
-  padding:2rem 2.25rem;
+  padding:1.55rem 1.7rem;
   border-radius:12px;
-  margin:3rem 0 2rem;
+  margin:2.1rem 0 1.25rem;
 }
 
 .post-scope .takeaway h3{
@@ -323,7 +323,7 @@
 .post-scope .post-footer{
   max-width:680px;
   margin:0 auto;
-  padding:0 2rem 4rem;
+  padding:0 2rem 2.6rem;
   text-align:center;
 }
 
@@ -359,19 +359,19 @@
   font-family:var(--sans);
   font-size:13px;
   color:var(--ink-muted);
-  line-height:1.55;
-  margin-top:10px;
+  line-height:1.5;
+  margin-top:8px;
 }
 
 .post-scope .fig-wide{
   max-width:1120px;
-  margin:1.25rem auto 1.75rem;
+  margin:.8rem auto 1.1rem;
   padding:0 2rem;
 }
 
 .post-scope .fig-grid{
   display:grid;
-  gap:14px;
+  gap:12px;
   align-items:start;
 }
 
@@ -399,37 +399,37 @@
   font-size:12px;
   color:var(--ink-muted);
   line-height:1.4;
-  margin-top:8px;
+  margin-top:6px;
   text-align:center;
 }
 
 .post-scope .hero + article{
-  padding-top:2.5rem;
+  padding-top:1.8rem;
 }
 
 .post-scope article + .fig-wide{
-  margin-top:.5rem;
+  margin-top:.2rem;
 }
 
 .post-scope .fig-wide + article{
-  padding-top:1rem !important;
+  padding-top:.35rem !important;
 }
 
 .post-scope .fig-wide:last-of-type{
-  margin-bottom:1.25rem;
+  margin-bottom:.95rem;
 }
 
 .post-scope .fig-row-label{
   font-family:var(--sans);
   font-size:13px;
   color:var(--ink);
-  margin:0 0 8px 0;
+  margin:0 0 6px 0;
 }
 
 .post-scope .denom-viz{
   display:grid;
   grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
-  gap:18px;
+  gap:14px;
   align-items:start;
 }
 
@@ -441,7 +441,7 @@
   font-family:var(--sans);
   font-size:13px;
   font-weight:600;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 
 .post-scope .denom-grid{
@@ -450,8 +450,8 @@
   background:var(--paper);
   border:1px solid var(--rule);
   border-radius:10px;
-  padding:10px;
-  min-height:120px;
+  padding:9px;
+  min-height:104px;
 }
 
 .post-scope .denom-cell{
@@ -461,19 +461,19 @@
 }
 
 .post-scope .gap-chart{
-  margin-top:16px;
+  margin-top:12px;
   background:var(--paper);
   border:1px solid var(--rule);
   border-radius:10px;
-  padding:14px;
+  padding:10px 12px;
 }
 
 .post-scope .gap-bar-row{
   display:grid;
   grid-template-columns:56px 1fr 48px;
-  gap:10px;
+  gap:8px;
   align-items:center;
-  margin:8px 0;
+  margin:6px 0;
 }
 
 .post-scope .gap-bar-label,
@@ -498,15 +498,15 @@
 .post-scope .collapse-grid{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-  margin:1.5rem 0;
+  gap:10px;
+  margin:1.2rem 0;
 }
 
 .post-scope .collapse-card{
   background:var(--paper);
   border:1px solid var(--rule);
   border-radius:10px;
-  padding:1.25rem;
+  padding:1rem;
   text-align:left;
 }
 
@@ -527,7 +527,7 @@
 .post-scope .collapse-card h4{
   font-family:var(--sans);
   font-size:14px;
-  margin:0 0 8px 0;
+  margin:0 0 6px 0;
   color:var(--ink);
 }
 
@@ -549,7 +549,7 @@
   background:var(--paper);
   border:1px solid var(--rule);
   border-radius:10px;
-  padding:14px;
+  padding:10px 12px;
 }
 
 .post-scope .align-card-title{
@@ -557,15 +557,15 @@
   font-size:13px;
   font-weight:600;
   color:var(--ink);
-  margin-bottom:12px;
+  margin-bottom:8px;
 }
 
 .post-scope .align-row{
   display:grid;
-  grid-template-columns:92px 1fr 34px;
-  gap:8px;
+  grid-template-columns:82px 1fr 32px;
+  gap:6px;
   align-items:center;
-  margin:8px 0;
+  margin:5px 0;
 }
 
 .post-scope .align-row-label{
@@ -597,8 +597,8 @@
   background:var(--paper);
   border:1px solid var(--rule);
   border-radius:12px;
-  padding:1.5rem;
-  margin:2rem 0;
+  padding:1.15rem;
+  margin:1.2rem 0;
 }
 
 .post-scope .explorer-title{
@@ -613,7 +613,7 @@
   font-family:var(--sans);
   font-size:13px;
   color:var(--ink-muted);
-  margin-bottom:1.25rem;
+  margin-bottom:.95rem;
 }
 
 .post-scope .ctrl-row{
@@ -707,7 +707,7 @@
 }
 
 .post-scope .gen-stepper{
-  margin:2rem 0;
+  margin:1.2rem 0;
 }
 
 .post-scope .gen-tabs{
@@ -750,7 +750,7 @@
   border:1px solid var(--rule);
   border-top:none;
   border-radius:0 0 8px 8px;
-  padding:1.25rem;
+  padding:1rem;
   min-height:340px;
   position:relative;
 }
@@ -772,7 +772,7 @@
   border-radius:12px;
   overflow:hidden;
   background:#0a0a0a;
-  margin:2rem 0;
+  margin:1.2rem 0;
   aspect-ratio:16/10;
 }
 
@@ -1029,7 +1029,7 @@
   </div>
 </div>
 
-<article style="padding-top:.5rem">
+<article style="padding-top:.2rem">
 
 <div class="paper-note">
 Based on two papers: (1) A. Luthra, T. Yang, T. Galanti. <a href="https://arxiv.org/abs/2506.04411">"Self-Supervised Contrastive Learning is Approximately Supervised Contrastive Learning"</a>, NeurIPS 2025. (2) A. Luthra, P. Mishra, T. Galanti. <a href="https://arxiv.org/abs/2510.08852">"On the Alignment Between Supervised and Self-Supervised Contrastive Learning"</a>, ICLR 2025.
@@ -1131,7 +1131,7 @@ $$\mathcal{L}^{\text{NSCL}}(f) \;\le\; \mathcal{L}^{\text{DCL}}(f) \;\le\; \math
   </div>
 </div>
 
-<div class="fig-wide" style="margin-top:1rem">
+<div class="fig-wide" style="margin-top:.45rem">
   <div class="fig-grid" style="grid-template-columns:repeat(4,1fr)">
     <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/svhn_simclr_nscl_corollary.png" alt="SVHN corollary"><div class="fig-grid-label"><strong>(a)</strong> SVHN</div></div>
     <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/cifar10_simclr_nscl_corollary.png" alt="CIFAR-10 corollary"><div class="fig-grid-label"><strong>(b)</strong> CIFAR-10</div></div>
@@ -1143,7 +1143,7 @@ $$\mathcal{L}^{\text{NSCL}}(f) \;\le\; \mathcal{L}^{\text{DCL}}(f) \;\le\; \math
   </div>
 </div>
 
-<article style="padding-top:.5rem">
+<article style="padding-top:.2rem">
 
 <h3>The gap scales as predicted with $C$</h3>
 
@@ -1162,7 +1162,7 @@ $$\mathcal{L}^{\text{NSCL}}(f) \;\le\; \mathcal{L}^{\text{DCL}}(f) \;\le\; \math
   </div>
 </div>
 
-<article style="padding-top:.5rem">
+<article style="padding-top:.2rem">
 
 <h3>What NSCL minimizers look like</h3>
 
@@ -1249,7 +1249,7 @@ $$\text{CKA}_T \;\ge\; \frac{1-\rho_T}{1+\rho_T}, \qquad \text{RSA}_T \;\ge\; \f
 </div>
 </div>
 
-<article style="padding-top:.5rem">
+<article style="padding-top:.2rem">
 
 <p>Two patterns are especially notable. First, alignment is strongest when the number of classes is largest — CIFAR-100 and mini-ImageNet reach 0.91+ — matching the theory that more classes imply a smaller loss gap. Second, scores are nearly identical across ResNet-50 and ViT-Base, indicating the DCL-NSCL relationship is not an artifact of a particular architecture.</p>
 
