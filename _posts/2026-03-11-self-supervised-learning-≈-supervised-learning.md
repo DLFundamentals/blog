@@ -336,8 +336,6 @@
 }
 
 .post-scope .fade-in{
-  opacity:0;
-  transform:translateY(16px);
   transition:opacity .6s ease,transform .6s ease;
 }
 
@@ -1268,82 +1266,94 @@ $$\text{CKA}_T \;\ge\; \frac{1-\rho_T}{1+\rho_T}, \qquad \text{RSA}_T \;\ge\; \f
 </div>
 
 <script>
-var scopeEl=document.querySelector('.post-scope');
+(function(){
+  var scopeEl=document.querySelector('.post-scope');
 
-var ki=setInterval(function(){
-  if(typeof renderMathInElement!=='undefined' && scopeEl){
-    clearInterval(ki);
-    renderMathInElement(scopeEl,{
-      delimiters:[
-        {left:'$$',right:'$$',display:true},
-        {left:'$',right:'$',display:false}
-      ],
-      throwOnError:false
+  var ki=setInterval(function(){
+    if(typeof renderMathInElement!=='undefined' && scopeEl){
+      clearInterval(ki);
+      renderMathInElement(scopeEl,{
+        delimiters:[
+          {left:'$$',right:'$$',display:true},
+          {left:'$',right:'$',display:false}
+        ],
+        throwOnError:false
+      });
+    }
+  },100);
+
+  function updateDenom(){
+    var slider=document.getElementById('c-slider');
+    if(!slider)return;
+
+    var C=parseInt(slider.value,10);
+    document.getElementById('c-val').textContent=C;
+
+    var n=3;
+    var N=C*n;
+    var gridSize=Math.min(N-1,35);
+    var cols=Math.ceil(Math.sqrt(gridSize));
+
+    var dclGrid=document.getElementById('dcl-grid');
+    dclGrid.innerHTML='';
+    dclGrid.style.gridTemplateColumns='repeat('+cols+',1fr)';
+    for(var i=0;i<gridSize;i++){
+      var cell=document.createElement('div');
+      cell.className='denom-cell';
+      var isSameClass=i<(n-1);
+      cell.style.background=isSameClass?'var(--coral)':'var(--teal-soft)';
+      cell.style.opacity=isSameClass?'0.7':'1';
+      dclGrid.appendChild(cell);
+    }
+    document.getElementById('dcl-count').textContent='All '+(N-1)+' other samples';
+
+    var nscGrid=document.getElementById('nscl-grid');
+    nscGrid.innerHTML='';
+    nscGrid.style.gridTemplateColumns='repeat('+cols+',1fr)';
+    var nscCount=N-n;
+    for(var j=0;j<Math.min(nscCount,gridSize);j++){
+      var cell2=document.createElement('div');
+      cell2.className='denom-cell';
+      cell2.style.background='var(--teal-soft)';
+      nscGrid.appendChild(cell2);
+    }
+    document.getElementById('nscl-count').textContent=nscCount+' different-class only';
+
+    var gaps=[2,5,10,20,50,100];
+    var barsHtml='';
+    gaps.forEach(function(gc){
+      var bound=Math.log(1+Math.exp(2)/(gc-1));
+      var pct=Math.min(100,bound/2.5*100);
+      var isActive=gc===C;
+      barsHtml+='<div class="gap-bar-row">';
+      barsHtml+='<span class="gap-bar-label" style="'+(isActive?'font-weight:600;color:var(--ink)':'')+'">C='+gc+'</span>';
+      barsHtml+='<div class="gap-bar-track"><div class="gap-bar-fill" style="width:'+pct+'%;background:'+(isActive?'var(--accent)':'var(--ink-muted)')+';opacity:'+(isActive?1:0.3)+'"></div></div>';
+      barsHtml+='<span class="gap-bar-val" style="'+(isActive?'font-weight:600;color:var(--ink)':'')+'">'+bound.toFixed(3)+'</span>';
+      barsHtml+='</div>';
+    });
+    document.getElementById('gap-bars').innerHTML=barsHtml;
+
+    var frac=((n-1)/(N-1)*100).toFixed(1);
+    var gapVal=(Math.exp(2)/(C-1)).toFixed(3);
+    document.getElementById('gap-insight').innerHTML =
+      "With <strong>C = "+C+"</strong> classes, same-class samples are <strong>"+frac+
+      "%</strong> of DCL's denominator. The gap bound is <strong>"+gapVal+
+      "</strong> — "+(C>=20?"negligibly small.":C>=10?"already quite small.":"noticeable but shrinking fast.");
+  }
+
+  updateDenom();
+  window.updateDenom=updateDenom;
+
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting)e.target.classList.add('visible');
+      });
+    },{threshold:.15});
+
+    document.querySelectorAll('.post-scope .fade-in').forEach(function(el){
+      obs.observe(el);
     });
   }
-},100);
-
-function updateDenom(){
-  var C=parseInt(document.getElementById('c-slider').value,10);
-  document.getElementById('c-val').textContent=C;
-
-  var n=3;
-  var N=C*n;
-  var gridSize=Math.min(N-1,35);
-  var cols=Math.ceil(Math.sqrt(gridSize));
-
-  var dclGrid=document.getElementById('dcl-grid');
-  dclGrid.innerHTML='';
-  dclGrid.style.gridTemplateColumns='repeat('+cols+',1fr)';
-  for(var i=0;i<gridSize;i++){
-    var cell=document.createElement('div');
-    cell.className='denom-cell';
-    var isSameClass=i<(n-1);
-    cell.style.background=isSameClass?'var(--coral)':'var(--teal-soft)';
-    cell.style.opacity=isSameClass?'0.7':'1';
-    dclGrid.appendChild(cell);
-  }
-  document.getElementById('dcl-count').textContent='All '+(N-1)+' other samples';
-
-  var nscGrid=document.getElementById('nscl-grid');
-  nscGrid.innerHTML='';
-  nscGrid.style.gridTemplateColumns='repeat('+cols+',1fr)';
-  var nscCount=N-n;
-  for(var j=0;j<Math.min(nscCount,gridSize);j++){
-    var cell2=document.createElement('div');
-    cell2.className='denom-cell';
-    cell2.style.background='var(--teal-soft)';
-    nscGrid.appendChild(cell2);
-  }
-  document.getElementById('nscl-count').textContent=nscCount+' different-class only';
-
-  var gaps=[2,5,10,20,50,100];
-  var barsHtml='';
-  gaps.forEach(function(gc){
-    var bound=Math.log(1+Math.exp(2)/(gc-1));
-    var pct=Math.min(100,bound/2.5*100);
-    var isActive=gc===C;
-    barsHtml+='<div class="gap-bar-row">';
-    barsHtml+='<span class="gap-bar-label" style="'+(isActive?'font-weight:600;color:var(--ink)':'')+'">C='+gc+'</span>';
-    barsHtml+='<div class="gap-bar-track"><div class="gap-bar-fill" style="width:'+pct+'%;background:'+(isActive?'var(--accent)':'var(--ink-muted)')+';opacity:'+(isActive?1:0.3)+'"></div></div>';
-    barsHtml+='<span class="gap-bar-val" style="'+(isActive?'font-weight:600;color:var(--ink)':'')+'">'+bound.toFixed(3)+'</span>';
-    barsHtml+='</div>';
-  });
-  document.getElementById('gap-bars').innerHTML=barsHtml;
-
-  var frac=((n-1)/(N-1)*100).toFixed(1);
-  var gapVal=(Math.exp(2)/(C-1)).toFixed(3);
-  document.getElementById('gap-insight').innerHTML='With <strong>C = '+C+'</strong> classes, same-class samples are <strong>'+frac+'%</strong> of DCL\\'s denominator. The gap bound is <strong>'+gapVal+'</strong> — '+(C>=20?'negligibly small.':C>=10?'already quite small.':'noticeable but shrinking fast.');
-}
-updateDenom();
-
-var obs=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting)e.target.classList.add('visible');
-  });
-},{threshold:.15});
-
-document.querySelectorAll('.post-scope .fade-in').forEach(function(el){
-  obs.observe(el);
-});
+})();
 </script>
