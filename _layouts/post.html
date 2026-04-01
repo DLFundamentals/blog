@@ -2,11 +2,14 @@
 layout: default
 ---
 
-<div class="article-shell">
+<article class="article-shell">
   {{ content }}
-</div>
+</article>
 
 {% unless page.comments == false %}
-<hr>
-<h2>Comments</h2>
+<hr class="section-rule">
+
+<section class="comments-section">
+  <h2 class="comments-heading">Comments</h2>
+</section>
 {% endunless %}
