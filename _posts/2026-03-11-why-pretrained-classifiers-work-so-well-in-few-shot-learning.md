@@ -1,3 +1,8 @@
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -252,6 +257,27 @@ $$V_f(Q_i, Q_j) = \frac{\text{Var}_f(Q_i)}{\|\mu_f(Q_i) - \mu_f(Q_j)\|^2}$$
 
 <p>CDNV is closely connected to <strong>neural collapse</strong> geometry. The NC1 component says that features collapse toward their class mean (driving the numerator down). The NC2 component says class means become maximally separated, approaching a simplex equiangular tight frame (driving the denominator up). Neural collapse improves CDNV from both sides.</p>
 
+<h3>Visualizing the double generalization</h3>
+
+<p>The stepper below illustrates how CDNV drives the two-stage generalization argument. Click each tab to see the progression from observed clustering, through distributional generalization, to transfer:</p>
+
+<!-- FIX: This entire HTML block was missing — the JS generalization stepper had no DOM to render into -->
+<div class="gen-stepper fade-in">
+  <div class="gen-tabs">
+    <button class="gen-tab active" onclick="showGen(0)">Step 1: Empirical clustering</button>
+    <button class="gen-tab" onclick="showGen(1)">Step 2: Samples → distributions</button>
+    <button class="gen-tab" onclick="showGen(2)">Step 3: Source → target classes</button>
+  </div>
+  <div class="gen-panel">
+    <canvas id="gen-canvas" style="width:100%;height:280px"></canvas>
+    <div class="gen-desc" id="gen-desc"></div>
+  </div>
+</div>
+
+<div class="figcaption" style="margin-top:-.5rem;margin-bottom:1.5rem">
+  <strong>Figure 2.</strong> The double generalization in 2D. <strong>Step 1:</strong> Source training points cluster around empirical class centers. <strong>Step 2:</strong> With enough samples, this reflects the true class-conditional distributions (confidence ellipses). <strong>Step 3:</strong> Because classes are i.i.d. from the same population, unseen target classes inherit the same favorable geometry — and a few labeled examples suffice for nearest-center classification.
+</div>
+
 <h2>Part III: The transfer bound</h2>
 
 <h3>The main result</h3>
@@ -480,7 +506,9 @@ window.addEventListener('resize',function(){
 })();
 
 // ============ GENERALIZATION STEPPER ============
+(function(){
 var genCanvas=document.getElementById('gen-canvas');
+if(!genCanvas)return;
 var genCtx=genCanvas.getContext('2d');
 var currentGenStep=0;
 var rng=[];
@@ -493,12 +521,12 @@ var genDescs=[
   'Because classes are i.i.d. draws from the same population D, new unseen target classes (shown in muted colors, right side) inherit the same favorable geometry. A few labeled examples (large dots) are enough to estimate their centers. This is the second generalization: source classes → target classes.'
 ];
 
-function showGen(step){
+window.showGen=function(step){
   currentGenStep=step;
   document.querySelectorAll('.gen-tab').forEach(function(t,i){t.classList.toggle('active',i===step)});
   document.getElementById('gen-desc').textContent=genDescs[step];
   drawGenStep(step);
-}
+};
 
 var classColors2d=['#5a4ab8','#1a7a5c','#c45028','#a06810','#d85a30'];
 var classColorsFaded2d=['rgba(90,74,184,0.3)','rgba(26,122,92,0.3)','rgba(196,80,40,0.3)','rgba(160,104,16,0.3)','rgba(216,90,48,0.3)'];
@@ -546,8 +574,11 @@ function drawGenStep(step){
 
 showGen(0);
 window.addEventListener('resize',function(){drawGenStep(currentGenStep)});
+})();
 
 // Fade observer
-var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.15});
-document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el)});
+if('IntersectionObserver' in window){
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.15});
+  document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el)});
+}
 </script>
