@@ -1,3 +1,7 @@
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -567,6 +571,7 @@ code {
 .post-footer p { font-family: var(--sans); font-size: 13px; color: var(--ink-muted); }
 .post-footer a { color: var(--accent); }
 
+/* FIX: fade-in initial hidden state for IntersectionObserver animation */
 .fade-in {
   opacity: 0;
   transform: translateY(16px);
@@ -970,9 +975,9 @@ $$\text{err}_D(h^\star) \;\le\; \epsilon \;+\; 2\sqrt{\frac{\log(4k/\delta)}{2m_
 <div class="bar-chart fade-in" id="results-chart">
   <div class="bar-chart-title">Test accuracy (%) — 200 training examples, $n = 100$</div>
   <div class="filter-tabs">
-    <button class="filter-tab active" onclick="filterBars('all')">All tasks</button>
-    <button class="filter-tab" onclick="filterBars('perfect')">LLM-PV perfect</button>
-    <button class="filter-tab" onclick="filterBars('hard')">Challenging</button>
+    <button class="filter-tab active" onclick="filterBars(this, 'all')">All tasks</button>
+    <button class="filter-tab" onclick="filterBars(this, 'perfect')">LLM-PV perfect</button>
+    <button class="filter-tab" onclick="filterBars(this, 'hard')">Challenging</button>
   </div>
   <div id="bars-container"></div>
 </div>
@@ -1154,21 +1159,24 @@ function renderBars(filter) {
   });
 }
 
-function filterBars(filter) {
+// FIX: accept the button element explicitly instead of relying on implicit `event` global
+function filterBars(btn, filter) {
   document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
-  event.target.classList.add('active');
+  btn.classList.add('active');
   renderBars(filter);
 }
 
 renderBars('all');
 
 // Fade-in observer
-var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
-}, { threshold: 0.15 });
-document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+if ('IntersectionObserver' in window) {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+}
 
 // ===== TRACE SIMULATOR =====
 var traceTasks = {
