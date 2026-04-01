@@ -18,6 +18,7 @@
 }
 
 .post-scope,
+.post-scope *,
 .post-scope *::before,
 .post-scope *::after {
   box-sizing:border-box;
@@ -25,11 +26,13 @@
 
 .post-scope{
   width:100%;
+  max-width:100%;
   background:var(--cream);
   color:var(--ink);
   font-family:var(--serif);
   line-height:1.72;
   -webkit-font-smoothing:antialiased;
+  overflow-x:clip;
 }
 
 .post-scope ::selection{
@@ -113,7 +116,7 @@
 .post-scope article{
   max-width:680px;
   margin:0 auto;
-  padding:3rem 2rem 5rem;
+  padding:2.25rem 2rem 2rem;
 }
 
 .post-scope article p{
@@ -220,7 +223,7 @@
 
 .post-scope .mechanism-grid{
   display:grid;
-  grid-template-columns:1fr 1fr 1fr;
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:12px;
   margin:1.5rem 0;
 }
@@ -259,7 +262,7 @@
 
 .post-scope .compare-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:12px;
   margin:1.5rem 0;
 }
@@ -362,7 +365,7 @@
 
 .post-scope .fig-wide{
   max-width:1120px;
-  margin:2rem auto;
+  margin:1.25rem auto 1.75rem;
   padding:0 2rem;
 }
 
@@ -373,6 +376,14 @@
 }
 
 .post-scope .fig-grid > div{
+  min-width:0;
+}
+
+.post-scope .align-card,
+.post-scope .compare-card,
+.post-scope .mechanism-card,
+.post-scope .collapse-card,
+.post-scope .denom-panel{
   min-width:0;
 }
 
@@ -392,6 +403,22 @@
   text-align:center;
 }
 
+.post-scope .hero + article{
+  padding-top:2.5rem;
+}
+
+.post-scope article + .fig-wide{
+  margin-top:.5rem;
+}
+
+.post-scope .fig-wide + article{
+  padding-top:1rem !important;
+}
+
+.post-scope .fig-wide:last-of-type{
+  margin-bottom:1.25rem;
+}
+
 .post-scope .fig-row-label{
   font-family:var(--sans);
   font-size:13px;
@@ -401,7 +428,7 @@
 
 .post-scope .denom-viz{
   display:grid;
-  grid-template-columns:1fr auto 1fr;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
   gap:18px;
   align-items:start;
 }
@@ -470,7 +497,7 @@
 
 .post-scope .collapse-grid{
   display:grid;
-  grid-template-columns:1fr 1fr 1fr;
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:12px;
   margin:1.5rem 0;
 }
@@ -513,7 +540,7 @@
 
 .post-scope .align-grid{
   display:grid;
-  grid-template-columns:1fr 1fr 1fr 1fr;
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:12px;
   margin-bottom:14px;
 }
@@ -867,7 +894,7 @@
 
 @media(max-width:900px){
   .post-scope .align-grid{
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(2,minmax(0,1fr));
   }
 }
 
@@ -909,7 +936,7 @@
   }
 
   .post-scope article{
-    padding:2rem 1rem 4rem;
+    padding:1.75rem 1rem 2rem;
   }
 
   .post-scope .hero h1{
