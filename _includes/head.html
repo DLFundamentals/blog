@@ -1,52 +1,29 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500&display=swap');
+  .site-header { border-top: none; border-bottom: 1px solid #e0dcd6; background: #fff; }
+  .site-title, .site-title:visited {
+    font-family: 'Newsreader', Georgia, serif !important;
+    font-weight: 500 !important;
+    font-size: 1.35rem !important;
+    letter-spacing: -0.02em;
+    color: #1a1714 !important;
+    float: none !important;
+  }
+  .site-title span { font-weight: 300; color: #8a8680; }
+  .site-title-sub {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #8a8680;
+    margin-top: 1px;
+  }
+  .site-nav { display: none !important; }
+</style>
 <header class="site-header" role="banner">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
-    .site-header {
-      background: #fff;
-      border-top: none;
-      border-bottom: 1px solid #e0dcd6;
-      padding: 1.25rem 0;
-      min-height: auto;
-    }
-    .site-header .wrapper {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-    }
-    .site-logo-link {
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-    }
-    .site-logo-title {
-      font-family: 'Newsreader', Georgia, serif;
-      font-size: 1.35rem;
-      font-weight: 500;
-      letter-spacing: -0.02em;
-      color: #1a1714;
-      line-height: 1.2;
-    }
-    .site-logo-title span {
-      font-weight: 300;
-      color: #8a8680;
-    }
-    .site-logo-sub {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: #8a8680;
-      margin-top: 2px;
-    }
-    .site-title { display: none; }
-    .site-nav { display: none; }
-  </style>
   <div class="wrapper">
-    <a class="site-logo-link" href="{{ '/' | relative_url }}">
-      <div class="site-logo-title">Theory<span>/Simplified</span></div>
-      <div class="site-logo-sub">DL Fundamentals Lab</div>
-    </a>
+    <a class="site-title" rel="author" href="{{ '/' | relative_url }}">Theory<span>/Simplified</span></a>
+    <div class="site-title-sub">DL Fundamentals Lab</div>
   </div>
 </header>
