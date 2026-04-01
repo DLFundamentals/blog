@@ -76,7 +76,7 @@ layout: default
 </style>
 
 <div class="index-intro">
-  <p>Clear, principled explanations of deep learning theory — with interactive visualizations, verified claims, and the math that matters.</p>
+  <p>Clear, principled explanations of deep learning theory, with the math that matters.</p>
 </div>
 
 <div class="post-list-styled">
