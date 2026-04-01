@@ -3,9 +3,25 @@ layout: default
 ---
 
 <style>
-  body { background: #faf8f4; }
-  .page-content { padding-top: 0; padding-bottom: 0; background: #faf8f4; }
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
 
+  /* Style minima's existing header */
+  .site-header { border-top: none; border-bottom: 1px solid #e0dcd6; background: #fff; }
+  .site-title, .site-title:visited {
+    font-family: 'Newsreader', Georgia, serif !important;
+    font-weight: 500 !important;
+    font-size: 1.35rem !important;
+    letter-spacing: -0.02em;
+    color: #1a1714 !important;
+  }
+  .site-nav { display: none !important; }
+
+  /* Page background */
+  body, .page-content { background: #faf8f4; }
+  .page-content { padding-top: 0; padding-bottom: 0; }
+
+  /* Intro */
   .index-intro {
     max-width: 680px;
     margin: 0 auto;
@@ -20,6 +36,7 @@ layout: default
     margin: 0;
   }
 
+  /* Post list */
   .post-list-styled {
     max-width: 680px;
     margin: 0 auto;
@@ -54,10 +71,8 @@ layout: default
     line-height: 1.6;
   }
 
-  .site-footer {
-    border-top: 1px solid #e0dcd6;
-    background: #faf8f4;
-  }
+  /* Footer */
+  .site-footer { border-top: 1px solid #e0dcd6; background: #faf8f4; }
 </style>
 
 <div class="index-intro">
