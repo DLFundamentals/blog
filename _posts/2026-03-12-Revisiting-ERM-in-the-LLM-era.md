@@ -839,7 +839,7 @@ $$\text{test error} \;\le\; \frac{L \log|\Sigma| + \log(2L^2/\delta)}{m}$$
 
 <h3>The central tension</h3>
 
-<p>This yields a sharp distinction between statistical and computational efficiency:</p>
+<p>When learning $k$-parity functions, this yields a sharp distinction between statistical and computational efficiency:</p>
 
 <table class="tension-table fade-in">
   <thead>
