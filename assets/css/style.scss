@@ -2,6 +2,7 @@
 ---
 
 @import "{{ site.theme }}";
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 .wrapper {
   max-width: 860px;
@@ -9,6 +10,60 @@
 
 .page-content {
   padding-top: 36px;
+}
+
+/* Shared site header. This is now the single source of truth for the logo/header */
+.site-header {
+  border-top: none !important;
+  border-bottom: 1px solid #e0dcd6 !important;
+  background: #fff !important;
+  padding: 1rem 0 !important;
+  min-height: 0 !important;
+  position: static !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.site-header .wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+.site-title,
+.site-title:visited {
+  font-family: 'Newsreader', Georgia, serif !important;
+  font-weight: 500 !important;
+  font-size: 1.35rem !important;
+  letter-spacing: -0.02em !important;
+  color: #1a1714 !important;
+  line-height: 1.2 !important;
+  display: block !important;
+  float: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-decoration: none !important;
+}
+
+.site-title span {
+  font-weight: 300 !important;
+  color: #8a8680 !important;
+}
+
+.site-sub {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  letter-spacing: 1.2px !important;
+  text-transform: uppercase !important;
+  color: #8a8680 !important;
+  margin-top: 6px !important;
+  display: block !important;
+  clear: both !important;
+}
+
+.site-nav {
+  display: none !important;
 }
 
 .post-card {
@@ -30,6 +85,7 @@
 .post-title {
   letter-spacing: -0.02em;
   line-height: 1.15;
+  font-size: 1.8rem;
 }
 
 .post-content p {
@@ -48,8 +104,4 @@
 
 .site-footer {
   display: none;
-}
-
-.post-title {
-  font-size: 1.8rem;
 }
