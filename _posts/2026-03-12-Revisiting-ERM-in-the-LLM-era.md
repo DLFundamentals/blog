@@ -33,12 +33,14 @@ body {
   color: var(--ink);
   line-height: 1.72;
   -webkit-font-smoothing: antialiased;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .hero {
   max-width: 900px;
   margin: 0 auto;
-  padding: 4rem 2rem 3rem;
+  padding: 3.2rem 1.5rem 2.3rem;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -70,12 +72,12 @@ body {
 }
 
 .hero-meta {
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
   font-family: var(--sans);
   font-size: 13px;
   color: var(--ink-muted);
   display: flex;
-  gap: 1.5rem;
+  gap: .9rem;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -95,18 +97,18 @@ body {
 article {
   max-width: 680px;
   margin: 0 auto;
-  padding: 3rem 2rem 5rem;
+  padding: 2.1rem 1.5rem 3.1rem;
 }
 
-article p { font-size: 1.05rem; margin-bottom: 1.5rem; }
+article p { font-size: 1.05rem; margin-bottom: 1.12rem; }
 
 article h2 {
   font-family: var(--serif);
   font-size: 1.6rem;
   font-weight: 500;
-  margin: 3rem 0 1.25rem;
+  margin: 2.2rem 0 .9rem;
   color: var(--ink);
-  padding-top: 2rem;
+  padding-top: 1.4rem;
   border-top: 1px solid var(--rule);
 }
 
@@ -114,27 +116,27 @@ article h3 {
   font-family: var(--sans);
   font-size: 1rem;
   font-weight: 600;
-  margin: 2rem 0 0.75rem;
+  margin: 1.45rem 0 .55rem;
   color: var(--ink-soft);
   letter-spacing: 0.3px;
 }
 
 .key-insight {
   border-left: 3px solid var(--accent);
-  padding: 1.25rem 1.5rem;
-  margin: 2rem 0;
+  padding: 1rem 1.15rem;
+  margin: 1.35rem 0;
   background: var(--accent-soft);
   border-radius: 0 8px 8px 0;
   font-style: italic;
   color: var(--ink-soft);
-  font-size: 1.05rem;
-  line-height: 1.65;
+  font-size: 1.03rem;
+  line-height: 1.62;
 }
 
 .math-display {
   text-align: center;
-  padding: 1.5rem 1rem;
-  margin: 1.5rem 0;
+  padding: 1.1rem .85rem;
+  margin: 1.1rem 0;
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
@@ -147,8 +149,8 @@ article h3 {
   background: var(--amber-soft);
   border: 1px solid #e8d5b0;
   border-radius: 8px;
-  padding: 1.25rem 1.5rem;
-  margin: 1.5rem 0;
+  padding: 1.05rem 1.15rem;
+  margin: 1.1rem 0;
   text-align: center;
   overflow-x: auto;
 }
@@ -172,7 +174,7 @@ code {
   background: var(--purple-soft);
   padding: 10px 14px 10px 32px;
   border-radius: 6px;
-  margin: 1rem 0 1.5rem;
+  margin: .85rem 0 1.1rem;
   line-height: 1.6;
   position: relative;
 }
@@ -191,9 +193,9 @@ code {
 /* Mechanism cards */
 .mechanism-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 1.5rem 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 1.15rem 0;
 }
 
 @media (max-width: 600px) { .mechanism-grid { grid-template-columns: 1fr; } }
@@ -202,8 +204,9 @@ code {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
-  padding: 1.25rem;
+  padding: 1rem;
   border-top: 3px solid var(--rule);
+  min-width: 0;
 }
 
 .mechanism-card .step-num {
@@ -232,9 +235,9 @@ code {
 
 .compare-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 1.5rem 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 1.15rem 0;
 }
 
 @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
@@ -243,7 +246,8 @@ code {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
-  padding: 1rem 1.25rem;
+  padding: .95rem 1rem;
+  min-width: 0;
 }
 
 .compare-card h4 {
@@ -262,10 +266,11 @@ code {
 
 /* Results table */
 .results-table-wrap {
-  margin: 1.5rem 0;
+  margin: 1.1rem 0;
   overflow-x: auto;
   border-radius: 8px;
   border: 1px solid var(--rule);
+  min-width: 0;
 }
 
 .results-table {
@@ -292,7 +297,7 @@ code {
 }
 
 .results-table td {
-  padding: 7px 12px;
+  padding: 6px 11px;
   border-bottom: 1px solid var(--rule);
   vertical-align: middle;
   white-space: nowrap;
@@ -323,7 +328,7 @@ code {
   font-size: 13px;
   color: var(--ink-muted);
   line-height: 1.55;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 /* Pipeline viz */
@@ -331,8 +336,9 @@ code {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 12px;
-  padding: 1.5rem;
-  margin: 2rem 0;
+  padding: 1.15rem;
+  margin: 1.35rem 0;
+  min-width: 0;
 }
 
 .pipeline-title {
@@ -365,11 +371,12 @@ code {
 .pipe-step {
   flex: 1;
   border-radius: 8px;
-  padding: 1rem;
+  padding: .9rem;
   text-align: center;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
   position: relative;
+  min-width: 0;
 }
 
 .pipe-step:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
@@ -408,8 +415,8 @@ code {
 }
 
 .pipe-detail {
-  margin-top: 1rem;
-  padding: 1rem;
+  margin-top: .9rem;
+  padding: .95rem;
   background: var(--cream);
   border-radius: 8px;
   font-family: var(--sans);
@@ -431,7 +438,7 @@ code {
   border-collapse: collapse;
   font-family: var(--sans);
   font-size: 13px;
-  margin: 1.5rem 0;
+  margin: 1.1rem 0;
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
@@ -461,11 +468,12 @@ code {
 
 /* Bar chart */
 .bar-chart {
-  margin: 1.5rem 0;
+  margin: 1.15rem 0;
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
-  padding: 1.25rem;
+  padding: 1rem;
+  min-width: 0;
 }
 
 .bar-chart-title {
@@ -533,9 +541,9 @@ code {
 .takeaway {
   background: var(--ink);
   color: var(--cream);
-  padding: 2rem 2.25rem;
+  padding: 1.45rem 1.5rem;
   border-radius: 12px;
-  margin: 3rem 0 2rem;
+  margin: 2rem 0 1.35rem;
 }
 
 .takeaway h3 {
@@ -550,7 +558,7 @@ code {
 
 .takeaway p {
   color: #d0cdc6;
-  margin-bottom: 1rem;
+  margin-bottom: .75rem;
   font-size: 1.02rem;
 }
 
@@ -560,7 +568,7 @@ code {
 .post-footer {
   max-width: 680px;
   margin: 0 auto;
-  padding: 0 2rem 4rem;
+  padding: 0 1.5rem 2.8rem;
   text-align: center;
 }
 
@@ -582,7 +590,7 @@ hr.section-rule {
   border: none;
   height: 1px;
   background: var(--rule);
-  margin: 2.5rem 0;
+  margin: 1.8rem 0;
 }
 
 /* Task filter tabs */
@@ -629,7 +637,7 @@ hr.section-rule {
   background: var(--paper);
   border: 0.5px solid var(--rule);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   transition: all .3s;
 }
 
@@ -706,8 +714,9 @@ hr.section-rule {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 12px;
-  padding: 1.5rem;
-  margin: 2rem 0;
+  padding: 1.1rem;
+  margin: 1.35rem 0;
+  min-width: 0;
 }
 
 .explorer-title {
@@ -722,7 +731,45 @@ hr.section-rule {
   font-family: var(--sans);
   font-size: 13px;
   color: var(--ink-muted);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+
+.mechanism-grid > *,
+.compare-grid > *,
+.pipeline-steps > *,
+.results-table-wrap,
+.pipeline,
+.explorer,
+.bar-chart,
+.key-insight,
+.math-display,
+.eq-highlight,
+.tension-table {
+  min-width: 0;
+}
+
+select,
+button,
+input {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .hero { padding: 2.8rem 1rem 2rem; }
+  article { padding: 1.8rem 1rem 2.6rem; }
+  .hero h1 { font-size: 2rem; }
+  .pipeline-steps { gap: 6px; }
+}
+
+@media (max-width: 480px) {
+  .hero-meta { gap: .55rem; }
+  .bar-label { width: 82px; }
+  .pipe-step { padding: .8rem; }
+  .explorer,
+  .pipeline,
+  .bar-chart,
+  .takeaway { padding: .95rem; }
 }
 </style>
 
@@ -970,9 +1017,9 @@ $$\text{err}_D(h^\star) \;\le\; \epsilon \;+\; 2\sqrt{\frac{\log(4k/\delta)}{2m_
 <div class="bar-chart fade-in" id="results-chart">
   <div class="bar-chart-title">Test accuracy (%) — 200 training examples, $n = 100$</div>
   <div class="filter-tabs">
-    <button class="filter-tab active" onclick="filterBars('all')">All tasks</button>
-    <button class="filter-tab" onclick="filterBars('perfect')">LLM-PV perfect</button>
-    <button class="filter-tab" onclick="filterBars('hard')">Challenging</button>
+    <button class="filter-tab active" onclick="filterBars('all', this)">All tasks</button>
+    <button class="filter-tab" onclick="filterBars('perfect', this)">LLM-PV perfect</button>
+    <button class="filter-tab" onclick="filterBars('hard', this)">Challenging</button>
   </div>
   <div id="bars-container"></div>
 </div>
@@ -1154,9 +1201,9 @@ function renderBars(filter) {
   });
 }
 
-function filterBars(filter) {
+function filterBars(filter, el) {
   document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
-  event.target.classList.add('active');
+  if (el) el.classList.add('active');
   renderBars(filter);
 }
 
