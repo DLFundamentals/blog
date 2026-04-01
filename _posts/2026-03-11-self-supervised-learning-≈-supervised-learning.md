@@ -967,7 +967,7 @@
   <h1>Self-Supervised Learning ≈ Supervised Learning</h1>
   <p class="hero-subtitle">Self-supervised contrastive learning is trained without labels, yet the representations look remarkably class-aware. The reason is structural: its objective and learned geometry are already much closer to a supervised contrastive counterpart than they first appear.</p>
   <div class="hero-meta">
-    <span>By Tomer Galanti</span>
+    <span>By Tomer Galanti & Achleshwar Luthra</span>
     <span>&middot;</span>
     <span>March 11, 2026</span>
     <span>&middot;</span>
