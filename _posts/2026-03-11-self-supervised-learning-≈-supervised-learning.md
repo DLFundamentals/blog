@@ -1,3 +1,8 @@
+<link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -338,7 +343,10 @@
   color:var(--accent);
 }
 
+/* FIX: fade-in elements need an initial hidden state for the animation to work */
 .post-scope .fade-in{
+  opacity:0;
+  transform:translateY(16px);
   transition:opacity .6s ease,transform .6s ease;
 }
 
@@ -1008,21 +1016,21 @@
 <div class="fig-wide">
   <div class="fig-row-label"><strong>DCL</strong> (self-supervised)</div>
   <div class="fig-grid" style="grid-template-columns:repeat(6,1fr)">
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_random.png" alt="Random init"><div class="fig-grid-label">Init</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch10.png" alt="DCL epoch 10"><div class="fig-grid-label">Epoch 10</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch100.png" alt="DCL epoch 100"><div class="fig-grid-label">Epoch 100</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch500.png" alt="DCL epoch 500"><div class="fig-grid-label">Epoch 500</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1000.png" alt="DCL epoch 1000"><div class="fig-grid-label">Epoch 1000</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1900.png" alt="DCL epoch 2000"><div class="fig-grid-label">Epoch 2000</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_random.png" alt="Random init" width="300" height="300" decoding="async"><div class="fig-grid-label">Init</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch10.png" alt="DCL epoch 10" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 10</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch100.png" alt="DCL epoch 100" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 100</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch500.png" alt="DCL epoch 500" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 500</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1000.png" alt="DCL epoch 1000" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 1000</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_dcl_epoch1900.png" alt="DCL epoch 2000" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 2000</div></div>
   </div>
   <div class="fig-row-label" style="margin-top:12px"><strong>NSCL</strong> (supervised)</div>
   <div class="fig-grid" style="grid-template-columns:repeat(6,1fr)">
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_random.png" alt="Random init"><div class="fig-grid-label">Init</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch10.png" alt="NSCL epoch 10"><div class="fig-grid-label">Epoch 10</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch100.png" alt="NSCL epoch 100"><div class="fig-grid-label">Epoch 100</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch500.png" alt="NSCL epoch 500"><div class="fig-grid-label">Epoch 500</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1000.png" alt="NSCL epoch 1000"><div class="fig-grid-label">Epoch 1000</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1900.png" alt="NSCL epoch 2000"><div class="fig-grid-label">Epoch 2000</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_random.png" alt="Random init" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Init</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch10.png" alt="NSCL epoch 10" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 10</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch100.png" alt="NSCL epoch 100" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 100</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch500.png" alt="NSCL epoch 500" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 500</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1000.png" alt="NSCL epoch 1000" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 1000</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/umap_imagenet_nscl_epoch1900.png" alt="NSCL epoch 2000" width="300" height="300" loading="lazy" decoding="async"><div class="fig-grid-label">Epoch 2000</div></div>
   </div>
   <div class="figcaption">
     <strong>Figure 1.</strong> UMAP visualizations on mini-ImageNet across training. <strong>Top row:</strong> DCL (self-supervised) progressively forms semantic clusters without access to labels. <strong>Bottom row:</strong> NSCL (supervised) yields tighter, more separable clusters. Both runs start from the same random initialization. The similarity between the two trajectories is one of the central observations of this post.
@@ -1121,10 +1129,10 @@ $$\mathcal{L}^{\text{NSCL}}(f) \;\le\; \mathcal{L}^{\text{DCL}}(f) \;\le\; \math
 
 <div class="fig-wide">
   <div class="fig-grid" style="grid-template-columns:repeat(4,1fr)">
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/svhn_simclr_losses.png" alt="SVHN losses"><div class="fig-grid-label"><strong>(a)</strong> SVHN</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/cifar10_simclr_losses.png" alt="CIFAR-10 losses"><div class="fig-grid-label"><strong>(b)</strong> CIFAR-10</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/cifar100_simclr_losses.png" alt="CIFAR-100 losses"><div class="fig-grid-label"><strong>(c)</strong> CIFAR-100</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/imagenet_simclr_losses.png" alt="mini-ImageNet losses"><div class="fig-grid-label"><strong>(d)</strong> mini-ImageNet</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/svhn_simclr_losses.png" alt="SVHN losses" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(a)</strong> SVHN</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/cifar10_simclr_losses.png" alt="CIFAR-10 losses" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(b)</strong> CIFAR-10</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/cifar100_simclr_losses.png" alt="CIFAR-100 losses" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(c)</strong> CIFAR-100</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/imagenet_simclr_losses.png" alt="mini-ImageNet losses" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(d)</strong> mini-ImageNet</div></div>
   </div>
   <div class="figcaption">
     <strong>Figure 2 (top).</strong> DCL loss, NSCL loss, and the theoretical bound tracked during SimCLR training on train and test sets. All three quantities are highly correlated. The gap between DCL and NSCL becomes tighter as the number of classes increases; compare CIFAR-10 with CIFAR-100.
@@ -1133,10 +1141,10 @@ $$\mathcal{L}^{\text{NSCL}}(f) \;\le\; \mathcal{L}^{\text{DCL}}(f) \;\le\; \math
 
 <div class="fig-wide" style="margin-top:.45rem">
   <div class="fig-grid" style="grid-template-columns:repeat(4,1fr)">
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/svhn_simclr_nscl_corollary.png" alt="SVHN corollary"><div class="fig-grid-label"><strong>(a)</strong> SVHN</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/cifar10_simclr_nscl_corollary.png" alt="CIFAR-10 corollary"><div class="fig-grid-label"><strong>(b)</strong> CIFAR-10</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/cifar100_simclr_nscl_corollary.png" alt="CIFAR-100 corollary"><div class="fig-grid-label"><strong>(c)</strong> CIFAR-100</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/imagenet_simclr_nscl_corollary.png" alt="mini-ImageNet corollary"><div class="fig-grid-label"><strong>(d)</strong> mini-ImageNet</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/svhn_simclr_nscl_corollary.png" alt="SVHN corollary" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(a)</strong> SVHN</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/cifar10_simclr_nscl_corollary.png" alt="CIFAR-10 corollary" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(b)</strong> CIFAR-10</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/cifar100_simclr_nscl_corollary.png" alt="CIFAR-100 corollary" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(c)</strong> CIFAR-100</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/imagenet_simclr_nscl_corollary.png" alt="mini-ImageNet corollary" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(d)</strong> mini-ImageNet</div></div>
   </div>
   <div class="figcaption">
     <strong>Figure 2 (bottom).</strong> Comparing the NSCL loss of two models, one trained with DCL and the other with NSCL. The resulting NSCL losses are comparable regardless of training objective, suggesting that minimizing DCL already brings the NSCL loss close to the value achieved by direct NSCL minimization.
@@ -1153,9 +1161,9 @@ $$\mathcal{L}^{\text{NSCL}}(f) \;\le\; \mathcal{L}^{\text{DCL}}(f) \;\le\; \math
 
 <div class="fig-wide">
   <div class="fig-grid" style="grid-template-columns:repeat(3,1fr)">
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/th1_exp2_cifar10.png" alt="CIFAR-10 gap vs C"><div class="fig-grid-label"><strong>(a)</strong> CIFAR-10</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/th1_exp2_cifar100.png" alt="CIFAR-100 gap vs C"><div class="fig-grid-label"><strong>(b)</strong> CIFAR-100</div></div>
-    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/th1_exp2_imagenet.png" alt="mini-ImageNet gap vs C"><div class="fig-grid-label"><strong>(c)</strong> mini-ImageNet</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/th1_exp2_cifar10.png" alt="CIFAR-10 gap vs C" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(a)</strong> CIFAR-10</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/th1_exp2_cifar100.png" alt="CIFAR-100 gap vs C" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(b)</strong> CIFAR-100</div></div>
+    <div><img src="https://raw.githubusercontent.com/DLFundamentals/blog/main/assets/figures/cl-nscl/th1_exp2_imagenet.png" alt="mini-ImageNet gap vs C" width="400" height="300" loading="lazy" decoding="async"><div class="fig-grid-label"><strong>(c)</strong> mini-ImageNet</div></div>
   </div>
   <div class="figcaption">
     <strong>Figure 3.</strong> The gap $\mathcal{L}^{\text{DCL}} - \mathcal{L}^{\text{NSCL}}$ as a function of the number of classes $C$, compared with the theoretical bound. The gap shrinks with $C$ and is highly correlated with the bound at all training epochs. Models were trained from scratch for each value of $C$ using randomly sampled class subsets.
