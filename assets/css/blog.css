@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════
    Blog Design System
-   Scoped to post/article content so it does not
-   mutate the shared site header.
+   Shared across all posts
    ═══════════════════════════════════════════════ */
 
+/* ── Tokens ── */
 :root {
   --navy: #0a1628;
   --navy-soft: #1a2a4a;
@@ -25,10 +25,23 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
-*,
-*::before,
-*::after {
+/* ── Safe reset: do NOT wipe all margins/padding globally ── */
+*, *::before, *::after {
   box-sizing: border-box;
+}
+
+html {
+  font-size: 17px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--body);
+  background: var(--bg);
+  line-height: 1.78;
 }
 
 ::selection {
@@ -36,7 +49,10 @@
   color: var(--navy);
 }
 
-/* Shared utility widths */
+/* Do not style .site-header here.
+   Header is controlled in _includes/header.html so posts and homepage match. */
+
+/* ── Widths ── */
 .col {
   max-width: var(--col-width);
   margin-left: auto;
@@ -53,50 +69,19 @@
   padding-right: 2rem;
 }
 
-/* Main post/article scope */
-.article-shell {
-  font-family: var(--font-body);
-  color: var(--body);
-  background: var(--bg);
-  line-height: 1.78;
-}
-
-.article-shell p {
-  margin-bottom: 1.4rem;
-}
-
-.article-shell a {
-  color: var(--accent);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s;
-}
-
-.article-shell a:hover {
-  border-bottom-color: var(--accent);
-}
-
-.article-shell strong {
-  color: var(--ink);
-}
-
-.article-shell em {
-  font-style: italic;
-}
-
-/* Hero */
-.article-shell .hero {
+/* ═══════════════════ Hero ═══════════════════ */
+.hero {
   padding: 5rem 0 3rem;
 }
 
-.article-shell .hero-tags {
+.hero-tags {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
   margin-bottom: 1.5rem;
 }
 
-.article-shell .hero-tag {
+.hero-tag {
   font-family: var(--font-ui);
   font-size: 0.7rem;
   font-weight: 500;
@@ -109,7 +94,7 @@
   border: 1px solid var(--border);
 }
 
-.article-shell .hero h1 {
+.hero h1 {
   font-family: var(--font-body);
   font-weight: 500;
   font-size: 2.8rem;
@@ -119,7 +104,7 @@
   margin-bottom: 1.25rem;
 }
 
-.article-shell .hero-meta {
+.hero-meta {
   font-family: var(--font-ui);
   font-size: 0.85rem;
   color: var(--muted);
@@ -129,11 +114,11 @@
   flex-wrap: wrap;
 }
 
-.article-shell .hero-meta .dot {
+.hero-meta .dot {
   color: var(--border);
 }
 
-.article-shell .hero-cite {
+.hero-cite {
   margin-top: 2rem;
   font-size: 0.88rem;
   font-style: italic;
@@ -145,19 +130,43 @@
   line-height: 1.6;
 }
 
-.article-shell .hero-cite a {
+.hero-cite a {
   color: var(--accent);
   text-decoration: none;
   border-bottom: 1px solid var(--accent-light);
   transition: border-color 0.2s;
 }
 
-.article-shell .hero-cite a:hover {
+.hero-cite a:hover {
   border-bottom-color: var(--accent);
 }
 
-/* Key message / callout */
-.article-shell .key-message {
+/* ═══════════════════ Article Prose ═══════════════════ */
+article p {
+  margin-bottom: 1.4rem;
+}
+
+article a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+article a:hover {
+  border-bottom-color: var(--accent);
+}
+
+article strong {
+  color: var(--ink);
+}
+
+article em {
+  font-style: italic;
+}
+
+/* ── Key Message / Callout ── */
+.key-message {
   margin: 2.5rem 0;
   padding: 1.5rem 1.75rem;
   border-left: 4px solid var(--accent);
@@ -168,8 +177,8 @@
   color: var(--navy-soft);
 }
 
-/* Headings */
-.article-shell h2 {
+/* ── Headings ── */
+article h2 {
   font-family: var(--font-ui);
   font-weight: 700;
   font-size: 1.55rem;
@@ -182,7 +191,7 @@
   border-bottom: 1px solid var(--border-light);
 }
 
-.article-shell h3 {
+article h3 {
   font-family: var(--font-ui);
   font-weight: 700;
   font-size: 1.1rem;
@@ -192,18 +201,18 @@
   letter-spacing: -0.005em;
 }
 
-/* Lists */
-.article-shell ol,
-.article-shell ul {
+/* ── Lists ── */
+article ol,
+article ul {
   padding-left: 1.5rem;
   margin-bottom: 1.4rem;
 }
 
-.article-shell li {
+article li {
   margin-bottom: 0.5rem;
 }
 
-/* Rules */
+/* ── Section Dividers ── */
 .section-rule {
   border: none;
   height: 1px;
@@ -211,8 +220,8 @@
   margin: 3rem 0;
 }
 
-/* Code */
-.article-shell code {
+/* ── Code ── */
+article code {
   font-family: var(--font-mono);
   font-size: 0.88em;
   background: var(--surface);
@@ -221,7 +230,7 @@
   color: var(--ink);
 }
 
-.article-shell pre {
+article pre {
   background: var(--surface);
   border: 1px solid var(--border-light);
   border-radius: 10px;
@@ -233,12 +242,12 @@
   line-height: 1.65;
 }
 
-.article-shell pre code {
+article pre code {
   background: none;
   padding: 0;
 }
 
-/* Math */
+/* ═══════════════════ Math (KaTeX) ═══════════════════ */
 .katex-display {
   margin: 1.5rem 0;
   overflow-x: auto;
@@ -254,42 +263,42 @@
   overflow-x: auto;
 }
 
-/* Figures */
-.article-shell .figure {
+/* ═══════════════════ Figures ═══════════════════ */
+.figure {
   margin: 2.5rem 0;
 }
 
-.article-shell .figure img {
+.figure img {
   width: 100%;
   border-radius: 10px;
 }
 
-.article-shell .figure-grid {
+.figure-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   align-items: start;
 }
 
-.article-shell .figure-grid-item {
+.figure-grid-item {
   text-align: center;
 }
 
-.article-shell .figure-grid-item img {
+.figure-grid-item img {
   width: 100%;
   border-radius: 8px;
   border: 1px solid var(--border-light);
 }
 
-.article-shell .figure-grid-item .label {
+.figure-grid-item .label {
   font-family: var(--font-ui);
   font-size: 0.78rem;
   color: var(--muted);
   margin-top: 0.4rem;
 }
 
-.article-shell figcaption,
-.article-shell .figcaption {
+figcaption,
+.figcaption {
   font-family: var(--font-ui);
   font-size: 0.82rem;
   color: var(--muted);
@@ -297,14 +306,14 @@
   margin-top: 0.8rem;
 }
 
-.article-shell figcaption strong,
-.article-shell .figcaption strong {
+figcaption strong,
+.figcaption strong {
   color: var(--ink);
   font-weight: 500;
 }
 
-/* Embeds */
-.article-shell .embed-wrap {
+/* ═══════════════════ Embed ═══════════════════ */
+.embed-wrap {
   margin: 2rem 0;
   border-radius: 14px;
   overflow: hidden;
@@ -312,21 +321,21 @@
   background: var(--surface);
 }
 
-.article-shell .embed-wrap iframe {
+.embed-wrap iframe {
   width: 100%;
   border: none;
   display: block;
 }
 
-/* Cards */
-.article-shell .card-stack {
+/* ═══════════════════ Cards ═══════════════════ */
+.card-stack {
   margin: 2rem 0;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.article-shell .card {
+.card {
   padding: 1rem 1.25rem;
   border-radius: 10px;
   border: 1px solid var(--border-light);
@@ -334,12 +343,12 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.article-shell .card:hover {
+.card:hover {
   border-color: var(--border);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 }
 
-.article-shell .card-title {
+.card-title {
   font-family: var(--font-ui);
   font-weight: 700;
   font-size: 0.85rem;
@@ -347,15 +356,15 @@
   margin-bottom: 0.35rem;
 }
 
-.article-shell .card p {
+.card p {
   font-size: 0.9rem;
   color: var(--body);
   margin: 0;
   line-height: 1.6;
 }
 
-/* Tables */
-.article-shell table {
+/* ═══════════════════ Tables ═══════════════════ */
+article table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5rem 0;
@@ -363,7 +372,7 @@
   font-size: 0.82rem;
 }
 
-.article-shell thead th {
+article thead th {
   font-weight: 700;
   color: var(--ink);
   text-align: left;
@@ -371,18 +380,18 @@
   border-bottom: 2px solid var(--border);
 }
 
-.article-shell tbody td {
+article tbody td {
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--border-light);
   color: var(--body);
 }
 
-.article-shell tbody tr:hover {
+article tbody tr:hover {
   background: var(--surface);
 }
 
-/* Takeaway box */
-.article-shell .takeaway {
+/* ═══════════════════ Takeaway Box ═══════════════════ */
+.takeaway {
   margin: 2.5rem 0;
   padding: 1.75rem;
   background: var(--surface);
@@ -390,7 +399,7 @@
   border: 1px solid var(--border);
 }
 
-.article-shell .takeaway-label {
+.takeaway-label {
   font-family: var(--font-ui);
   font-size: 0.75rem;
   font-weight: 700;
@@ -400,21 +409,57 @@
   margin-bottom: 1rem;
 }
 
-.article-shell .takeaway ol,
-.article-shell .takeaway ul {
+.takeaway ol,
+.takeaway ul {
   padding-left: 1.25rem;
 }
 
-.article-shell .takeaway li {
+.takeaway li {
   margin-bottom: 0.75rem;
   line-height: 1.65;
 }
 
-.article-shell .takeaway li:last-child {
+.takeaway li:last-child {
   margin-bottom: 0;
 }
 
-/* Comments */
+/* ═══════════════════ Footer ═══════════════════ */
+.site-footer {
+  border-top: 1px solid var(--border);
+  margin-top: 4rem;
+  padding: 2rem;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--faint);
+}
+
+/* ═══════════════════ Animations ═══════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeUp 0.6s ease-out both; }
+.fade-in-d1 { animation-delay: 0.1s; }
+.fade-in-d2 { animation-delay: 0.2s; }
+.fade-in-d3 { animation-delay: 0.3s; }
+
+/* ═══════════════════ Responsive ═══════════════════ */
+@media (max-width: 768px) {
+  html { font-size: 16px; }
+  .hero h1 { font-size: 2rem; }
+  .figure-grid { grid-template-columns: repeat(2, 1fr); }
+  .col, .col-wide, .hero { padding-left: 1.25rem; padding-right: 1.25rem; }
+}
+
+@media (max-width: 480px) {
+  .hero h1 { font-size: 1.7rem; }
+  .hero-meta { font-size: 0.78rem; }
+  .figure-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+}
+
+/* ═══════════════════ Giscus Comments ═══════════════════ */
 .comments-section {
   margin-top: 3rem;
 }
@@ -438,7 +483,7 @@
   border: none !important;
 }
 
-/* Like button on index/home if used */
+/* ═══════════════════ Like button (index page) ═══════════════════ */
 .like-btn {
   display: inline-flex;
   align-items: center;
@@ -461,69 +506,4 @@
 .like-btn:hover svg {
   stroke: #E24B4A;
   fill: rgba(226, 75, 74, 0.12);
-}
-
-/* Animations */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fadeUp 0.6s ease-out both;
-}
-
-.fade-in-d1 {
-  animation-delay: 0.1s;
-}
-
-.fade-in-d2 {
-  animation-delay: 0.2s;
-}
-
-.fade-in-d3 {
-  animation-delay: 0.3s;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .article-shell {
-    font-size: 16px;
-  }
-
-  .article-shell .hero h1 {
-    font-size: 2rem;
-  }
-
-  .article-shell .figure-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .col,
-  .col-wide,
-  .article-shell .hero {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .article-shell .hero h1 {
-    font-size: 1.7rem;
-  }
-
-  .article-shell .hero-meta {
-    font-size: 0.78rem;
-  }
-
-  .article-shell .figure-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
 }
