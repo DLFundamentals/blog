@@ -33,15 +33,12 @@ body {
   color: var(--ink);
   line-height: 1.72;
   -webkit-font-smoothing: antialiased;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: clip;
 }
 
 .hero {
   max-width: 900px;
   margin: 0 auto;
-  padding: 3.4rem 2rem 2.35rem;
+  padding: 4rem 2rem 3rem;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -52,7 +49,7 @@ body {
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: .95rem;
+  margin-bottom: 1.25rem;
 }
 
 .hero h1 {
@@ -61,7 +58,7 @@ body {
   font-weight: 500;
   line-height: 1.2;
   color: var(--ink);
-  margin: 0 0 1.2rem 0;
+  margin-bottom: 1.5rem;
   max-width: 700px;
 }
 
@@ -98,18 +95,18 @@ body {
 article {
   max-width: 680px;
   margin: 0 auto;
-  padding: 1.7rem 2rem 1.35rem;
+  padding: 3rem 2rem 5rem;
 }
 
-article p { font-size: 1.05rem; margin: 0 0 1.2rem 0; }
+article p { font-size: 1.05rem; margin-bottom: 1.5rem; }
 
 article h2 {
   font-family: var(--serif);
   font-size: 1.6rem;
   font-weight: 500;
-  margin: 2.2rem 0 .95rem;
+  margin: 3rem 0 1.25rem;
   color: var(--ink);
-  padding-top: 1.45rem;
+  padding-top: 2rem;
   border-top: 1px solid var(--rule);
 }
 
@@ -117,15 +114,15 @@ article h3 {
   font-family: var(--sans);
   font-size: 1rem;
   font-weight: 600;
-  margin: 1.45rem 0 .6rem;
+  margin: 2rem 0 0.75rem;
   color: var(--ink-soft);
   letter-spacing: 0.3px;
 }
 
 .key-insight {
   border-left: 3px solid var(--accent);
-  padding: 1rem 1.2rem;
-  margin: 1.2rem 0;
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
   background: var(--accent-soft);
   border-radius: 0 8px 8px 0;
   font-style: italic;
@@ -136,8 +133,8 @@ article h3 {
 
 .math-display {
   text-align: center;
-  padding: 1.1rem .85rem;
-  margin: 1.1rem 0;
+  padding: 1.5rem 1rem;
+  margin: 1.5rem 0;
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
@@ -150,8 +147,8 @@ article h3 {
   background: var(--amber-soft);
   border: 1px solid #e8d5b0;
   border-radius: 8px;
-  padding: 1.05rem 1.15rem;
-  margin: 1.1rem 0;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
   text-align: center;
   overflow-x: auto;
 }
@@ -194,9 +191,9 @@ code {
 /* Mechanism cards */
 .mechanism-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 1.15rem 0;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 1.5rem 0;
 }
 
 @media (max-width: 600px) { .mechanism-grid { grid-template-columns: 1fr; } }
@@ -205,7 +202,7 @@ code {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 1.25rem;
   border-top: 3px solid var(--rule);
 }
 
@@ -235,9 +232,9 @@ code {
 
 .compare-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 1.15rem 0;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 1.5rem 0;
 }
 
 @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
@@ -246,7 +243,7 @@ code {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
-  padding: .95rem 1.05rem;
+  padding: 1rem 1.25rem;
 }
 
 .compare-card h4 {
@@ -265,11 +262,10 @@ code {
 
 /* Results table */
 .results-table-wrap {
-  margin: 1.2rem 0;
+  margin: 1.5rem 0;
   overflow-x: auto;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid var(--rule);
-  background: var(--paper);
 }
 
 .results-table {
@@ -296,7 +292,7 @@ code {
 }
 
 .results-table td {
-  padding: 6px 11px;
+  padding: 7px 12px;
   border-bottom: 1px solid var(--rule);
   vertical-align: middle;
   white-space: nowrap;
@@ -327,7 +323,7 @@ code {
   font-size: 13px;
   color: var(--ink-muted);
   line-height: 1.55;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 /* Pipeline viz */
@@ -335,8 +331,8 @@ code {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 12px;
-  padding: 1.25rem;
-  margin: 1.55rem 0;
+  padding: 1.5rem;
+  margin: 2rem 0;
 }
 
 .pipeline-title {
@@ -369,12 +365,11 @@ code {
 .pipe-step {
   flex: 1;
   border-radius: 8px;
-  padding: .9rem;
+  padding: 1rem;
   text-align: center;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
   position: relative;
-  min-width: 0;
 }
 
 .pipe-step:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
@@ -413,8 +408,8 @@ code {
 }
 
 .pipe-detail {
-  margin-top: .9rem;
-  padding: .95rem;
+  margin-top: 1rem;
+  padding: 1rem;
   background: var(--cream);
   border-radius: 8px;
   font-family: var(--sans);
@@ -436,10 +431,10 @@ code {
   border-collapse: collapse;
   font-family: var(--sans);
   font-size: 13px;
-  margin: 1.2rem 0;
+  margin: 1.5rem 0;
   background: var(--paper);
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -466,11 +461,11 @@ code {
 
 /* Bar chart */
 .bar-chart {
-  margin: 1.25rem 0;
+  margin: 1.5rem 0;
   background: var(--paper);
   border: 1px solid var(--rule);
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: 8px;
+  padding: 1.25rem;
 }
 
 .bar-chart-title {
@@ -540,7 +535,7 @@ code {
   color: var(--cream);
   padding: 2rem 2.25rem;
   border-radius: 12px;
-  margin: 2.2rem 0 1.5rem;
+  margin: 3rem 0 2rem;
 }
 
 .takeaway h3 {
@@ -555,7 +550,7 @@ code {
 
 .takeaway p {
   color: #d0cdc6;
-  margin-bottom: .75rem;
+  margin-bottom: 1rem;
   font-size: 1.02rem;
 }
 
@@ -587,7 +582,7 @@ hr.section-rule {
   border: none;
   height: 1px;
   background: var(--rule);
-  margin: 1.8rem 0;
+  margin: 2.5rem 0;
 }
 
 /* Task filter tabs */
@@ -634,7 +629,7 @@ hr.section-rule {
   background: var(--paper);
   border: 0.5px solid var(--rule);
   border-radius: 8px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   transition: all .3s;
 }
 
@@ -711,8 +706,8 @@ hr.section-rule {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 12px;
-  padding: 1.25rem;
-  margin: 1.55rem 0;
+  padding: 1.5rem;
+  margin: 2rem 0;
 }
 
 .explorer-title {
@@ -727,86 +722,7 @@ hr.section-rule {
   font-family: var(--sans);
   font-size: 13px;
   color: var(--ink-muted);
-  margin-bottom: 1rem;
-}
-
-
-.mechanism-grid > *,
-.compare-grid > *,
-.pipeline-steps > *,
-.results-table-wrap,
-.pipeline,
-.explorer,
-.bar-chart,
-.key-insight,
-.math-display,
-.eq-highlight,
-.tension-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--sans);
-  font-size: 13px;
-  margin: 1.2rem 0;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-select,
-button,
-input {
-  max-width: 100%;
-}
-
-@media (max-width: 768px) {
-  .hero {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 3.4rem 2rem 2.35rem;
-  border-bottom: 1px solid var(--rule);
-}
-  article {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 1.7rem 2rem 1.35rem;
-}
-  .hero h1 {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 500;
-  line-height: 1.2;
-  color: var(--ink);
-  margin: 0 0 1.2rem 0;
-  max-width: 700px;
-}
-  .pipeline-steps { gap: 6px; }
-}
-
-@media (max-width: 700px) {
-  .hero { padding: 3rem 1rem 2rem; }
-  article { padding: 1.45rem 1rem 1rem; }
-  .post-footer { padding: 0 1rem 3rem; }
-}
-
-@media (max-width: 480px) {
-  .hero h1 { font-size: 1.7rem; }
-  .hero-meta { gap: .6rem; }
-  .takeaway { padding: 1.45rem 1.15rem; }
-}
-
-  .bar-label { width: 82px; }
-  .pipe-step { padding: .8rem; }
-  .explorer,
-  .pipeline,
-  .bar-chart,
-  .takeaway {
-  background: var(--ink);
-  color: var(--cream);
-  padding: 2rem 2.25rem;
-  border-radius: 12px;
-  margin: 2.2rem 0 1.5rem;
-}
+  margin-bottom: 1.25rem;
 }
 </style>
 
@@ -1054,9 +970,9 @@ $$\text{err}_D(h^\star) \;\le\; \epsilon \;+\; 2\sqrt{\frac{\log(4k/\delta)}{2m_
 <div class="bar-chart fade-in" id="results-chart">
   <div class="bar-chart-title">Test accuracy (%) — 200 training examples, $n = 100$</div>
   <div class="filter-tabs">
-    <button class="filter-tab active" onclick="filterBars('all', this)">All tasks</button>
-    <button class="filter-tab" onclick="filterBars('perfect', this)">LLM-PV perfect</button>
-    <button class="filter-tab" onclick="filterBars('hard', this)">Challenging</button>
+    <button class="filter-tab active" onclick="filterBars('all')">All tasks</button>
+    <button class="filter-tab" onclick="filterBars('perfect')">LLM-PV perfect</button>
+    <button class="filter-tab" onclick="filterBars('hard')">Challenging</button>
   </div>
   <div id="bars-container"></div>
 </div>
@@ -1238,9 +1154,9 @@ function renderBars(filter) {
   });
 }
 
-function filterBars(filter, el) {
+function filterBars(filter) {
   document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
-  if (el) el.classList.add('active');
+  event.target.classList.add('active');
   renderBars(filter);
 }
 
