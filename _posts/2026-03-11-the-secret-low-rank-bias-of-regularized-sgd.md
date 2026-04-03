@@ -726,7 +726,7 @@
 
         <!-- Timeline label -->
         <text x="10" y="18" font-family="IBM Plex Mono,monospace" font-size="9" fill="#a09880">older ←</text>
-        <text x="540" y="18" font-family="IBM Plex Mono,monospace" font-size="9" fill="#1e4f7a" text-anchor="end">→ most recent</text>
+        <text x="405" y="12" font-family="IBM Plex Mono,monospace" font-size="9" fill="#1e4f7a" text-anchor="end">→ most recent</text>
 
         <!-- Gradient slabs, fading left to right (older = more faded) -->
         <rect x="10"  y="26" width="52" height="44" rx="3" fill="#d4e6f5" opacity="0.12" stroke="#8ab8d8" stroke-width="0.5"/>
@@ -754,7 +754,7 @@
         <text x="405" y="57" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#2a6199" text-anchor="middle">current</text>
 
         <!-- Decay weights annotation -->
-        <text x="10"  y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#c8c0b0" text-anchor="middle" style="dominant-baseline:middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">8</tspan></text>
+        <text x="36"  y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#c8c0b0" text-anchor="middle" style="dominant-baseline:middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">8</tspan></text>
         <text x="96"  y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#b0a898" text-anchor="middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">6</tspan></text>
         <text x="156" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#908880" text-anchor="middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">4</tspan></text>
         <text x="216" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#706860" text-anchor="middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">3</tspan></text>
