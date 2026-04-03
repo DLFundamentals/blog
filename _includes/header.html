@@ -1,66 +1,106 @@
-now give me a revised logo for the new v6 style: <style>
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500&display=swap');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Header — v6 CSS replacement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
 
-.ts-header{
+/* ─── PREVIEW CHROME ─────────────────────── */
+body { background: #e0dbd0; margin: 0; padding: 3rem 2rem; font-family: sans-serif; }
+.wrapper { max-width: 820px; margin: 0 auto; }
+
+/* ─────────────────────────────────────────────────
+   DROP-IN REPLACEMENT — paste this into your site
+   (replaces the existing <style> block entirely)
+───────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@500&display=swap');
+
+.ts-header {
   position: sticky;
   top: 0;
   z-index: 100;
   border-top: none;
-  border-bottom: 1px solid #e0dcd6;
-  background: rgba(255,255,255,0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 1rem 0;
+  border-bottom: 1px solid #d8d2c6;
+  background: rgba(246, 243, 238, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 0;
   min-height: 0;
 }
 
-.ts-brand{
+/* accent bar — replaces the missing border-top */
+.ts-header::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, #1e4f7a 0%, #2a6199 55%, #b8860b 100%);
+}
+
+.ts-header .wrapper {
+  padding: 0.85rem 0;
+}
+
+.ts-brand {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
   text-decoration: none !important;
   line-height: 1;
+  gap: 5px;
 }
 
-.ts-brand:hover{
-  text-decoration: none !important;
-}
+.ts-brand:hover { text-decoration: none !important; }
 
-.ts-title{
-  font-family: 'Newsreader', Georgia, serif !important;
-  font-weight: 500;
-  font-size: 1.35rem;
-  letter-spacing: -0.02em;
-  color: #1a1714;
+/* "Theory" — Lora italic, accent blue */
+.ts-title {
+  font-family: 'Lora', Georgia, serif !important;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.32rem;
+  letter-spacing: -0.015em;
+  color: #1e4f7a;
   line-height: 1.1;
 }
 
-.ts-title-light{
-  font-weight: 300;
-  color: #8a8680;
+/* "/Simplified" — Lora upright, warm dark */
+.ts-title-light {
+  font-weight: 500;
+  font-style: normal;
+  color: #18160f;
+  letter-spacing: -0.02em;
 }
 
-.ts-sub{
-  margin-top: 8px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 10px;
+/* "DL Fundamentals Lab" — IBM Plex Mono */
+.ts-sub {
+  margin-top: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
   font-weight: 500;
-  letter-spacing: 1.2px;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: #8a8680;
+  color: #a09880;
   line-height: 1.2;
 }
 
-.site-nav{
-  display: none !important;
-}
-</style>
+.site-nav { display: none !important; }
 
+</style>
+</head>
+<body>
+
+<!-- Exact original HTML — unchanged -->
 <header class="site-header ts-header">
   <div class="wrapper">
-    <a class="ts-brand" href="{{ '/' | relative_url }}">
+    <a class="ts-brand" href="#">
       <span class="ts-title">Theory<span class="ts-title-light">/Simplified</span></span>
       <span class="ts-sub">DL Fundamentals Lab</span>
     </a>
   </div>
 </header>
+
+</body>
+</html>
