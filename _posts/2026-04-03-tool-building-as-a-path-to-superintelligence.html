@@ -10,254 +10,580 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #faf9f7;
-  --surface: #f3f1ec;
-  --border: #e2ddd5;
-  --text: #1a1916;
-  --muted: #7a7570;
-  --accent: #2a5c8f;
-  --accent-soft: #dce8f4;
-  --code-bg: #f0ede6;
-  --tag: #e8e4dc;
-  --tag-text: #5a5650;
-  --highlight: #fff8e6;
-  --highlight-border: #e8c94a;
+  --bg:               #f6f3ee;
+  --bg-warm:          #f0ece4;
+  --surface:          #ede9e0;
+  --surface-2:        #e8e3d8;
+  --border:           #d8d2c6;
+  --border-light:     #e4dfd4;
+  --text:             #18160f;
+  --text-soft:        #3a3628;
+  --muted:            #7a7060;
+  --muted-light:      #a09880;
+  --accent:           #1e4f7a;
+  --accent-mid:       #2a6199;
+  --accent-soft:      #d4e6f5;
+  --accent-xsoft:     #ebf4fc;
+  --gold:             #b8860b;
+  --gold-soft:        #fdf4d8;
+  --gold-border:      #d4a820;
+  --red-muted:        #8f2a2a;
+  --red-soft:         #f5e8e8;
+  --green-muted:      #2a6645;
+  --green-soft:       #e4f0ea;
+  --rule-accent:      #1e4f7a;
 }
+
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  font-size: 17px;
-  line-height: 1.75;
+  font-size: 17.5px;
+  line-height: 1.78;
   font-weight: 300;
+  -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+a { color: var(--accent-mid); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .2s; }
+a:hover { border-bottom-color: var(--accent-mid); }
+
+/* ── TOP ACCENT BAR ── */
+.top-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 55%, var(--gold) 100%);
+}
 
 /* ── HERO ── */
-.hero { max-width: 720px; margin: 0 auto; padding: 4rem 2rem 2rem; }
+.hero {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 4.5rem 2.5rem 2.5rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
 
 .meta {
-  display: flex; align-items: center; gap: 0.75rem;
-  font-size: 12px; color: var(--muted);
+  display: flex; align-items: center; gap: 0.6rem;
   font-family: 'IBM Plex Mono', monospace;
-  margin-bottom: 1.5rem; flex-wrap: wrap;
+  font-size: 11px; color: var(--muted); letter-spacing: 0.02em;
+  margin-bottom: 1.75rem; flex-wrap: wrap;
 }
 
 .tag {
-  background: var(--tag); color: var(--tag-text);
-  padding: 2px 8px; border-radius: 3px;
-  font-size: 11px; font-weight: 500; letter-spacing: 0.03em;
+  background: var(--surface); color: var(--muted);
+  padding: 2px 9px; border-radius: 2px;
+  font-size: 10.5px; font-weight: 500; letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
-.tag.paper { background: var(--accent-soft); color: var(--accent); }
+.tag.paper {
+  background: var(--accent-soft); color: var(--accent);
+  border: 1px solid #b5cfe6;
+}
+
 .sep { color: var(--border); }
 
 h1 {
   font-family: 'Lora', serif;
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  font-weight: 500; line-height: 1.2; letter-spacing: -0.01em;
-  margin-bottom: 1.25rem;
+  font-size: clamp(2rem, 4.5vw, 3.1rem);
+  font-weight: 600;
+  line-height: 1.13;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  max-width: 680px;
 }
-h1 em { font-style: italic; color: var(--accent); }
+
+h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
 
 .subtitle {
-  font-size: 1.1rem; color: var(--muted); font-weight: 300;
-  line-height: 1.6; border-left: 3px solid var(--border);
-  padding-left: 1rem; margin-bottom: 2rem;
+  font-size: 1.1rem;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.68;
+  max-width: 620px;
+  border-left: 2px solid var(--border);
+  padding-left: 1.1rem;
+  margin-bottom: 0;
+  font-style: italic;
 }
 
 /* ── ARTICLE ── */
-.article { max-width: 720px; margin: 0 auto; padding: 0 2rem 6rem; }
+.article {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 3rem 2.5rem 7rem;
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  column-gap: 3rem;
+}
+
+/* All direct children span both columns unless specified */
+.article > * { grid-column: 1; }
 
 h2 {
-  font-family: 'Lora', serif; font-size: 1.45rem; font-weight: 500;
-  margin: 3rem 0 1rem; padding-top: 2rem; border-top: 1px solid var(--border);
+  font-family: 'Lora', serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 3rem 0 1.1rem;
+  padding-top: 2.25rem;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  letter-spacing: -0.01em;
+  position: relative;
+}
+
+h2::before {
+  content: attr(data-n);
+  position: absolute;
+  left: -2.2rem;
+  top: 2.5rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--muted-light);
+  text-transform: uppercase;
 }
 
 h3 {
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-  font-weight: 500; letter-spacing: 0.06em; color: var(--muted);
-  text-transform: uppercase; margin: 2rem 0 0.6rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.73rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin: 2.25rem 0 0.7rem;
 }
 
-p { margin-bottom: 1.1rem; }
+p { margin-bottom: 1.15rem; }
+
+p.lead:first-of-type::first-letter {
+  font-family: 'Lora', serif;
+  font-size: 3.8em;
+  font-weight: 600;
+  line-height: 0.75;
+  float: left;
+  margin: 0.06em 0.1em 0 0;
+  color: var(--accent);
+}
+
+strong { font-weight: 500; }
 
 code {
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.88em;
-  background: var(--code-bg); padding: 2px 6px; border-radius: 3px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85em;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--text-soft);
 }
 
-/* ── CALLOUT ── */
+/* ── MARGIN NOTES ── */
+.margin-note {
+  grid-column: 2;
+  align-self: start;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  line-height: 1.65;
+  color: var(--muted-light);
+  border-left: 2px solid var(--border-light);
+  padding-left: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* ── CALLOUT (gold) ── */
 .callout {
-  background: var(--highlight); border-left: 3px solid var(--highlight-border);
-  padding: 1rem 1.25rem; border-radius: 0 6px 6px 0;
-  margin: 1.75rem 0; font-size: 0.97rem; line-height: 1.65;
+  background: var(--gold-soft);
+  border-left: 3px solid var(--gold-border);
+  padding: 1.1rem 1.3rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.9rem 0;
+  font-size: 0.97rem;
+  line-height: 1.68;
+  color: var(--text-soft);
 }
-.callout strong { font-weight: 500; display: block; margin-bottom: 0.3rem; }
 
-/* ── FINDING ── */
-.finding {
-  background: var(--accent-soft); border: 1px solid #b5cfe6;
-  border-radius: 8px; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 0.95rem;
+.callout strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 500;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
 }
+
+/* ── FINDING (blue) ── */
+.finding {
+  background: var(--accent-xsoft);
+  border: 1px solid #c0d9ef;
+  border-left: 3px solid var(--accent-mid);
+  border-radius: 0 7px 7px 0;
+  padding: 1rem 1.3rem;
+  margin: 1.6rem 0;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+}
+
 .finding-label {
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
-  font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 0.4rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.45rem;
 }
 
 /* ── MATH ── */
 .math-display {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 8px; padding: 1.25rem 1.5rem;
-  margin: 1.5rem 0; text-align: center; overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 1.4rem 1.75rem;
+  margin: 1.75rem 0;
+  text-align: center;
+  overflow-x: auto;
 }
+
 .math-label {
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
-  font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 0.6rem;
-}
-.eq-highlight {
-  background: var(--highlight); border: 1px solid var(--highlight-border);
-  border-radius: 8px; padding: 1.1rem 1.5rem;
-  margin: 1.5rem 0; text-align: center; overflow-x: auto;
-}
-
-/* ── NUMBERED STEPS (v1 style) ── */
-.steps { margin: 1.5rem 0; }
-.step { display: flex; gap: 1rem; margin-bottom: 1.1rem; align-items: flex-start; }
-.step-num {
-  background: var(--accent); color: white;
-  width: 24px; height: 24px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
-  font-weight: 500; flex-shrink: 0; margin-top: 0.15rem;
-}
-.step-body { flex: 1; }
-.step-title { font-weight: 500; margin-bottom: 0.1rem; font-size: 0.95rem; }
-.step-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
-
-/* ── DIAGRAM WRAP (v1 style) ── */
-.diagram-wrap {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 8px; padding: 1.5rem; margin: 2rem 0; overflow-x: auto;
-}
-.diagram-caption {
-  font-size: 12px; color: var(--muted);
   font-family: 'IBM Plex Mono', monospace;
-  margin-top: 0.75rem; text-align: center;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.eq-highlight {
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-border);
+  border-radius: 7px;
+  padding: 1.2rem 1.75rem;
+  margin: 1.75rem 0;
+  text-align: center;
+  overflow-x: auto;
+}
+
+/* ── NUMBERED STEPS ── */
+.steps { margin: 1.6rem 0; }
+
+.step {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  align-items: flex-start;
+}
+
+.step-num {
+  background: var(--accent);
+  color: white;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem; font-weight: 500;
+  flex-shrink: 0; margin-top: 0.12rem;
+  box-shadow: 0 1px 4px rgba(30,79,122,0.25);
+}
+
+.step-body { flex: 1; }
+.step-title { font-weight: 500; margin-bottom: 0.15rem; font-size: 0.97rem; }
+.step-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.62; font-weight: 300; }
+
+/* ── DIAGRAM WRAP ── */
+.diagram-wrap {
+  background: var(--bg-warm);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.75rem 1.5rem 1.25rem;
+  margin: 2.25rem 0;
+  overflow-x: auto;
+}
+
+.diagram-caption {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 0.9rem;
+  text-align: center;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
 }
 
 /* ── PAPER NOTE ── */
 .paper-note {
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-  color: var(--accent); background: var(--accent-soft);
-  padding: 0.75rem 1rem 0.75rem 2rem;
-  border-radius: 5px; margin: 1rem 0 1.5rem;
-  line-height: 1.65; position: relative;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  color: var(--accent);
+  background: var(--accent-xsoft);
+  border: 1px solid #c0d9ef;
+  padding: 0.8rem 1rem 0.8rem 2.1rem;
+  border-radius: 5px;
+  margin: 1.1rem 0 1.6rem;
+  line-height: 1.7;
+  position: relative;
 }
+
 .paper-note::before {
-  content: "◆"; position: absolute; left: 0.75rem; top: 0.78rem; font-size: 9px;
+  content: "◆";
+  position: absolute; left: 0.8rem; top: 0.85rem; font-size: 8px;
+}
+
+/* ── PULL QUOTE ── */
+.pull-quote {
+  font-family: 'Lora', serif;
+  font-size: 1.25rem;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+  border-top: 2px solid var(--accent-soft);
+  border-bottom: 2px solid var(--accent-soft);
+  padding: 1.1rem 0;
+  margin: 2.2rem 0;
+  line-height: 1.55;
+  text-align: center;
 }
 
 /* ── EXPLORER ── */
 .explorer {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 1.15rem; margin: 1.5rem 0;
+  background: var(--bg-warm);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1.75rem 0;
 }
-.explorer-title {
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
-  font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
-  color: var(--text); margin-bottom: 3px;
-}
-.explorer-subtitle { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 1rem; }
-.controls-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 1rem; }
-.control-group { flex: 1; min-width: 140px; }
-.control-group label {
-  display: block; font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px; color: var(--muted); margin-bottom: 4px;
-}
-.ctrl-value { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; color: var(--text); float: right; }
-.control-group input[type="range"] { width: 100%; margin: 0; }
 
-.model-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-.model-tab {
-  font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500;
-  padding: 4px 12px; border-radius: 3px; border: 1px solid var(--border);
-  background: transparent; cursor: pointer; color: var(--muted);
-  letter-spacing: 0.02em; transition: all 0.15s;
+.explorer-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
 }
-.model-tab:hover:not(.on) { background: var(--bg); }
-.model-tab.on { color: white; border-color: transparent; }
+
+.explorer-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.explorer-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.explorer-body { padding: 1.1rem 1.25rem 1.25rem; }
+
+.controls-row { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 1rem; }
+.control-group { flex: 1; min-width: 130px; }
+
+.control-group label {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px; color: var(--muted); margin-bottom: 5px;
+  letter-spacing: 0.04em;
+}
+
+.ctrl-value {
+  font-weight: 500; color: var(--accent); float: right;
+  font-size: 12px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%; height: 3px;
+  background: var(--border);
+  border-radius: 2px; outline: none; cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(30,79,122,0.35);
+  cursor: pointer;
+}
+
+.model-tabs { display: flex; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+
+.model-tab {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px; font-weight: 500;
+  padding: 4px 12px; border-radius: 3px;
+  border: 1px solid var(--border);
+  background: transparent; cursor: pointer;
+  color: var(--muted); letter-spacing: 0.03em;
+  transition: all 0.15s;
+}
+
+.model-tab:hover:not(.on) { background: var(--surface); color: var(--text-soft); }
+.model-tab.on { color: white; border-color: transparent; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
 
 .viz-area { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 1rem; }
+
 .viz-panel {
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 6px; padding: 0.9rem; min-width: 0;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  border-radius: 7px;
+  padding: 0.9rem;
+  min-width: 0;
 }
+
 .viz-panel-title {
-  font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500;
-  color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px; font-weight: 500;
+  color: var(--muted-light); letter-spacing: 0.07em;
+  text-transform: uppercase; margin-bottom: 8px;
 }
-.stats-row { display: flex; gap: 10px; margin-top: 12px; }
+
+.stats-row { display: flex; gap: 8px; margin-top: 10px; }
+
 .stat-card {
-  flex: 1; background: var(--bg); border: 1px solid var(--border);
-  border-radius: 6px; padding: 9px 12px; text-align: center;
+  flex: 1; background: var(--surface-2);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 8px 10px; text-align: center;
 }
-.stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 3px; letter-spacing: 0.04em; }
-.stat-value { font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 500; color: var(--text); }
+
+.stat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; color: var(--muted-light);
+  margin-bottom: 3px; letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 16px; font-weight: 500; color: var(--text);
+}
+
+.play-row { display: flex; gap: 7px; margin-top: 10px; align-items: center; }
+
 .play-btn {
-  font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500;
-  padding: 5px 14px; border-radius: 4px; border: 1px solid var(--border);
-  background: transparent; color: var(--muted); cursor: pointer;
-  letter-spacing: 0.02em; transition: background 0.15s;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px; font-weight: 500;
+  padding: 5px 14px; border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg); color: var(--muted);
+  cursor: pointer; letter-spacing: 0.03em;
+  transition: all 0.15s;
 }
-.play-btn:hover { background: var(--bg); }
-.play-btn.on { background: var(--accent); color: white; border-color: var(--accent); }
-.step-counter { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
-.figcaption { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.6; margin-top: 0.75rem; margin-bottom: 2rem; }
+
+.play-btn:hover { background: var(--surface); color: var(--text-soft); border-color: var(--border); }
+
+.play-btn.on {
+  background: var(--accent); color: white;
+  border-color: var(--accent);
+  box-shadow: 0 1px 6px rgba(30,79,122,0.3);
+}
+
+.step-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px; color: var(--muted-light);
+  margin-left: auto;
+}
+
+/* ── FIGCAPTION ── */
+.figcaption {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px; color: var(--muted-light);
+  line-height: 1.6; margin-top: 0.75rem;
+  margin-bottom: 2.25rem;
+  letter-spacing: 0.01em;
+}
 
 /* ── TAKEAWAY ── */
 .takeaway {
-  background: var(--text); color: #e8e5e0;
-  padding: 1.6rem 1.75rem; border-radius: 10px; margin: 2.5rem 0 1.25rem;
+  background: var(--text);
+  padding: 2rem 2rem;
+  border-radius: 12px;
+  margin: 2.75rem 0 1.5rem;
+  position: relative;
+  overflow: hidden;
 }
+
+.takeaway::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-mid), var(--gold));
+}
+
 .takeaway-header {
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
-  font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--highlight-border); margin-bottom: 0.9rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold-border); margin-bottom: 1.1rem;
 }
-.takeaway p { color: #c8c4be; margin-bottom: 0.9rem; font-size: 1.02rem; }
+
+.takeaway p {
+  color: #c2bdb4;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  line-height: 1.72;
+}
+
 .takeaway p:last-child { margin-bottom: 0; }
-.takeaway strong { color: #e8e5e0; }
+.takeaway strong { color: #e8e2d8; }
 
 /* ── FOOTER ── */
 .post-footer {
-  max-width: 720px; margin: 0 auto; padding: 0 2rem 3rem;
-  text-align: center; font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px; color: var(--muted);
+  max-width: 820px; margin: 0 auto;
+  padding: 0 2.5rem 3.5rem;
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 1.75rem;
 }
 
-hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
 canvas { display: block; width: 100%; height: auto; }
-.fade-in { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+
+/* ── FADE IN ── */
+.fade-in { opacity: 0; transform: translateY(18px); transition: opacity 0.65s ease, transform 0.65s ease; }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-@media (max-width: 600px) {
+@media (max-width: 740px) {
+  .article { grid-template-columns: 1fr; padding: 2.5rem 1.5rem 5rem; }
+  .margin-note { display: none; }
+  h2::before { display: none; }
   .viz-area { grid-template-columns: 1fr; }
-  .hero, .article, .post-footer { padding-left: 1.25rem; padding-right: 1.25rem; }
-  h1 { font-size: 1.75rem; }
+  .hero { padding: 3.5rem 1.5rem 2rem; }
+  .post-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
 }
 </style>
 </head>
 <body>
+
+<div class="top-bar"></div>
 
 <div class="hero">
   <div class="meta">
@@ -267,17 +593,19 @@ canvas { display: block; width: 100%; height: auto; }
     <span class="sep">·</span>
     <span>February 2026</span>
     <span class="sep">·</span>
-    <span>Koplow et al. (Poggio Lab, MIT)</span>
+    <span>Koplow et al. · Poggio Lab, MIT</span>
+    <span class="sep">·</span>
+    <span>arXiv 2602.21061</span>
   </div>
-  <h1>Tool Building as a Path to <em>&ldquo;Superintelligence&rdquo;</em></h1>
+  <h1>Tool Building as a Path<br>to <em>&ldquo;Superintelligence&rdquo;</em></h1>
   <p class="subtitle">The Diligent Learner framework promises that any model with a high enough per-step success rate can, in principle, solve arbitrarily hard problems via search. This paper tests that claim rigorously — and finds that the bottleneck is not scale or search depth, but the ability to use tools precisely.</p>
 </div>
 
 <div class="article">
 
-  <h2>Introduction</h2>
+  <h2 data-n="§ 01">Introduction</h2>
 
-  <p>There is a compelling theoretical argument that LLMs could achieve superintelligence through test-time search alone — no new architecture, no extra training, just more inference-time computation. The argument, formalized in the <strong>Diligent Learner</strong> framework, rests on one key quantity: the per-step success probability $\gamma$.</p>
+  <p class="lead">There is a compelling theoretical argument that LLMs could achieve superintelligence through test-time search alone — no new architecture, no extra training, just more inference-time computation. The argument, formalized in the <strong>Diligent Learner</strong> framework, rests on one key quantity: the per-step success probability $\gamma$.</p>
 
   <p>The idea is elegant. If your reasoner is reliable enough at each individual step, you can stack steps arbitrarily deep. A model with $\gamma \geq 0.9$ per step is, in principle, capable of multi-hundred-step reasoning chains, provided it has a good search strategy and can backtrack on failures.</p>
 
@@ -290,95 +618,81 @@ canvas { display: block; width: 100%; height: auto; }
 
   <hr>
 
-  <h2>The Diligent Learner framework</h2>
+  <h2 data-n="§ 02">The Diligent Learner framework</h2>
 
   <h3>Reasoning as a search tree</h3>
 
   <p>The Diligent Learner formalizes multi-step reasoning as a depth-first search over a tree. Each node is a partial reasoning state. An LLM navigates the tree by emitting one of three operations at each step.</p>
 
-  <!-- DFS tree illustration -->
   <div class="diagram-wrap fade-in">
-    <svg viewBox="0 0 620 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:auto">
+    <svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:auto">
       <defs>
-        <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-          <path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#7a7570"/>
-        </marker>
-        <marker id="arr-blue" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-          <path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#2a5c8f"/>
-        </marker>
-        <marker id="arr-amber" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-          <path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#a06810"/>
-        </marker>
-        <marker id="arr-green" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-          <path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#2a6645"/>
-        </marker>
+        <marker id="a0" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#a09880"/></marker>
+        <marker id="a-blue" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#1e4f7a"/></marker>
+        <marker id="a-gold" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#b8860b"/></marker>
+        <marker id="a-green" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#2a6645"/></marker>
       </defs>
 
-      <!-- ROOT -->
-      <circle cx="310" cy="32" r="22" fill="#dce8f4" stroke="#2a5c8f" stroke-width="1.5"/>
-      <text x="310" y="28" font-family="IBM Plex Mono,monospace" font-size="9" fill="#2a5c8f" text-anchor="middle">problem</text>
-      <text x="310" y="40" font-family="IBM Plex Mono,monospace" font-size="9" fill="#2a5c8f" text-anchor="middle">root</text>
+      <!-- Root -->
+      <circle cx="310" cy="34" r="24" fill="#d4e6f5" stroke="#1e4f7a" stroke-width="1.5"/>
+      <text x="310" y="30" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#1e4f7a" text-anchor="middle">problem</text>
+      <text x="310" y="42" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#1e4f7a" text-anchor="middle">root</text>
 
-      <!-- Left branch: new node → chain extends -->
-      <line x1="293" y1="50" x2="180" y2="86" stroke="#7a7570" stroke-width="1.2" marker-end="url(#arr)"/>
-      <text x="222" y="64" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7570" text-anchor="middle" transform="rotate(-26,222,64)">new node</text>
+      <!-- Left branch -->
+      <line x1="292" y1="53" x2="168" y2="92" stroke="#a09880" stroke-width="1.2" marker-end="url(#a0)"/>
+      <text x="218" y="67" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#a09880" text-anchor="middle" transform="rotate(-26,218,67)">new node</text>
+      <circle cx="153" cy="107" r="22" fill="#ede9e0" stroke="#c0b89a" stroke-width="1.2"/>
+      <text x="153" y="103" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#3a3628" text-anchor="middle">state</text>
+      <text x="153" y="116" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#7a7060" text-anchor="middle">d = 1</text>
 
-      <circle cx="165" cy="100" r="22" fill="#f3f1ec" stroke="#b5a88f" stroke-width="1.2"/>
-      <text x="165" y="96" font-family="IBM Plex Mono,monospace" font-size="9" fill="#5a5650" text-anchor="middle">state</text>
-      <text x="165" y="108" font-family="IBM Plex Mono,monospace" font-size="9" fill="#5a5650" text-anchor="middle">d = 1</text>
+      <!-- Left-left: extend -->
+      <line x1="138" y1="125" x2="78" y2="160" stroke="#a09880" stroke-width="1.2" marker-end="url(#a0)"/>
+      <text x="99" y="138" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#a09880" text-anchor="middle" transform="rotate(-36,99,138)">new node</text>
+      <circle cx="63" cy="177" r="22" fill="#ede9e0" stroke="#c0b89a" stroke-width="1.2"/>
+      <text x="63" y="173" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#3a3628" text-anchor="middle">state</text>
+      <text x="63" y="186" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#7a7060" text-anchor="middle">d = 2</text>
 
-      <!-- Left-left: extends deeper -->
-      <line x1="150" y1="118" x2="90" y2="152" stroke="#7a7570" stroke-width="1.2" marker-end="url(#arr)"/>
-      <text x="112" y="130" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7570" text-anchor="middle" transform="rotate(-36,112,130)">new node</text>
+      <!-- Done leaf (left) -->
+      <line x1="77" y1="192" x2="108" y2="205" stroke="#2a6645" stroke-width="1.2" marker-end="url(#a-green)"/>
+      <rect x="111" y="198" width="46" height="18" rx="3" fill="#e4f0ea" stroke="#2a6645" stroke-width="1"/>
+      <text x="134" y="211" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#2a6645" text-anchor="middle">done ✓</text>
 
-      <circle cx="75" cy="168" r="22" fill="#f3f1ec" stroke="#b5a88f" stroke-width="1.2"/>
-      <text x="75" y="164" font-family="IBM Plex Mono,monospace" font-size="9" fill="#5a5650" text-anchor="middle">state</text>
-      <text x="75" y="176" font-family="IBM Plex Mono,monospace" font-size="9" fill="#5a5650" text-anchor="middle">d = 2</text>
-
-      <!-- Done leaf -->
-      <line x1="88" y1="183" x2="115" y2="196" stroke="#2a6645" stroke-width="1.2" marker-end="url(#arr-green)"/>
-      <rect x="118" y="189" width="42" height="18" rx="3" fill="#e4f0ea" stroke="#2a6645" stroke-width="1"/>
-      <text x="139" y="201" font-family="IBM Plex Mono,monospace" font-size="9" fill="#2a6645" text-anchor="middle">done ✓</text>
-
-      <!-- Left-right: backtrack -->
-      <line x1="178" y1="118" x2="210" y2="152" stroke="#7a7570" stroke-width="1.2" marker-end="url(#arr)"/>
-      <text x="203" y="130" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7570" text-anchor="middle" transform="rotate(36,203,130)">new node</text>
-
-      <circle cx="224" cy="168" r="22" fill="#f9f0e8" stroke="#c49a40" stroke-width="1.2" stroke-dasharray="4,2"/>
-      <text x="224" y="164" font-family="IBM Plex Mono,monospace" font-size="9" fill="#a06810" text-anchor="middle">state</text>
-      <text x="224" y="176" font-family="IBM Plex Mono,monospace" font-size="9" fill="#a06810" text-anchor="middle">d = 2</text>
+      <!-- Left-right: failed branch -->
+      <line x1="167" y1="125" x2="213" y2="160" stroke="#a09880" stroke-width="1.2" marker-end="url(#a0)"/>
+      <circle cx="228" cy="177" r="22" fill="#fdf4d8" stroke="#d4a820" stroke-width="1.2" stroke-dasharray="4,2"/>
+      <text x="228" y="173" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#b8860b" text-anchor="middle">state</text>
+      <text x="228" y="186" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#b8860b" text-anchor="middle">dead end</text>
 
       <!-- Backtrack arc -->
-      <path d="M 224 146 C 240 110, 260 95, 187 100" stroke="#a06810" stroke-width="1.2" fill="none" stroke-dasharray="4,2" marker-end="url(#arr-amber)"/>
-      <text x="252" y="118" font-family="IBM Plex Mono,monospace" font-size="9" fill="#a06810" text-anchor="middle">backtrack</text>
+      <path d="M 228,155 C 248,115 262,100 175,107" stroke="#b8860b" stroke-width="1.3" fill="none" stroke-dasharray="5,3" marker-end="url(#a-gold)"/>
+      <text x="262" y="122" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#b8860b" text-anchor="middle">backtrack</text>
 
       <!-- Right branch -->
-      <line x1="327" y1="50" x2="440" y2="86" stroke="#7a7570" stroke-width="1.2" marker-end="url(#arr)"/>
-      <text x="395" y="63" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7570" text-anchor="middle" transform="rotate(26,395,63)">new node</text>
+      <line x1="328" y1="53" x2="452" y2="92" stroke="#a09880" stroke-width="1.2" marker-end="url(#a0)"/>
+      <text x="402" y="67" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#a09880" text-anchor="middle" transform="rotate(26,402,67)">new node</text>
+      <circle cx="467" cy="107" r="22" fill="#ede9e0" stroke="#c0b89a" stroke-width="1.2"/>
+      <text x="467" y="103" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#3a3628" text-anchor="middle">state</text>
+      <text x="467" y="116" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#7a7060" text-anchor="middle">d = 1</text>
 
-      <circle cx="455" cy="100" r="22" fill="#f3f1ec" stroke="#b5a88f" stroke-width="1.2"/>
-      <text x="455" y="96" font-family="IBM Plex Mono,monospace" font-size="9" fill="#5a5650" text-anchor="middle">state</text>
-      <text x="455" y="108" font-family="IBM Plex Mono,monospace" font-size="9" fill="#5a5650" text-anchor="middle">d = 1</text>
+      <!-- Right done -->
+      <line x1="467" y1="129" x2="467" y2="160" stroke="#1e4f7a" stroke-width="1.3" marker-end="url(#a-blue)"/>
+      <text x="481" y="148" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#1e4f7a">done</text>
+      <rect x="443" y="163" width="48" height="18" rx="3" fill="#d4e6f5" stroke="#1e4f7a" stroke-width="1"/>
+      <text x="467" y="176" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#1e4f7a" text-anchor="middle">solved ✓</text>
 
-      <line x1="455" y1="122" x2="455" y2="154" stroke="#2a5c8f" stroke-width="1.2" marker-end="url(#arr-blue)"/>
-      <rect x="430" y="157" width="50" height="18" rx="3" fill="#dce8f4" stroke="#2a5c8f" stroke-width="1"/>
-      <text x="455" y="169" font-family="IBM Plex Mono,monospace" font-size="9" fill="#2a5c8f" text-anchor="middle">done ✓</text>
-
-      <text x="455" y="138" font-family="IBM Plex Mono,monospace" font-size="9" fill="#2a5c8f" text-anchor="middle">done</text>
-
-      <!-- γ label -->
-      <text x="543" y="100" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7570" text-anchor="middle">γ = P(correct</text>
-      <text x="543" y="114" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7570" text-anchor="middle">step | all prior</text>
-      <text x="543" y="128" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7570" text-anchor="middle">steps correct)</text>
+      <!-- γ annotation -->
+      <text x="558" y="107" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7060" text-anchor="middle">γ = P(correct</text>
+      <text x="558" y="120" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7060" text-anchor="middle">step | history</text>
+      <text x="558" y="133" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7060" text-anchor="middle">all correct)</text>
     </svg>
-    <p class="diagram-caption">Fig. 1 — DFS over reasoning states. At each node the LLM emits "new node" (extend), "done" (solution found), or "backtrack" (reject and retry). The amber dashed path shows a failed branch being pruned.</p>
+    <p class="diagram-caption">Fig. 1 — DFS over reasoning states. At each node the LLM emits "new node" (extend), "done" (solution found), or "backtrack" (reject and retry). The gold dashed branch shows a failed path being pruned and retried.</p>
   </div>
 
-  <p>Under this formalism, the quality of a reasoner is captured almost entirely by $\gamma$, the per-step success probability. Two mild assumptions complete the theory: $\gamma$ must be bounded away from zero, and a validator can distinguish correct from incorrect partial chains. Under these conditions, DFS with backtracking is both sample-efficient and complete.</p>
+  <p>Under this formalism, the quality of a reasoner is captured almost entirely by $\gamma$. Two mild assumptions complete the theory: $\gamma$ must be bounded away from zero, and a validator can distinguish correct from incorrect partial chains. Under these conditions, DFS with backtracking is both sample-efficient and complete.</p>
 
   <h3>The gap in the theory</h3>
 
-  <p>The framework's Achilles heel is the first assumption. If $\gamma$ degrades superlinearly with depth — each new step becoming exponentially harder — the search tree explodes and the whole argument breaks down. No one had rigorously tested whether this happens in practice, especially on tasks designed to defeat shortcuts.</p>
+  <p>The framework's Achilles heel is the first assumption. If $\gamma$ degrades superlinearly with depth — each new step becoming exponentially harder — the search tree explodes and the whole argument breaks down. No one had rigorously tested whether this happens in practice.</p>
 
   <div class="paper-note">
     The original Diligent Learner (Shalev-Shwartz &amp; Shashua, 2025) proved the framework works under the $\gamma \geq \gamma_0$ assumption. This paper provides the first systematic empirical measurement of whether that assumption holds on out-of-distribution logical inference.
@@ -386,9 +700,9 @@ canvas { display: block; width: 100%; height: auto; }
 
   <hr>
 
-  <h2>Why existing benchmarks miss the point</h2>
+  <h2 data-n="§ 03">Why existing benchmarks miss the point</h2>
 
-  <p>Most reasoning benchmarks have a subtle but critical flaw: they do not isolate $\gamma$. They either score only the final answer, admit many valid intermediate paths, or are solvable by exploiting dataset-specific shortcuts from training. To measure $\gamma$ cleanly, you need a task with four strict properties:</p>
+  <p>Most reasoning benchmarks do not isolate $\gamma$. They either score only the final answer, admit many valid intermediate paths, or are solvable by exploiting dataset-specific shortcuts. To measure $\gamma$ cleanly, you need a task with four strict properties:</p>
 
   <div class="steps">
     <div class="step">
@@ -425,113 +739,113 @@ canvas { display: block; width: 100%; height: auto; }
 
   <hr>
 
-  <h2>The GF(2) circuit reconstruction benchmark</h2>
+  <h2 data-n="§ 04">The GF(2) circuit reconstruction benchmark</h2>
 
-  <p>The benchmark is built around Boolean circuits over $\mathrm{GF}(2)$ — the field with two elements, where addition is XOR. A hidden circuit takes a binary input and produces a binary output. The LLM is shown input/output examples one at a time and must reconstruct which circuit produced them. Each new depth step reveals one more sample.</p>
+  <p>The benchmark is built around Boolean circuits over $\mathrm{GF}(2)$ — the field with two elements, where addition is XOR. A hidden circuit takes a binary input and produces a binary output. The LLM is shown input/output examples one at a time and must reconstruct which circuit produced them. Each depth step reveals one more sample.</p>
 
-  <!-- GF(2) circuit trace diagram (v1 style) -->
   <div class="diagram-wrap fade-in">
-    <svg viewBox="0 0 640 162" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:640px;display:block;margin:auto">
+    <svg viewBox="0 0 640 168" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:640px;display:block;margin:auto">
       <defs>
-        <marker id="arr2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-          <path d="M0,0 L6,3 L0,6 Z" fill="#7a7570"/>
-        </marker>
+        <marker id="a1" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#a09880"/></marker>
       </defs>
 
-      <text x="50"  y="28" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7570" text-anchor="middle">depth 1</text>
-      <text x="195" y="28" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7570" text-anchor="middle">depth 2</text>
-      <text x="340" y="28" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7570" text-anchor="middle">depth 3</text>
-      <text x="485" y="28" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7570" text-anchor="middle">depth 4</text>
-      <text x="605" y="28" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7570" text-anchor="middle">…</text>
+      <text x="50"  y="22" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#a09880" text-anchor="middle">depth 1</text>
+      <text x="198" y="22" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#a09880" text-anchor="middle">depth 2</text>
+      <text x="346" y="22" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#a09880" text-anchor="middle">depth 3</text>
+      <text x="494" y="22" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#a09880" text-anchor="middle">depth 4</text>
+      <text x="610" y="22" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#c8c0b0" text-anchor="middle">…</text>
 
-      <rect x="5"   y="42" width="90" height="42" rx="5" fill="#dce8f4" stroke="#b5cfe6" stroke-width="1"/>
-      <text x="50"  y="59" font-family="IBM Plex Mono,monospace" font-size="9" fill="#185fa5" text-anchor="middle">sample 1</text>
-      <text x="50"  y="74" font-family="IBM Plex Mono,monospace" font-size="9" fill="#185fa5" text-anchor="middle">x=01 → 0</text>
+      <rect x="5"   y="34" width="90" height="44" rx="5" fill="#d4e6f5" stroke="#8ab8d8" stroke-width="1"/>
+      <text x="50"  y="53" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#1e4f7a" text-anchor="middle">sample 1</text>
+      <text x="50"  y="67" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#2a6199" text-anchor="middle">x=01 → 0</text>
 
-      <rect x="150" y="42" width="90" height="42" rx="5" fill="#dce8f4" stroke="#b5cfe6" stroke-width="1"/>
-      <text x="195" y="59" font-family="IBM Plex Mono,monospace" font-size="9" fill="#185fa5" text-anchor="middle">+ sample 2</text>
-      <text x="195" y="74" font-family="IBM Plex Mono,monospace" font-size="9" fill="#185fa5" text-anchor="middle">x=11 → 1</text>
+      <rect x="153" y="34" width="90" height="44" rx="5" fill="#d4e6f5" stroke="#8ab8d8" stroke-width="1"/>
+      <text x="198" y="53" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#1e4f7a" text-anchor="middle">+ sample 2</text>
+      <text x="198" y="67" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#2a6199" text-anchor="middle">x=11 → 1</text>
 
-      <rect x="295" y="42" width="90" height="42" rx="5" fill="#dce8f4" stroke="#b5cfe6" stroke-width="1"/>
-      <text x="340" y="59" font-family="IBM Plex Mono,monospace" font-size="9" fill="#185fa5" text-anchor="middle">+ sample 3</text>
-      <text x="340" y="74" font-family="IBM Plex Mono,monospace" font-size="9" fill="#185fa5" text-anchor="middle">x=10 → 1</text>
+      <rect x="301" y="34" width="90" height="44" rx="5" fill="#d4e6f5" stroke="#8ab8d8" stroke-width="1"/>
+      <text x="346" y="53" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#1e4f7a" text-anchor="middle">+ sample 3</text>
+      <text x="346" y="67" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#2a6199" text-anchor="middle">x=10 → 1</text>
 
-      <rect x="440" y="42" width="90" height="42" rx="5" fill="#f3f1ec" stroke="#c8c4bc" stroke-width="1"/>
-      <text x="485" y="59" font-family="IBM Plex Mono,monospace" font-size="9" fill="#5a5650" text-anchor="middle">+ sample 4</text>
-      <text x="485" y="74" font-family="IBM Plex Mono,monospace" font-size="9" fill="#5a5650" text-anchor="middle">x=00 → 0</text>
+      <rect x="449" y="34" width="90" height="44" rx="5" fill="#ede9e0" stroke="#c0b89a" stroke-width="1"/>
+      <text x="494" y="53" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#7a7060" text-anchor="middle">+ sample 4</text>
+      <text x="494" y="67" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#7a7060" text-anchor="middle">x=00 → 0</text>
 
-      <line x1="97"  y1="63" x2="148" y2="63" stroke="#b5cfe6" stroke-width="1.5" marker-end="url(#arr2)"/>
-      <line x1="242" y1="63" x2="293" y2="63" stroke="#b5cfe6" stroke-width="1.5" marker-end="url(#arr2)"/>
-      <line x1="387" y1="63" x2="438" y2="63" stroke="#c8c4bc" stroke-width="1.5" marker-end="url(#arr2)"/>
-      <line x1="532" y1="63" x2="584" y2="63" stroke="#c8c4bc" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="97"  y1="56" x2="151" y2="56" stroke="#8ab8d8" stroke-width="1.4" marker-end="url(#a1)"/>
+      <line x1="245" y1="56" x2="299" y2="56" stroke="#8ab8d8" stroke-width="1.4" marker-end="url(#a1)"/>
+      <line x1="393" y1="56" x2="447" y2="56" stroke="#c0b89a" stroke-width="1.4" marker-end="url(#a1)"/>
+      <line x1="541" y1="56" x2="596" y2="56" stroke="#c8c0b0" stroke-width="1.4" stroke-dasharray="4,3"/>
 
-      <!-- Hypothesis space shrinking annotation -->
-      <text x="50"  y="106" font-family="IBM Plex Mono,monospace" font-size="9" fill="#2a5c8f" text-anchor="middle">|H| = 2⁴</text>
-      <text x="195" y="106" font-family="IBM Plex Mono,monospace" font-size="9" fill="#2a5c8f" text-anchor="middle">|H| = 2³</text>
-      <text x="340" y="106" font-family="IBM Plex Mono,monospace" font-size="9" fill="#2a5c8f" text-anchor="middle">|H| = 2²</text>
-      <text x="485" y="106" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7570" text-anchor="middle">|H| = 2¹</text>
+      <!-- |H| labels -->
+      <text x="50"  y="100" font-family="IBM Plex Mono,monospace" font-size="9" fill="#1e4f7a" text-anchor="middle">|H| = 2⁴</text>
+      <text x="198" y="100" font-family="IBM Plex Mono,monospace" font-size="9" fill="#1e4f7a" text-anchor="middle">|H| = 2³</text>
+      <text x="346" y="100" font-family="IBM Plex Mono,monospace" font-size="9" fill="#1e4f7a" text-anchor="middle">|H| = 2²</text>
+      <text x="494" y="100" font-family="IBM Plex Mono,monospace" font-size="9" fill="#a09880" text-anchor="middle">|H| = 2¹</text>
 
-      <text x="320" y="132" font-family="DM Sans,sans-serif" font-size="11" fill="#7a7570" text-anchor="middle">At each step, the model must identify a circuit consistent with <tspan font-family="IBM Plex Mono,monospace">all</tspan> accumulated evidence.</text>
-      <text x="320" y="150" font-family="DM Sans,sans-serif" font-size="11" fill="#7a7570" text-anchor="middle">Ignoring any prior sample is information-theoretically fatal — the task cannot be reliably solved.</text>
+      <text x="322" y="130" font-family="DM Sans,sans-serif" font-size="11" fill="#7a7060" text-anchor="middle">At each step the model must stay consistent with <tspan font-family="IBM Plex Mono,monospace">all</tspan> accumulated evidence.</text>
+      <text x="322" y="150" font-family="DM Sans,sans-serif" font-size="11" fill="#a09880" text-anchor="middle">Ignoring any prior sample is information-theoretically fatal.</text>
     </svg>
-    <p class="diagram-caption">Fig. 2 — The stepwise GF(2) reconstruction task. Each depth adds one sample; the hypothesis space |H| halves. The model must fuse all prior constraints at every step.</p>
+    <p class="diagram-caption">Fig. 2 — The stepwise GF(2) reconstruction task. Each depth adds one sample; the hypothesis space |H| halves. Every prior constraint must be fused at every step.</p>
   </div>
 
-  <p>The algebraic structure of $\mathrm{GF}(2)$ guarantees exactly one correct consistent extension at each depth — no ambiguity, no shortcuts. At depth $d$, the remaining hypothesis space is $|\mathcal{H}_d| = 2^{\dim\ker(A_d)}$, where $A_d$ is the constraint matrix of accumulated samples. Any model that fails to maintain $A_d$ accurately cannot reliably extend correctly.</p>
+  <p>The algebraic structure of $\mathrm{GF}(2)$ guarantees exactly one correct consistent extension at each depth. At depth $d$, the remaining hypothesis space is $|\mathcal{H}_d| = 2^{\dim\ker(A_d)}$, where $A_d$ is the constraint matrix of accumulated samples. Any model that fails to maintain $A_d$ accurately cannot reliably extend correctly.</p>
 
   <h3>Interactive explorer</h3>
 
   <div class="explorer fade-in">
-    <div class="explorer-title">Circuit reconstruction trace</div>
-    <div class="explorer-subtitle">How $\gamma$ evolves with depth for different model types. Select a model, adjust $n$ and max depth, then play the trace.</div>
-
-    <div class="controls-row">
-      <div class="control-group">
-        <label>Circuit dimension $n$ <span class="ctrl-value" id="n-val">4</span></label>
-        <input type="range" min="2" max="6" value="4" id="n-slider" oninput="explorerUpdate()">
-      </div>
-      <div class="control-group">
-        <label>Max depth <span class="ctrl-value" id="d-val">8</span></label>
-        <input type="range" min="2" max="16" value="8" id="d-slider" oninput="explorerUpdate()">
-      </div>
+    <div class="explorer-header">
+      <span class="explorer-title">Circuit reconstruction trace</span>
+      <span class="explorer-subtitle">— how $\gamma$ evolves with depth across model types</span>
     </div>
-
-    <div class="model-tabs">
-      <button class="model-tab on" style="background:#8f2a2a" data-model="small"    onclick="selectModel('small')">Small LLM</button>
-      <button class="model-tab" data-model="frontier" onclick="selectModel('frontier')">Frontier (no tools)</button>
-      <button class="model-tab" data-model="tools"    onclick="selectModel('tools')">Frontier + Tools</button>
-      <button class="model-tab" data-model="bayes"    onclick="selectModel('bayes')">Bayes (optimal)</button>
-    </div>
-
-    <div class="viz-area">
-      <div class="viz-panel">
-        <div class="viz-panel-title">$\gamma$ at each depth</div>
-        <canvas id="gamma-chart" height="130"></canvas>
+    <div class="explorer-body">
+      <div class="controls-row">
+        <div class="control-group">
+          <label>Circuit dimension $n$ <span class="ctrl-value" id="n-val">4</span></label>
+          <input type="range" min="2" max="6" value="4" id="n-slider" oninput="explorerUpdate()">
+        </div>
+        <div class="control-group">
+          <label>Max depth <span class="ctrl-value" id="d-val">8</span></label>
+          <input type="range" min="2" max="16" value="8" id="d-slider" oninput="explorerUpdate()">
+        </div>
       </div>
-      <div class="viz-panel">
-        <div class="viz-panel-title">Hypothesis space size</div>
-        <canvas id="hyp-chart" height="130"></canvas>
+
+      <div class="model-tabs">
+        <button class="model-tab on" style="background:#8f2a2a" data-model="small"    onclick="selectModel('small')">Small LLM</button>
+        <button class="model-tab" data-model="frontier" onclick="selectModel('frontier')">Frontier (no tools)</button>
+        <button class="model-tab" data-model="tools"    onclick="selectModel('tools')">Frontier + Tools</button>
+        <button class="model-tab" data-model="bayes"    onclick="selectModel('bayes')">Bayes optimal</button>
       </div>
-    </div>
 
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-label">γ at depth 1</div><div class="stat-value" id="g-d1">—</div></div>
-      <div class="stat-card"><div class="stat-label">γ at max depth</div><div class="stat-value" id="g-dmax">—</div></div>
-      <div class="stat-card"><div class="stat-label">Degradation</div><div class="stat-value" id="deg-type" style="font-size:13px;">—</div></div>
-    </div>
+      <div class="viz-area">
+        <div class="viz-panel">
+          <div class="viz-panel-title">$\gamma$ at each depth</div>
+          <canvas id="gamma-chart" height="130"></canvas>
+        </div>
+        <div class="viz-panel">
+          <div class="viz-panel-title">Hypothesis space size</div>
+          <canvas id="hyp-chart" height="130"></canvas>
+        </div>
+      </div>
 
-    <div style="display:flex;gap:8px;margin-top:12px;align-items:center;">
-      <button class="play-btn on" id="trace-play-btn" onclick="traceToggle()">▶ Play</button>
-      <button class="play-btn" onclick="traceReset()">Reset</button>
-      <span class="step-counter" id="trace-step">depth = 0</span>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">γ at depth 1</div><div class="stat-value" id="g-d1">—</div></div>
+        <div class="stat-card"><div class="stat-label">γ at max depth</div><div class="stat-value" id="g-dmax">—</div></div>
+        <div class="stat-card"><div class="stat-label">Degradation</div><div class="stat-value" id="deg-type" style="font-size:12px;">—</div></div>
+      </div>
+
+      <div class="play-row">
+        <button class="play-btn on" id="trace-play-btn" onclick="traceToggle()">▶ Play</button>
+        <button class="play-btn" onclick="traceReset()">Reset</button>
+        <span class="step-counter" id="trace-step">depth = 0</span>
+      </div>
     </div>
   </div>
 
-  <p class="figcaption">Fig. 3 — $\gamma$ as a function of depth. Faint lines show the other models for comparison. The Bayes estimator is the theoretical ceiling.</p>
+  <p class="figcaption">Fig. 3 — $\gamma$ as a function of depth. Faint lines show the other models for comparison. Bayes optimal is the theoretical ceiling at $\gamma = 1$.</p>
 
   <hr>
 
-  <h2>What the paper found</h2>
+  <h2 data-n="§ 05">What the paper found</h2>
 
   <h3>Finding 1 — Small models collapse superlinearly</h3>
 
@@ -541,93 +855,103 @@ canvas { display: block; width: 100%; height: auto; }
     $$\gamma_{\text{small}}(d) \approx \gamma_0 \cdot e^{-\alpha d^2}, \quad \alpha > 0$$
   </div>
 
-  <p>This is the critical finding. If $\gamma$ falls superlinearly, the number of search paths required grows faster than any reasonable compute budget. No amount of test-time compute scaling can compensate.</p>
+  <p>This is the critical finding. If $\gamma$ falls superlinearly, the search tree explodes faster than any reasonable compute budget can cover. No amount of test-time scaling can compensate. The analysis traces this to a concrete failure mode: small models behave as <strong>partial-information estimators</strong> — accurate on recent evidence, amnesiac on history.</p>
 
-  <p>The analysis traces this to a concrete failure mode: small models behave as <strong>partial-information estimators</strong>. The diagram below illustrates the contrast between how a small model processes accumulated history versus a tool-augmented frontier model.</p>
-
-  <!-- Memory / state illustration -->
+  <!-- Memory vs. tool state illustration -->
   <div class="diagram-wrap fade-in">
-    <svg viewBox="0 0 620 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:auto">
-      <!-- Left: Small LLM -->
-      <text x="150" y="20" font-family="IBM Plex Mono,monospace" font-size="10" fill="#8f2a2a" text-anchor="middle" font-weight="500">small LLM</text>
-
-      <!-- Sample slots: older ones faded -->
-      <rect x="10"  y="32" width="52" height="30" rx="4" fill="#f9f0f0" stroke="#d4a0a0" stroke-width="1"/>
-      <text x="36"  y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#c8a0a0" text-anchor="middle">s₁: 01→0</text>
-      <text x="36"  y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="#c8a0a0" text-anchor="middle">forgotten</text>
-
-      <rect x="70"  y="32" width="52" height="30" rx="4" fill="#f5e8e8" stroke="#c88080" stroke-width="1"/>
-      <text x="96"  y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#a05050" text-anchor="middle">s₂: 11→1</text>
-      <text x="96"  y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="#a05050" text-anchor="middle">fading</text>
-
-      <rect x="130" y="32" width="52" height="30" rx="4" fill="#f0e0e0" stroke="#b86060" stroke-width="1"/>
-      <text x="156" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8f3030" text-anchor="middle">s₃: 10→1</text>
-      <text x="156" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8f3030" text-anchor="middle">partial</text>
-
-      <rect x="190" y="32" width="52" height="30" rx="4" fill="#f4d8d8" stroke="#b85050" stroke-width="1.5"/>
-      <text x="216" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8f2a2a" text-anchor="middle">s₄: 00→0</text>
-      <text x="216" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8f2a2a" text-anchor="middle">attended</text>
-
-      <!-- Arrow to decision -->
-      <line x1="244" y1="47" x2="272" y2="47" stroke="#8f2a2a" stroke-width="1.2" marker-end="url(#arr-red)"/>
+    <svg viewBox="0 0 620 175" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:auto">
       <defs>
-        <marker id="arr-red" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-          <path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#8f2a2a"/>
-        </marker>
+        <marker id="a-r" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#8f2a2a"/></marker>
+        <marker id="a-g" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#2a6645"/></marker>
       </defs>
 
-      <rect x="275" y="34" width="58" height="26" rx="4" fill="#f4d8d8" stroke="#8f2a2a" stroke-width="1.2"/>
-      <text x="304" y="48" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#8f2a2a" text-anchor="middle">predict</text>
-      <text x="304" y="59" font-family="DM Sans,monospace" font-size="8" fill="#8f2a2a" text-anchor="middle">γ drops fast</text>
+      <text x="155" y="18" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#8f2a2a" text-anchor="middle" font-weight="500">SMALL LLM</text>
+      <text x="465" y="18" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#2a6645" text-anchor="middle" font-weight="500">FRONTIER + TOOLS</text>
 
-      <text x="150" y="90" font-family="DM Sans,sans-serif" font-size="10" fill="#8f2a2a" text-anchor="middle">relies on in-context memory → lossy at depth</text>
+      <!-- Small LLM: fading samples -->
+      <rect x="8"   y="28" width="58" height="36" rx="4" fill="#f5e8e8" stroke="#c89898" stroke-width="1" opacity="0.4"/>
+      <text x="37"  y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#c89898" text-anchor="middle" opacity="0.5">s₁: 01→0</text>
+      <text x="37"  y="56" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#c89898" text-anchor="middle" opacity="0.5">lost</text>
+
+      <rect x="72"  y="28" width="58" height="36" rx="4" fill="#f5e8e8" stroke="#c07070" stroke-width="1" opacity="0.6"/>
+      <text x="101" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#a06060" text-anchor="middle">s₂: 11→1</text>
+      <text x="101" y="56" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#a06060" text-anchor="middle">fading</text>
+
+      <rect x="136" y="28" width="58" height="36" rx="4" fill="#f0dcdc" stroke="#b05858" stroke-width="1" opacity="0.8"/>
+      <text x="165" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8f3838" text-anchor="middle">s₃: 10→1</text>
+      <text x="165" y="56" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#8f3838" text-anchor="middle">partial</text>
+
+      <rect x="200" y="28" width="58" height="36" rx="4" fill="#ead4d4" stroke="#8f2a2a" stroke-width="1.4"/>
+      <text x="229" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8f2a2a" text-anchor="middle">s₄: 00→0</text>
+      <text x="229" y="56" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#8f2a2a" text-anchor="middle">attended</text>
+
+      <line x1="260" y1="46" x2="290" y2="46" stroke="#8f2a2a" stroke-width="1.2" marker-end="url(#a-r)"/>
+      <rect x="293" y="34" width="58" height="24" rx="3" fill="#f0dcdc" stroke="#8f2a2a" stroke-width="1"/>
+      <text x="322" y="48" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8f2a2a" text-anchor="middle">predict</text>
+
+      <text x="155" y="88" font-family="DM Sans,sans-serif" font-size="10.5" fill="#8f2a2a" text-anchor="middle" font-style="italic">in-context memory → lossy with depth</text>
+
+      <!-- Opacity gradient legend -->
+      <rect x="8" y="100" width="340" height="4" rx="2">
+        <animate attributeName="opacity" values="1" dur="0"/>
+      </rect>
+      <defs>
+        <linearGradient id="fade-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#c89898" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#8f2a2a" stop-opacity="1"/>
+        </linearGradient>
+      </defs>
+      <rect x="8" y="100" width="340" height="3" rx="1.5" fill="url(#fade-grad)"/>
+      <text x="8"   y="115" font-family="IBM Plex Mono,monospace" font-size="8" fill="#c89898">older</text>
+      <text x="300" y="115" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8f2a2a" text-anchor="end">most recent</text>
 
       <!-- Divider -->
-      <line x1="345" y1="15" x2="345" y2="105" stroke="#e2ddd5" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="352" y1="10" x2="352" y2="130" stroke="#d8d2c6" stroke-width="1" stroke-dasharray="4,3"/>
 
-      <!-- Right: Frontier + Tools -->
-      <text x="490" y="20" font-family="IBM Plex Mono,monospace" font-size="10" fill="#2a6645" text-anchor="middle" font-weight="500">frontier + tools</text>
+      <!-- Frontier + Tools: all equal -->
+      <rect x="365" y="28" width="58" height="36" rx="4" fill="#e4f0ea" stroke="#6ab090" stroke-width="1.2"/>
+      <text x="394" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">s₁: 01→0</text>
+      <text x="394" y="56" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#2a6645" text-anchor="middle">in tool</text>
 
-      <!-- All samples equally weighted -->
-      <rect x="355" y="32" width="52" height="30" rx="4" fill="#e4f0ea" stroke="#6ab090" stroke-width="1.2"/>
-      <text x="381" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">s₁: 01→0</text>
-      <text x="381" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">in tool</text>
+      <rect x="429" y="28" width="58" height="36" rx="4" fill="#e4f0ea" stroke="#6ab090" stroke-width="1.2"/>
+      <text x="458" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">s₂: 11→1</text>
+      <text x="458" y="56" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#2a6645" text-anchor="middle">in tool</text>
 
-      <rect x="415" y="32" width="52" height="30" rx="4" fill="#e4f0ea" stroke="#6ab090" stroke-width="1.2"/>
-      <text x="441" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">s₂: 11→1</text>
-      <text x="441" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">in tool</text>
+      <rect x="493" y="28" width="58" height="36" rx="4" fill="#e4f0ea" stroke="#6ab090" stroke-width="1.2"/>
+      <text x="522" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">s₃: 10→1</text>
+      <text x="522" y="56" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#2a6645" text-anchor="middle">in tool</text>
 
-      <rect x="475" y="32" width="52" height="30" rx="4" fill="#e4f0ea" stroke="#6ab090" stroke-width="1.2"/>
-      <text x="501" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">s₃: 10→1</text>
-      <text x="501" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">in tool</text>
+      <rect x="557" y="28" width="58" height="36" rx="4" fill="#e4f0ea" stroke="#6ab090" stroke-width="1.2"/>
+      <text x="586" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">s₄: 00→0</text>
+      <text x="586" y="56" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#2a6645" text-anchor="middle">in tool</text>
 
-      <rect x="535" y="32" width="52" height="30" rx="4" fill="#e4f0ea" stroke="#6ab090" stroke-width="1.5"/>
-      <text x="561" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">s₄: 00→0</text>
-      <text x="561" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">in tool</text>
+      <!-- Bracket -->
+      <line x1="365" y1="72" x2="615" y2="72" stroke="#6ab090" stroke-width="1"/>
+      <line x1="365" y1="67" x2="365" y2="72" stroke="#6ab090" stroke-width="1"/>
+      <line x1="615" y1="67" x2="615" y2="72" stroke="#6ab090" stroke-width="1"/>
+      <text x="490" y="86" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#2a6645" text-anchor="middle">all constraints stored losslessly</text>
 
-      <!-- Bracket under all -->
-      <line x1="355" y1="68" x2="587" y2="68" stroke="#6ab090" stroke-width="1"/>
-      <line x1="355" y1="63" x2="355" y2="68" stroke="#6ab090" stroke-width="1"/>
-      <line x1="587" y1="63" x2="587" y2="68" stroke="#6ab090" stroke-width="1"/>
-      <text x="471" y="82" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6645" text-anchor="middle">all constraints stored losslessly in external state</text>
-
-      <text x="490" y="100" font-family="DM Sans,sans-serif" font-size="10" fill="#2a6645" text-anchor="middle">tools offload state → γ stays stable at depth</text>
+      <text x="490" y="108" font-family="DM Sans,sans-serif" font-size="10.5" fill="#2a6645" text-anchor="middle" font-style="italic">external tool → γ stable at any depth</text>
     </svg>
-    <p class="diagram-caption">Fig. 4 — How in-context memory (left) vs. external tool state (right) handle accumulated constraints. The small LLM compresses and forgets; the tool-augmented model preserves every constraint with equal fidelity.</p>
+    <p class="diagram-caption">Fig. 4 — In-context memory (left) vs. external tool state (right). The small LLM compresses and forgets; the tool-augmented model preserves every constraint with equal fidelity.</p>
   </div>
 
   <h3>Finding 2 — Frontier models show partial robustness, but only with tools</h3>
 
-  <p>State-of-the-art frontier models exhibit substantially more stable $\gamma$ — but this robustness is contingent on their ability to make precise tool calls to manage state externally. Without tools, even frontier models show non-trivial $\gamma$ degradation at depth. With well-designed tools, $\gamma$ remains nearly flat across the depths tested.</p>
+  <p>State-of-the-art frontier models exhibit substantially more stable $\gamma$ — but this robustness is contingent on their ability to make precise tool calls to manage state externally. Without tools, even frontier models show non-trivial $\gamma$ degradation at depth.</p>
 
   <div class="finding">
     <div class="finding-label">Key result</div>
     A model that offloads state tracking to an external tool is not relying on its own working memory to hold the accumulated history. The model's job becomes narrower — call the right tool at the right time — and that is a much more tractable problem.
   </div>
 
+  <div class="pull-quote">
+    &ldquo;Progress toward superintelligence depends less on scaling test-time compute or deepening search, and more on architectures that can build and use tools precisely.&rdquo;
+  </div>
+
   <h3>Finding 3 — Tool design quality is the critical variable</h3>
 
-  <p>Among tool-using frontier models, the single largest predictor of $\gamma$ stability is not model size, not context length, and not base reasoning ability. It is the quality of the tool design. Precise, well-specified tools that match the task structure allow the model to maintain $\gamma$ over long sequences. Poorly designed tools — vague, under-specified, or misaligned with the state representation the task requires — cause failures even in the strongest models.</p>
+  <p>Among tool-using frontier models, the single largest predictor of $\gamma$ stability is the quality of the tool design — not model size, not context length, not base reasoning ability. Precise, well-specified tools that match the task structure allow the model to maintain $\gamma$ over long sequences. Poorly designed tools cause failures even in the strongest models.</p>
 
   <div class="paper-note">
     This identifies <strong>tool design</strong> as a first-class research problem — not just an engineering convenience, but a core capability determining whether the Diligent Learner hypothesis holds in practice.
@@ -635,7 +959,7 @@ canvas { display: block; width: 100%; height: auto; }
 
   <hr>
 
-  <h2>What this does and does not claim</h2>
+  <h2 data-n="§ 06">What this does and does not claim</h2>
 
   <p>The GF(2) benchmark is adversarially designed — a worst case for state maintenance where there is no slack, no shortcuts, and no forgetting allowed. Many real-world tasks are easier. The benchmark isolates a failure mode, not a universal limitation.</p>
 
@@ -643,14 +967,14 @@ canvas { display: block; width: 100%; height: auto; }
 
   <div class="steps">
     <div class="step">
-      <div class="step-num" style="background:var(--muted);">✓</div>
+      <div class="step-num" style="background:var(--green-muted);">✓</div>
       <div class="step-body">
         <div class="step-title">What this supports</div>
-        <div class="step-desc">The Diligent Learner framework can hold in practice for frontier models equipped with precise, well-designed tools, at least over the depths studied.</div>
+        <div class="step-desc">The Diligent Learner framework can hold in practice for frontier models with precise, well-designed tools, at least over the depths studied.</div>
       </div>
     </div>
     <div class="step">
-      <div class="step-num" style="background:var(--border);color:var(--muted);">?</div>
+      <div class="step-num" style="background:var(--surface-2);color:var(--muted);">?</div>
       <div class="step-body">
         <div class="step-title">What remains open</div>
         <div class="step-desc">Whether $\gamma$ stays bounded at much larger depths, whether tool-building generalizes to novel task classes, and how tool quality scales with autonomy.</div>
@@ -688,12 +1012,12 @@ canvas { display: block; width: 100%; height: auto; }
 
   var models = {
     small:    { color:'#8f2a2a', gammaFn:function(d){ return Math.max(0.05, 0.78*Math.exp(-0.08*d*d)); },   degradation:'Superlinear' },
-    frontier: { color:'#a06810', gammaFn:function(d){ return Math.max(0.35, 0.91-0.048*d+0.0008*d*d); },    degradation:'Linear'      },
+    frontier: { color:'#b8860b', gammaFn:function(d){ return Math.max(0.35, 0.91-0.048*d+0.0008*d*d); },    degradation:'Linear'      },
     tools:    { color:'#2a6645', gammaFn:function(d){ return Math.max(0.75, 0.93-0.012*d); },                degradation:'Near-flat'   },
-    bayes:    { color:'#2a5c8f', gammaFn:function(d){ return 1.0; },                                         degradation:'Constant'    }
+    bayes:    { color:'#1e4f7a', gammaFn:function(d){ return 1.0; },                                         degradation:'Constant'    }
   };
 
-  var tabColors = { small:'#8f2a2a', frontier:'#a06810', tools:'#2a6645', bayes:'#2a5c8f' };
+  var tabColors = { small:'#8f2a2a', frontier:'#b8860b', tools:'#2a6645', bayes:'#1e4f7a' };
   var activeModel = 'small', traceDepth = 0, maxD = 8, dimN = 4;
   var traceInterval = null, tracePlaying = false;
 
@@ -739,7 +1063,7 @@ canvas { display: block; width: 100%; height: auto; }
 
   function setupCanvas(id, h){
     var c = document.getElementById(id); if(!c) return null;
-    var W = c.parentElement.clientWidth - 32; if(W < 80) W = 200;
+    var W = c.parentElement.clientWidth - 20; if(W < 80) W = 200;
     c.width = W*2; c.height = h*2; c.style.width = W+'px'; c.style.height = h+'px';
     var ctx = c.getContext('2d'); ctx.scale(2,2);
     return { ctx:ctx, W:W, H:h };
@@ -748,21 +1072,25 @@ canvas { display: block; width: 100%; height: auto; }
   function drawGamma(){
     var s = setupCanvas('gamma-chart', 130); if(!s) return;
     var ctx = s.ctx, pw = s.W, ph = s.H;
-    var pad = { l:30, r:8, t:8, b:24 };
+    var pad = { l:32, r:10, t:10, b:26 };
     var cw = pw-pad.l-pad.r, ch = ph-pad.t-pad.b;
+
+    ctx.fillStyle = '#f6f3ee';
+    ctx.fillRect(0,0,pw,ph);
 
     [0, 0.25, 0.5, 0.75, 1.0].forEach(function(v){
       var y = pad.t+ch*(1-v);
-      ctx.strokeStyle = '#e2ddd5'; ctx.lineWidth = 0.5;
+      ctx.strokeStyle = v === 0 || v === 1 ? '#d8d2c6' : '#e8e3d8';
+      ctx.lineWidth = v === 0 || v === 1 ? 0.8 : 0.5;
       ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
-      ctx.fillStyle = '#7a7570'; ctx.font = '9px IBM Plex Mono,monospace';
-      ctx.textAlign = 'right'; ctx.fillText(v.toFixed(2), pad.l-4, y+3);
+      ctx.fillStyle = '#a09880'; ctx.font = '9px IBM Plex Mono,monospace';
+      ctx.textAlign = 'right'; ctx.fillText(v.toFixed(2), pad.l-5, y+3);
     });
 
     Object.keys(models).forEach(function(key){
       if(key === activeModel) return;
       var m = models[key];
-      ctx.beginPath(); ctx.strokeStyle = m.color+'28'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.strokeStyle = m.color+'22'; ctx.lineWidth = 1;
       for(var d=0;d<=maxD;d++){
         var x=pad.l+(d/maxD)*cw, y=pad.t+ch*(1-m.gammaFn(d));
         d===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
@@ -771,6 +1099,20 @@ canvas { display: block; width: 100%; height: auto; }
     });
 
     var m = models[activeModel];
+    // Filled area under the curve
+    if(traceDepth > 0){
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t+ch);
+      for(var d=0;d<=traceDepth;d++){
+        var x=pad.l+(d/maxD)*cw, y=pad.t+ch*(1-m.gammaFn(d));
+        ctx.lineTo(x,y);
+      }
+      ctx.lineTo(pad.l+(traceDepth/maxD)*cw, pad.t+ch);
+      ctx.closePath();
+      ctx.fillStyle = m.color+'18';
+      ctx.fill();
+    }
+
     ctx.beginPath(); ctx.strokeStyle = m.color; ctx.lineWidth = 2;
     for(var d=0;d<=traceDepth;d++){
       var x=pad.l+(d/maxD)*cw, y=pad.t+ch*(1-m.gammaFn(d));
@@ -780,55 +1122,67 @@ canvas { display: block; width: 100%; height: auto; }
 
     if(traceDepth > 0){
       var gd = m.gammaFn(traceDepth);
-      ctx.beginPath(); ctx.arc(pad.l+(traceDepth/maxD)*cw, pad.t+ch*(1-gd), 4, 0, Math.PI*2);
+      var xd=pad.l+(traceDepth/maxD)*cw, yd=pad.t+ch*(1-gd);
+      ctx.beginPath(); ctx.arc(xd,yd,4.5,0,Math.PI*2);
       ctx.fillStyle = m.color; ctx.fill();
+      ctx.beginPath(); ctx.arc(xd,yd,4.5,0,Math.PI*2);
+      ctx.strokeStyle = 'white'; ctx.lineWidth = 1.5; ctx.stroke();
     }
 
-    ctx.fillStyle = '#7a7570'; ctx.font = '9px IBM Plex Mono,monospace'; ctx.textAlign = 'center';
+    ctx.fillStyle = '#a09880'; ctx.font = '9px IBM Plex Mono,monospace'; ctx.textAlign = 'center';
     for(var d=0;d<=maxD;d+=Math.max(1,Math.ceil(maxD/8))){
-      ctx.fillText(d, pad.l+(d/maxD)*cw, ph-4);
+      ctx.fillText(d, pad.l+(d/maxD)*cw, ph-5);
     }
-    ctx.font = '9px DM Sans,sans-serif'; ctx.fillText('depth', pad.l+cw/2, ph);
+    ctx.font = '9px DM Sans,sans-serif'; ctx.fillStyle='#a09880';
+    ctx.fillText('depth', pad.l+cw/2, ph);
   }
 
   function drawHyp(){
     var s = setupCanvas('hyp-chart', 130); if(!s) return;
     var ctx = s.ctx, pw = s.W, ph = s.H;
-    var pad = { l:34, r:8, t:8, b:24 };
+    var pad = { l:36, r:10, t:10, b:26 };
     var cw = pw-pad.l-pad.r, ch = ph-pad.t-pad.b;
-    var maxHyp = Math.pow(2, dimN);
+    var maxHyp = Math.pow(2,dimN);
     var m = models[activeModel];
-    var bw = cw/(maxD+1)*0.7;
+    var bw = cw/(maxD+1)*0.72;
 
-    [0, 0.5, 1.0].forEach(function(v){
+    ctx.fillStyle = '#f6f3ee'; ctx.fillRect(0,0,pw,ph);
+
+    [0,0.5,1.0].forEach(function(v){
       var y = pad.t+ch*(1-v);
-      ctx.strokeStyle = '#e2ddd5'; ctx.lineWidth = 0.5;
+      ctx.strokeStyle = v===0||v===1 ? '#d8d2c6' : '#e8e3d8';
+      ctx.lineWidth = v===0||v===1 ? 0.8 : 0.5;
       ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
-      var val = Math.round(v*maxHyp);
-      var label = val >= 1000 ? (val/1000).toFixed(0)+'k' : val;
-      ctx.fillStyle = '#7a7570'; ctx.font = '9px IBM Plex Mono,monospace';
-      ctx.textAlign = 'right'; ctx.fillText(label, pad.l-4, y+3);
+      var val=Math.round(v*maxHyp);
+      var label = val>=1000?(val/1000).toFixed(0)+'k':val;
+      ctx.fillStyle='#a09880'; ctx.font='9px IBM Plex Mono,monospace';
+      ctx.textAlign='right'; ctx.fillText(label,pad.l-5,y+3);
     });
 
     for(var d=0;d<=Math.min(traceDepth,maxD);d++){
-      var hyp = Math.max(1, maxHyp*Math.pow(0.5,d));
-      var bh = (hyp/maxHyp)*ch;
-      var x = pad.l+(d/maxD)*cw, y = pad.t+ch-bh;
-      var hexA = Math.round((d===traceDepth?1.0:0.28)*255).toString(16).padStart(2,'0');
-      ctx.fillStyle = m.color+hexA;
+      var hyp=Math.max(1,maxHyp*Math.pow(0.5,d));
+      var bh=(hyp/maxHyp)*ch;
+      var x=pad.l+(d/maxD)*cw, y=pad.t+ch-bh;
+      var isActive = d===traceDepth;
+      ctx.fillStyle = m.color+(isActive?'cc':'33');
       ctx.fillRect(x,y,bw,bh);
-      if(bw>12 && bh>14){
-        ctx.fillStyle = m.color; ctx.font = '9px IBM Plex Mono,monospace'; ctx.textAlign = 'center';
-        var lbl = hyp>=1000?(hyp/1000).toFixed(0)+'k':Math.round(hyp).toString();
-        ctx.fillText(lbl, x+bw/2, y-2);
+      if(isActive){
+        ctx.strokeStyle = m.color; ctx.lineWidth=1;
+        ctx.strokeRect(x,y,bw,bh);
+      }
+      if(bw>12&&bh>14){
+        ctx.fillStyle=m.color; ctx.font='9px IBM Plex Mono,monospace'; ctx.textAlign='center';
+        var lbl=hyp>=1000?(hyp/1000).toFixed(0)+'k':Math.round(hyp).toString();
+        ctx.fillText(lbl,x+bw/2,y-2);
       }
     }
 
-    ctx.fillStyle = '#7a7570'; ctx.font = '9px IBM Plex Mono,monospace'; ctx.textAlign = 'center';
+    ctx.fillStyle='#a09880'; ctx.font='9px IBM Plex Mono,monospace'; ctx.textAlign='center';
     for(var d=0;d<=maxD;d+=Math.max(1,Math.ceil(maxD/8))){
-      ctx.fillText(d, pad.l+(d/maxD)*cw, ph-4);
+      ctx.fillText(d,pad.l+(d/maxD)*cw,ph-5);
     }
-    ctx.font = '9px DM Sans,sans-serif'; ctx.fillText('depth', pad.l+cw/2, ph);
+    ctx.font='9px DM Sans,sans-serif'; ctx.fillStyle='#a09880';
+    ctx.fillText('depth',pad.l+cw/2,ph);
   }
 
   function updateStats(){
@@ -842,7 +1196,7 @@ canvas { display: block; width: 100%; height: auto; }
   if('IntersectionObserver' in window){
     var obs = new IntersectionObserver(function(entries){
       entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
-    },{threshold:0.12});
+    },{threshold:0.1});
     document.querySelectorAll('.fade-in').forEach(function(el){ obs.observe(el); });
   }
 
