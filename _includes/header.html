@@ -1,5 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@500&display=swap');
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 
+<style>
 .ts-header {
   position: sticky;
   top: 0;
@@ -11,10 +14,8 @@
   -webkit-backdrop-filter: blur(14px);
   padding: 0;
   min-height: 0;
-  width: 100%;
 }
 
-/* accent bar */
 .ts-header::before {
   content: '';
   display: block;
@@ -22,12 +23,9 @@
   background: linear-gradient(90deg, #1e4f7a 0%, #2a6199 55%, #b8860b 100%);
 }
 
-/* override the theme's .wrapper constraints */
-.ts-header .wrapper {
-  max-width: 100% !important;
-  width: 100% !important;
-  padding: 0.85rem 2rem !important;
-  margin: 0 !important;
+.ts-header-inner {
+  width: 100%;
+  padding: 0.85rem 2rem;
 }
 
 .ts-brand {
@@ -39,9 +37,10 @@
   gap: 5px;
 }
 
-.ts-brand:hover { text-decoration: none !important; }
+.ts-brand:hover {
+  text-decoration: none !important;
+}
 
-/* "Theory" — Lora italic, accent blue */
 .ts-title {
   font-family: 'Lora', Georgia, serif !important;
   font-weight: 400;
@@ -52,15 +51,14 @@
   line-height: 1.1;
 }
 
-/* "/Simplified" — Lora upright, warm dark */
 .ts-title-light {
+  font-family: 'Lora', Georgia, serif !important;
   font-weight: 500;
   font-style: normal;
   color: #18160f;
   letter-spacing: -0.02em;
 }
 
-/* "DL Fundamentals Lab" — IBM Plex Mono */
 .ts-sub {
   margin-top: 0;
   font-family: 'IBM Plex Mono', monospace;
@@ -72,4 +70,16 @@
   line-height: 1.2;
 }
 
-.site-nav { display: none !important; }
+.site-nav {
+  display: none !important;
+}
+</style>
+
+<header class="site-header ts-header">
+  <div class="ts-header-inner">
+    <a class="ts-brand" href="{{ '/' | relative_url }}">
+      <span class="ts-title">Theory<span class="ts-title-light">/Simplified</span></span>
+      <span class="ts-sub">DL Fundamentals Lab</span>
+    </a>
+  </div>
+</header>
