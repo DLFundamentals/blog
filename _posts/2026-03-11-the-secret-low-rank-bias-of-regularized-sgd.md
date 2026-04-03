@@ -653,7 +653,7 @@
 
         <!-- W_t matrix -->
         <rect x="10" y="20" width="60" height="60" rx="4" fill="#ede9e0" stroke="#d8d2c6" stroke-width="1"/>
-        <text x="40" y="47" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7060" text-anchor="middle">W_t</text>
+        <text x="40" y="47" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7060" text-anchor="middle">W<tspan baseline-shift="sub" font-size="70%">t</tspan></text>
         <text x="40" y="60" font-family="IBM Plex Mono,monospace" font-size="8" fill="#a09880" text-anchor="middle">8 × 8</text>
         <text x="40" y="96" font-family="DM Sans,sans-serif" font-size="9" fill="#a09880" text-anchor="middle">current</text>
 
@@ -663,7 +663,7 @@
 
         <!-- W_t decayed -->
         <rect x="113" y="20" width="60" height="60" rx="4" fill="#fdf4d8" stroke="#d4a820" stroke-width="1"/>
-        <text x="143" y="47" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7060" text-anchor="middle">W_t</text>
+        <text x="143" y="47" font-family="IBM Plex Mono,monospace" font-size="9" fill="#7a7060" text-anchor="middle">W<tspan baseline-shift="sub" font-size="70%">t</tspan></text>
         <text x="143" y="60" font-family="IBM Plex Mono,monospace" font-size="8" fill="#b8860b" text-anchor="middle">shrunk</text>
         <text x="143" y="96" font-family="DM Sans,sans-serif" font-size="9" fill="#a09880" text-anchor="middle">decayed</text>
 
@@ -672,7 +672,7 @@
 
         <!-- rank-B slab G_t -->
         <rect x="204" y="20" width="60" height="60" rx="4" fill="#d4e6f5" stroke="#1e4f7a" stroke-width="1.2"/>
-        <text x="234" y="44" font-family="IBM Plex Mono,monospace" font-size="9" fill="#1e4f7a" text-anchor="middle">μ G_t</text>
+        <text x="234" y="44" font-family="IBM Plex Mono,monospace" font-size="9" fill="#1e4f7a" text-anchor="middle">μ G<tspan baseline-shift="sub" font-size="70%">t</tspan></text>
         <text x="234" y="57" font-family="IBM Plex Mono,monospace" font-size="8" fill="#2a6199" text-anchor="middle">rank ≤ B</text>
         <!-- rank stripes -->
         <line x1="208" y1="66" x2="260" y2="66" stroke="#2a6199" stroke-width="1" stroke-dasharray="3,2" opacity="0.5"/>
@@ -684,7 +684,7 @@
 
         <!-- W_{t+1} -->
         <rect x="295" y="20" width="60" height="60" rx="4" fill="#ede9e0" stroke="#d8d2c6" stroke-width="1"/>
-        <text x="325" y="47" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#7a7060" text-anchor="middle">W_{t+1}</text>
+        <text x="325" y="47" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#7a7060" text-anchor="middle">W<tspan baseline-shift="sub" font-size="70%">t+1</tspan></text>
         <text x="325" y="60" font-family="IBM Plex Mono,monospace" font-size="8" fill="#a09880" text-anchor="middle">updated</text>
         <text x="325" y="96" font-family="DM Sans,sans-serif" font-size="9" fill="#a09880" text-anchor="middle">next step</text>
 
@@ -730,36 +730,36 @@
 
         <!-- Gradient slabs, fading left to right (older = more faded) -->
         <rect x="10"  y="26" width="52" height="44" rx="3" fill="#d4e6f5" opacity="0.12" stroke="#8ab8d8" stroke-width="0.5"/>
-        <text x="36"  y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#a09880" text-anchor="middle" opacity="0.4">G_{T-8}</text>
+        <text x="36"  y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#a09880" text-anchor="middle" opacity="0.4">G<tspan baseline-shift="sub" font-size="70%">T-8</tspan></text>
         <text x="36"  y="57" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#a09880" text-anchor="middle" opacity="0.4">~forgotten</text>
 
         <rect x="70"  y="26" width="52" height="44" rx="3" fill="#d4e6f5" opacity="0.25" stroke="#8ab8d8" stroke-width="0.7"/>
-        <text x="96"  y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#7a7060" text-anchor="middle" opacity="0.5">G_{T-6}</text>
+        <text x="96"  y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#7a7060" text-anchor="middle" opacity="0.5">G<tspan baseline-shift="sub" font-size="70%">T-6</tspan></text>
 
         <rect x="130" y="26" width="52" height="44" rx="3" fill="#d4e6f5" opacity="0.45" stroke="#8ab8d8" stroke-width="0.9"/>
-        <text x="156" y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#7a7060" text-anchor="middle">G_{T-4}</text>
+        <text x="156" y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#7a7060" text-anchor="middle">G<tspan baseline-shift="sub" font-size="70%">T-4</tspan></text>
 
         <rect x="190" y="26" width="52" height="44" rx="3" fill="#d4e6f5" opacity="0.68" stroke="#8ab8d8" stroke-width="1"/>
-        <text x="216" y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#3a3628" text-anchor="middle">G_{T-3}</text>
+        <text x="216" y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#3a3628" text-anchor="middle">G<tspan baseline-shift="sub" font-size="70%">T-3</tspan></text>
 
         <rect x="250" y="26" width="52" height="44" rx="3" fill="#d4e6f5" opacity="0.85" stroke="#2a6199" stroke-width="1.1"/>
-        <text x="276" y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#1e4f7a" text-anchor="middle">G_{T-2}</text>
+        <text x="276" y="45" font-family="IBM Plex Mono,monospace" font-size="8" fill="#1e4f7a" text-anchor="middle">G<tspan baseline-shift="sub" font-size="70%">T-2</tspan></text>
 
         <rect x="310" y="22" width="56" height="52" rx="3" fill="#d4e6f5" opacity="0.95" stroke="#1e4f7a" stroke-width="1.3"/>
-        <text x="338" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#1e4f7a" text-anchor="middle">G_{T-1}</text>
+        <text x="338" y="44" font-family="IBM Plex Mono,monospace" font-size="8" fill="#1e4f7a" text-anchor="middle">G<tspan baseline-shift="sub" font-size="70%">T-1</tspan></text>
         <text x="338" y="56" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#2a6199" text-anchor="middle">rank ≤ B</text>
 
         <rect x="374" y="18" width="62" height="60" rx="3" fill="#d4e6f5" stroke="#1e4f7a" stroke-width="1.6"/>
-        <text x="405" y="44" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#1e4f7a" text-anchor="middle">G_T</text>
+        <text x="405" y="44" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#1e4f7a" text-anchor="middle">G<tspan baseline-shift="sub" font-size="70%">T</tspan></text>
         <text x="405" y="57" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#2a6199" text-anchor="middle">current</text>
 
         <!-- Decay weights annotation -->
-        <text x="10"  y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#c8c0b0" text-anchor="middle" style="dominant-baseline:middle">×(1-2μλ)⁸</text>
-        <text x="96"  y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#b0a898" text-anchor="middle">×(1-2μλ)⁶</text>
-        <text x="156" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#908880" text-anchor="middle">×(1-2μλ)⁴</text>
-        <text x="216" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#706860" text-anchor="middle">×(1-2μλ)³</text>
-        <text x="276" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#505048" text-anchor="middle">×(1-2μλ)²</text>
-        <text x="338" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#303028" text-anchor="middle">×(1-2μλ)¹</text>
+        <text x="10"  y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#c8c0b0" text-anchor="middle" style="dominant-baseline:middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">8</tspan></text>
+        <text x="96"  y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#b0a898" text-anchor="middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">6</tspan></text>
+        <text x="156" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#908880" text-anchor="middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">4</tspan></text>
+        <text x="216" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#706860" text-anchor="middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">3</tspan></text>
+        <text x="276" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#505048" text-anchor="middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">2</tspan></text>
+        <text x="338" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#303028" text-anchor="middle">×(1−2μλ)<tspan baseline-shift="super" font-size="70%">1</tspan></text>
         <text x="405" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#1e4f7a" text-anchor="middle">×1</text>
 
         <!-- Bracket and label for "effective window" -->
