@@ -770,10 +770,8 @@
 
         <!-- right annotation -->
         <rect x="448" y="18" width="145" height="60" rx="5" fill="#f6f3ee" stroke="#e4dfd4" stroke-width="1"/>
-        <text x="462" y="36" font-family="DM Sans,sans-serif" font-size="10" fill="#3a3628">Older updates</text>
-        <text x="462" y="50" font-family="DM Sans,sans-serif" font-size="10" fill="#3a3628">fade to nothing.</text>
-        <text x="462" y="65" font-family="DM Sans,sans-serif" font-size="10" fill="#a09880">Only recent rank-B</text>
-        <text x="462" y="79" font-family="DM Sans,sans-serif" font-size="10" fill="#a09880">slabs matter.</text>
+        <text x="462" y="36" font-family="DM Sans,sans-serif" font-size="10" fill="#3a3628">Older updates fade.</text>
+        <text x="462" y="65" font-family="DM Sans,sans-serif" font-size="10" fill="#a09880">Only recent rank-B matter.</text>
       </svg>
       <p class="diagram-caption">Fig. 3 — Weight decay exponentially suppresses old gradient contributions. Only a window of $\approx \log(1/\varepsilon)/(\mu\lambda)$ recent steps matters for the current weight matrix.</p>
     </div>
