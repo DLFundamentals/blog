@@ -1,268 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Header Preview — v6 Variant B</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+now give me a revised logo for the new v6 style: <style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;500&display=swap');
 
-body {
-  background: #e8e3d8;
-  font-family: 'DM Sans', sans-serif;
-  padding: 3rem 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2.5rem;
+.ts-header{
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-top: none;
+  border-bottom: 1px solid #e0dcd6;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1rem 0;
+  min-height: 0;
 }
 
-/* ── HEADER ── */
-.ts-header {
-  width: 100%;
-  max-width: 860px;
-  background: rgba(246,243,238,0.97);
-  border-bottom: 1px solid #d8d2c6;
-  border-radius: 8px;
-  box-shadow: 0 2px 20px rgba(24,22,15,0.07);
-  overflow: hidden;
-}
-
-.ts-header::before {
-  content: '';
-  display: block;
-  height: 3px;
-  background: linear-gradient(90deg, #1e4f7a 0%, #2a6199 55%, #b8860b 100%);
-}
-
-.ts-header .wrapper {
-  padding: 0.9rem 1.75rem;
-}
-
-.ts-brand {
+.ts-brand{
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
-  text-decoration: none;
-  gap: 4px;
-}
-
-.ts-brand:hover .ts-title-theory   { color: #163d5e; }
-.ts-brand:hover .ts-title-simplified { color: #2a2818; }
-
-.ts-title-line {
-  display: flex;
-  align-items: baseline;
+  text-decoration: none !important;
   line-height: 1;
 }
 
-.ts-title-theory {
-  font-family: 'Lora', serif;
-  font-size: 1.22rem;
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: -0.01em;
-  color: #1e4f7a;
-  transition: color .2s;
+.ts-brand:hover{
+  text-decoration: none !important;
 }
 
-.ts-slash {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #b8860b;
-  margin: 0 2px;
-  line-height: 1;
-}
-
-.ts-title-simplified {
-  font-family: 'Lora', serif;
-  font-size: 1.22rem;
+.ts-title{
+  font-family: 'Newsreader', Georgia, serif !important;
   font-weight: 500;
-  font-style: normal;
-  letter-spacing: -0.015em;
-  color: #18160f;
-  transition: color .2s;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  color: #1a1714;
+  line-height: 1.1;
 }
 
-.ts-sub {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: #a09880;
-  line-height: 1;
+.ts-title-light{
+  font-weight: 300;
+  color: #8a8680;
 }
 
-/* ── CODE BLOCK ── */
-.code-section {
-  width: 100%;
-  max-width: 860px;
-  background: #18160f;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0,0,0,.25);
-}
-
-.code-header {
-  background: #222018;
-  padding: 0.65rem 1.25rem;
-  font-family: 'IBM Plex Mono', monospace;
+.ts-sub{
+  margin-top: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 10px;
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: #5a5548;
-  border-bottom: 1px solid #2e2c22;
-  display: flex;
-  gap: 6px;
-  align-items: center;
+  color: #8a8680;
+  line-height: 1.2;
 }
 
-.dot { width: 10px; height: 10px; border-radius: 50%; }
-
-pre {
-  padding: 1.5rem 1.75rem;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  line-height: 1.85;
-  color: #c8c0b0;
-  overflow-x: auto;
-  white-space: pre;
+.site-nav{
+  display: none !important;
 }
-
-.c  { color: #4a4840; }
-.p  { color: #a09880; }
-.v  { color: #c8a060; }
-.b  { color: #7ab8e0; }
-.g  { color: #d4a830; }
-.s  { color: #9ac880; }
-.t  { color: #e08060; }
 </style>
-</head>
-<body>
 
-<div class="ts-header">
+<header class="site-header ts-header">
   <div class="wrapper">
-    <a class="ts-brand" href="#">
-      <div class="ts-title-line">
-        <span class="ts-title-theory">Theory</span>
-        <span class="ts-slash">/</span>
-        <span class="ts-title-simplified">Simplified</span>
-      </div>
+    <a class="ts-brand" href="{{ '/' | relative_url }}">
+      <span class="ts-title">Theory<span class="ts-title-light">/Simplified</span></span>
       <span class="ts-sub">DL Fundamentals Lab</span>
     </a>
   </div>
-</div>
-
-<div class="code-section">
-  <div class="code-header">
-    <div class="dot" style="background:#e05050"></div>
-    <div class="dot" style="background:#e0a050"></div>
-    <div class="dot" style="background:#50b050"></div>
-    &nbsp; Drop-in replacement CSS + HTML
-  </div>
-  <pre><span class="c">/* ── Fonts (add to &lt;head&gt;) ───────────────────────────────── */</span>
-<span class="t">@import</span> <span class="s">url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap')</span>;
-
-<span class="c">/* ── Header shell ──────────────────────────────────────────── */</span>
-<span class="b">.ts-header</span> {
-  <span class="p">position</span>:         <span class="v">sticky</span>;
-  <span class="p">top</span>:              <span class="v">0</span>;
-  <span class="p">z-index</span>:          <span class="v">100</span>;
-  <span class="p">background</span>:       <span class="v">rgba(246, 243, 238, 0.96)</span>;
-  <span class="p">backdrop-filter</span>:  <span class="v">blur(14px)</span>;
-  <span class="p">-webkit-backdrop-filter</span>: <span class="v">blur(14px)</span>;
-  <span class="p">border-bottom</span>:    <span class="v">1px solid #d8d2c6</span>;
-  <span class="p">padding</span>:          <span class="v">0</span>;
-}
-
-<span class="c">/* ── Top accent bar ────────────────────────────────────────── */</span>
-<span class="b">.ts-header</span><span class="t">::before</span> {
-  <span class="p">content</span>:    <span class="s">''</span>;
-  <span class="p">display</span>:    <span class="v">block</span>;
-  <span class="p">height</span>:     <span class="v">3px</span>;
-  <span class="p">background</span>: <span class="g">linear-gradient(90deg, #1e4f7a 0%, #2a6199 55%, #b8860b 100%)</span>;
-}
-
-<span class="c">/* ── Inner wrapper ─────────────────────────────────────────── */</span>
-<span class="b">.ts-header .wrapper</span> {
-  <span class="p">padding</span>: <span class="v">0.9rem 1.75rem</span>;
-}
-
-<span class="c">/* ── Brand ─────────────────────────────────────────────────── */</span>
-<span class="b">.ts-brand</span> {
-  <span class="p">display</span>:         <span class="v">inline-flex</span>;
-  <span class="p">flex-direction</span>:  <span class="v">column</span>;
-  <span class="p">align-items</span>:     <span class="v">flex-start</span>;
-  <span class="p">text-decoration</span>: <span class="v">none</span>;
-  <span class="p">gap</span>:             <span class="v">4px</span>;
-}
-
-<span class="b">.ts-title-line</span> {
-  <span class="p">display</span>:     <span class="v">flex</span>;
-  <span class="p">align-items</span>: <span class="v">baseline</span>;
-  <span class="p">line-height</span>: <span class="v">1</span>;
-}
-
-<span class="c">/* Theory — Lora italic, accent blue */</span>
-<span class="b">.ts-title-theory</span> {
-  <span class="p">font-family</span>:    <span class="s">'Lora', serif</span>;
-  <span class="p">font-size</span>:      <span class="v">1.22rem</span>;
-  <span class="p">font-weight</span>:    <span class="v">400</span>;
-  <span class="p">font-style</span>:     <span class="v">italic</span>;
-  <span class="p">letter-spacing</span>: <span class="v">-0.01em</span>;
-  <span class="p">color</span>:          <span class="v">#1e4f7a</span>;
-}
-
-<span class="c">/* / — IBM Plex Mono, gold */</span>
-<span class="b">.ts-slash</span> {
-  <span class="p">font-family</span>: <span class="s">'IBM Plex Mono', monospace</span>;
-  <span class="p">font-size</span>:   <span class="v">1rem</span>;
-  <span class="p">font-weight</span>: <span class="v">400</span>;
-  <span class="p">color</span>:       <span class="v">#b8860b</span>;
-  <span class="p">margin</span>:      <span class="v">0 2px</span>;
-}
-
-<span class="c">/* Simplified — Lora upright, dark */</span>
-<span class="b">.ts-title-simplified</span> {
-  <span class="p">font-family</span>:    <span class="s">'Lora', serif</span>;
-  <span class="p">font-size</span>:      <span class="v">1.22rem</span>;
-  <span class="p">font-weight</span>:    <span class="v">500</span>;
-  <span class="p">font-style</span>:     <span class="v">normal</span>;
-  <span class="p">letter-spacing</span>: <span class="v">-0.015em</span>;
-  <span class="p">color</span>:          <span class="v">#18160f</span>;
-}
-
-<span class="c">/* DL Fundamentals Lab — IBM Plex Mono small caps */</span>
-<span class="b">.ts-sub</span> {
-  <span class="p">font-family</span>:    <span class="s">'IBM Plex Mono', monospace</span>;
-  <span class="p">font-size</span>:      <span class="v">9px</span>;
-  <span class="p">font-weight</span>:    <span class="v">500</span>;
-  <span class="p">letter-spacing</span>: <span class="v">0.13em</span>;
-  <span class="p">text-transform</span>: <span class="v">uppercase</span>;
-  <span class="p">color</span>:          <span class="v">#a09880</span>;
-}
-
-<span class="c">/* ── HTML ──────────────────────────────────────────────────── */</span>
-<span class="t">&lt;header</span> <span class="b">class</span>=<span class="s">"site-header ts-header"</span><span class="t">&gt;</span>
-  <span class="t">&lt;div</span> <span class="b">class</span>=<span class="s">"wrapper"</span><span class="t">&gt;</span>
-    <span class="t">&lt;a</span> <span class="b">class</span>=<span class="s">"ts-brand"</span> <span class="b">href</span>=<span class="s">"{{ '/' | relative_url }}"</span><span class="t">&gt;</span>
-      <span class="t">&lt;div</span> <span class="b">class</span>=<span class="s">"ts-title-line"</span><span class="t">&gt;</span>
-        <span class="t">&lt;span</span> <span class="b">class</span>=<span class="s">"ts-title-theory"</span><span class="t">&gt;</span>Theory<span class="t">&lt;/span&gt;</span>
-        <span class="t">&lt;span</span> <span class="b">class</span>=<span class="s">"ts-slash"</span><span class="t">&gt;</span>/<span class="t">&lt;/span&gt;</span>
-        <span class="t">&lt;span</span> <span class="b">class</span>=<span class="s">"ts-title-simplified"</span><span class="t">&gt;</span>Simplified<span class="t">&lt;/span&gt;</span>
-      <span class="t">&lt;/div&gt;</span>
-      <span class="t">&lt;span</span> <span class="b">class</span>=<span class="s">"ts-sub"</span><span class="t">&gt;</span>DL Fundamentals Lab<span class="t">&lt;/span&gt;</span>
-    <span class="t">&lt;/a&gt;</span>
-  <span class="t">&lt;/div&gt;</span>
-<span class="t">&lt;/header&gt;</span>
-
-<span class="c">/* ── Hide default Jekyll nav ───────────────────────────────── */</span>
-<span class="b">.site-nav</span> { <span class="p">display</span>: <span class="v">none</span> <span class="v">!important</span>; }</pre>
-</div>
-
-</body>
-</html>
+</header>
