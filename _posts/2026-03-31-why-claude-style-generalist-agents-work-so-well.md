@@ -117,7 +117,7 @@
 <div class="hero">
   <div class="hero-eyebrow">Agents &middot; LLMs &middot; Claude</div>
   <h1>Why Claude-Style <em>Generalist Agents</em> Work So Well</h1>
-  <p class="hero-subtitle">Claude-style agents work because they repeatedly choose the next useful action, execute it through tools, observe the result, and continue. This post explains why — and verifies every claim against real source code.</p>
+  <p class="hero-subtitle">Claude-style agents work because they repeatedly choose the next useful action, execute it through tools, observe the result, and continue. This post explains why.</p>
   <div class="hero-meta">
     <span>By Tomer Galanti</span>
     <span>&middot;</span>
