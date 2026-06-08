@@ -152,7 +152,7 @@
     <span>&middot;</span>
     <span>14 min read</span>
     <span>&middot;</span>
-    <span class="paper-badge">&#9670; Luthra, Salunkhe, Galanti — arXiv 2026</span>
+    <span class="paper-badge">&#9670; Luthra, Salunkhe, Galanti — ICML 2026</span>
   </div>
 </div>
 
@@ -203,7 +203,7 @@
   </div>
 
   <div class="paper-note">
-    Based on: A. Luthra, Y. Salunkhe, T. Galanti. &ldquo;Directional Neural Collapse Explains Few-Shot Transfer in Self-Supervised Learning&rdquo;, arXiv:2603.03530, 2026.
+    Based on: A. Luthra, Y. Salunkhe, T. Galanti. &ldquo;Directional Neural Collapse Explains Few-Shot Transfer in Self-Supervised Learning&rdquo;, ICML, 2026.
   </div>
 
   <hr>
