@@ -191,7 +191,7 @@
     <span>&middot;</span>
     <span>14 min read</span>
     <span>&middot;</span>
-    <span class="paper-badge">&#9670; Singhal, Mishra, Malach, Galanti — arXiv 2025</span>
+    <span class="paper-badge">&#9670; Singhal*, Mishra*, Malach, Galanti — ICML 2026</span>
   </div>
 </div>
 
@@ -244,7 +244,7 @@
   </div>
 
   <div class="paper-note">
-    Based on: S. Singhal, P. Mishra, E. Malach, T. Galanti. <a href="#">&ldquo;LLM Priors for ERM over Programs&rdquo;</a>, arXiv, 2025.
+    Based on: S. Singhal*, P. Mishra*, E. Malach, T. Galanti. <a href="#">&ldquo;LLM Priors for ERM over Programs&rdquo;</a>, ICML, 2026.
   </div>
 
   <hr>
