@@ -574,7 +574,7 @@
   /* ── PIPELINE ── */
   var pipeDetails = [
     '<strong>Step 1 — Prompt construction.</strong> The training examples are formatted as input-output pairs and placed into a prompt asking the LLM to write a Python function implementing the underlying rule. No gradient updates, no fine-tuning — just prompting.',
-    '<strong>Step 2 — Sampling.</strong> The LLM generates $k$ candidate programs (typically $k=64$ to $256$). Each is a complete, executable Python function. The LLM acts purely as a proposal distribution — it does not optimize the learning objective.',
+    '<strong>Step 2 — Sampling.</strong> The LLM generates $k$ candidate programs (in the paper, up to $k=5$ trials). Each is a complete, executable Python function. The LLM acts purely as a proposal distribution — it does not optimize the learning objective.',
     '<strong>Step 3 — Sandbox execution.</strong> Each candidate program is compiled and executed against training and validation examples in an isolated sandbox. Programs that crash, time out, or produce malformed output are discarded automatically.',
     '<strong>Step 4 — ERM selection.</strong> The program with the lowest error on held-out validation data is selected. This is classical empirical risk minimization — the LLM proposes, the data decides.'
   ];
@@ -681,8 +681,17 @@
     if(lbl) lbl.textContent='Round '+traceRound+' / '+total;
   }
 
+  // Stop playback only. Idempotent, and crucially does NOT call traceTogglePlay
+  // or traceReset, so there is no mutual recursion / runaway timer.
+  function traceStop(){
+    tracePlaying=false;
+    if(traceTimer){clearInterval(traceTimer);traceTimer=null;}
+    var btn=document.getElementById('trace-play-btn');
+    if(btn){btn.textContent='▶ Play';btn.classList.remove('active');}
+  }
+
   window.traceReset=function(){
-    if(tracePlaying) window.traceTogglePlay();
+    traceStop();
     var sel=document.getElementById('trace-task');
     traceTask=sel?sel.value:'prime';
     traceRound=0; traceBestHistory=[];
@@ -738,24 +747,25 @@
     var ins=document.getElementById('trace-insight');
     if(ins){ins.style.display='block';ins.textContent=round.insight;}
     traceUpdateLabel();
-    if(traceRound>=t.rounds.length&&tracePlaying) window.traceTogglePlay();
+    if(traceRound>=t.rounds.length&&tracePlaying) traceStop();
   };
 
   window.traceTogglePlay=function(){
-    tracePlaying=!tracePlaying;
+    // If already playing, this acts as Pause.
+    if(tracePlaying){ traceStop(); return; }
+    // Starting playback. If the previous run already finished, reset first so we
+    // begin cleanly from round 1. traceReset no longer calls back into here, so
+    // there is no reentrancy and no orphaned timer.
+    if(traceRound>=traceTasks[traceTask].rounds.length) window.traceReset();
+    tracePlaying=true;
     var btn=document.getElementById('trace-play-btn');
-    if(tracePlaying){
-      if(btn){btn.textContent='⏸ Pause';btn.classList.add('active');}
-      if(traceRound===0||traceRound>=traceTasks[traceTask].rounds.length) window.traceReset();
+    if(btn){btn.textContent='⏸ Pause';btn.classList.add('active');}
+    window.traceStep();
+    if(traceTimer) clearInterval(traceTimer);
+    traceTimer=setInterval(function(){
+      if(!tracePlaying||traceRound>=traceTasks[traceTask].rounds.length){traceStop();return;}
       window.traceStep();
-      traceTimer=setInterval(function(){
-        if(traceRound>=traceTasks[traceTask].rounds.length){window.traceTogglePlay();return;}
-        window.traceStep();
-      },3500);
-    } else {
-      if(btn){btn.textContent='▶ Play';btn.classList.remove('active');}
-      clearInterval(traceTimer);
-    }
+    },3500);
   };
 
   if('IntersectionObserver' in window){
