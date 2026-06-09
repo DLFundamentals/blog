@@ -152,7 +152,7 @@
     <span>&middot;</span>
     <span>15 min read</span>
     <span>&middot;</span>
-    <span class="paper-badge">&#9670; arXiv, 2026</span>
+    <span class="paper-badge">&#9670; Koplow, Galanti, Poggio - 2026</span>
   </div>
 </div>
 
@@ -203,7 +203,7 @@
   </div>
 
   <div class="paper-note">
-    Based on: &ldquo;Tool Use Reduces Depth-Induced Collapse in OOD Reasoning&rdquo;, arXiv 2026.
+    Based on: D. Koplow, T. Galanti, T. Poggio. &ldquo;Tool Use Reduces Depth-Induced Collapse in OOD Reasoning&rdquo;, arXiv 2026.
   </div>
 
   <hr>
