@@ -183,7 +183,7 @@
 <div class="hero">
   <div class="hero-eyebrow">Learning Theory &middot; Program Synthesis &middot; LLMs</div>
   <h1>Revisiting <em>ERM</em> in the LLM Era</h1>
-  <p class="hero-subtitle">How pretrained LLMs can serve as search priors for empirical risk minimization over programs, recovering exact algorithmic rules from just a handful of examples — while SGD-trained models remain at chance.</p>
+  <p class="hero-subtitle">Given only labeled examples and no task description, can we recover the hidden rule as executable code? LLM-PV uses pretrained LLMs as proposal priors for ERM over programs: the model guesses code, the data verifies it, and short algorithmic rules become searchable.</p>
   <div class="hero-meta">
     <span>By Tomer Galanti</span>
     <span>&middot;</span>
@@ -199,15 +199,15 @@
 
   <h2>Introduction</h2>
 
-  <p class="lead">Deep learning works extraordinarily well in vision, language, and audio. But outside these regimes there are many simple tasks that standard training methods still do not handle well: primality testing, parity, Boolean circuits, graph connectivity, and other rule-based problems. One can cast them as supervised learning tasks and train a large model on labeled examples. In practice, the model often fits the training data and still fails to recover the underlying rule.</p>
+  <p class="lead">Imagine being handed a tiny table of input-output examples. There is no task description, no grammar, no hint that the labels came from parity, primality, a bracket parser, a graph invariant, or something stranger. The only question is the oldest question in supervised learning: <em>what rule generated these labels, and will it keep working on new inputs?</em></p>
 
-  <p>A natural alternative is to use the fact that many such tasks admit short exact implementations — often just a few lines of Python. Instead of training a model to imitate the input-output map, we can search directly for a <strong>program</strong> that explains the data. This is empirical risk minimization (ERM) over a discrete class of programs, and classical learning theory tells us that such an approach can generalize from surprisingly little data.</p>
+  <p>Deep learning is spectacular when the right representation can be learned smoothly from data. But many algorithmic tasks have a different flavor. The correct rule may be a very short program — a parity loop, a stack check, a primality test — while the input-output map looks almost random to a gradient-based learner. A neural classifier can fit the 200 training examples and still learn the wrong thing: a brittle surface predictor rather than the underlying computation.</p>
 
-  <p>The difficulty is computational. Exhaustive search over all Python programs is clearly infeasible. The number of candidates grows exponentially with program length, so even when the correct hypothesis is very short, brute-force ERM is usually not practical.</p>
+  <p>The classical alternative is beautifully simple: search over programs and select one that fits the data. That is empirical risk minimization over a discrete hypothesis class. If the true rule has a short description, the sample complexity can be tiny. The catch is computational: length-first enumeration over programs grows like $|\Sigma|^L$, so the cute statistical story becomes an impossible search problem almost immediately.</p>
 
   <div class="callout">
     <strong>The central claim</strong>
-    Pretrained LLMs can serve as search priors for empirical risk minimization over short programs — making classical program-based ERM practically searchable while preserving its strong sample-efficiency advantages.
+    A pretrained LLM can be used as a <em>proposal prior</em> for ERM over programs. It does not replace validation, and it is not trusted as the final classifier. It simply changes the search distribution: instead of enumerating all code, sample plausible programs, execute them, and let held-out data choose.
   </div>
 
   <p>The story has four parts:</p>
@@ -217,28 +217,28 @@
       <div class="step-num" style="background:var(--red);">I</div>
       <div class="step-body">
         <div class="step-title">SGD is the wrong search.</div>
-        <div class="step-desc">SGD-trained networks fit the training data and still fail to recover algorithmic rules. The failure is fundamental on SQ-hard tasks, not a tuning issue.</div>
+        <div class="step-desc">Gradient-trained networks can fit small algorithmic datasets while failing to recover the rule. On SQ-hard families such as parity, this is a structural issue, not a hyperparameter accident.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num" style="background:var(--teal);">II</div>
       <div class="step-body">
-        <div class="step-title">Program ERM is sample-efficient.</div>
-        <div class="step-desc">PAC-style guarantees scale with description length $L$, not input dimension $n$. A compact parity program generalizes from $O(k \log n)$ examples.</div>
+        <div class="step-title">Program ERM is statistically lovely.</div>
+        <div class="step-desc">If the rule has a length-$L$ implementation, Occam-style bounds scale with description length rather than raw input dimension. Short code is a strong prior.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num" style="background:var(--amber);">III</div>
       <div class="step-body">
-        <div class="step-title">LLM-PV makes ERM feasible.</div>
-        <div class="step-desc">A pretrained LLM replaces uniform search with a structured proposal distribution. Verification still comes from held-out data — the ERM principle is preserved.</div>
+        <div class="step-title">LLM-PV makes the search finite.</div>
+        <div class="step-desc">The LLM proposes candidate programs; a sandbox executes them; held-out validation performs ERM-style selection. The data is the referee.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num" style="background:var(--accent);">IV</div>
       <div class="step-body">
-        <div class="step-title">Exact rules from few examples.</div>
-        <div class="step-desc">LLM-PV recovers perfect accuracy on 10 of 13 algorithmic tasks from only 200 examples, while all neural baselines remain near chance.</div>
+        <div class="step-title">Rules become inspectable objects.</div>
+        <div class="step-desc">Successful outputs are executable hypotheses — loops, tests, parsers, sieves — that can be read, debugged, stress-tested, and reused beyond the training length.</div>
       </div>
     </div>
   </div>
@@ -253,7 +253,9 @@
 
   <h3>Where our usual intuition breaks down</h3>
 
-  <p>Most of our intuitions about sample efficiency come from settings where deep learning is well matched to the structure of the problem. Algorithmic tasks are fundamentally different — here the target hypothesis is compact as code, but opaque to gradient descent.</p>
+  <p>Most of our intuitions about sample efficiency come from settings where the optimization path and the target structure are aligned. Algorithmic tasks violate this. The target may be compact in a programming language, yet invisible to the local statistics that gradient descent extracts from a small sample.</p>
+
+  <p>This is the uncomfortable regime: the rule is not complicated, but the <em>search interface</em> is wrong. A parity function over ten hidden coordinates is one line once the support is known; before the support is known, its low-order correlations vanish. A primality test is short code; as a classifier on decimal strings, it looks like a patchwork of modular facts. The same object can be simple for a programmer and hostile to SGD.</p>
 
   <!-- Algorithmic tasks diagram -->
   <div class="diagram-wrap fade-in">
@@ -298,17 +300,19 @@
 
   <h3>The failure mode</h3>
 
-  <p>Across several 1B-scale language models, training on a few hundred labeled examples yields near-perfect <em>training</em> accuracy on tasks such as parity, Dyck-2, and cellular automata parity. Test accuracy, however, often remains near chance — and this persists even when the amount of training data is substantially increased.</p>
+  <p>Across several 1B-scale language models, training on a few hundred labeled examples often yields near-perfect <em>training</em> accuracy on tasks such as parity, Dyck-2, and cellular-automata parity. The test accuracy, however, remains near chance. The model has memorized a finite table, not discovered the program that produced it.</p>
+
+  <p>The same pattern survives larger data sweeps: more examples can make the training fit cleaner without making the learned predictor more algorithmic. That is the little tragedy of this setting — the data contains a compact rule, but the learner is not searching in the language where the rule is compact.</p>
 
   <h3>Why SGD struggles</h3>
 
-  <p>The statistical query perspective gives a clean explanation. For planted $k$-parity over $n$ variables, mini-batch coordinate SGD requires at least:</p>
+  <p>The statistical query perspective gives a clean explanation for the canonical case. For planted $k$-parity over $n$ variables, finite-precision mini-batch coordinate SGD needs on the order of</p>
 
   <div class="eq-highlight">
     $$q = \Omega\!\left(\frac{\sqrt{\binom{n}{k}}}{2^b}\right)$$
   </div>
 
-  <p>fresh examples to achieve nontrivial population error. The target rule is simple as a program, but <strong>SGD is the wrong search procedure for this hypothesis class</strong>. The difficulty is statistical and fundamental, not a matter of model capacity or hyperparameter tuning.</p>
+  <p>fresh examples to achieve nontrivial population error. The factor $2^b$ reflects numerical precision, and the combinatorial term reflects the hidden support. The theorem is not saying parity is impossible; it is saying that <strong>the wrong learner pays for the wrong coordinates</strong>. As code, the target is tiny. As a gradient signal, it is nearly silent.</p>
 
   <hr>
 
@@ -316,13 +320,13 @@
 
   <h3>Think of the target as code</h3>
 
-  <p>Suppose the target rule can be expressed as a program of length $L$ over an alphabet $\Sigma$. The relevant hypothesis class is the set of valid programs of length at most $L$, with $|\mathcal{H}_L| \le |\Sigma|^L$. This immediately yields a classical PAC-style guarantee:</p>
+  <p>Now switch languages. Suppose the target rule can be expressed as a program of length $L$ over an alphabet $\Sigma$. The relevant hypothesis class is the set of valid programs of length at most $L$, with $|\mathcal{H}_L| \le |\Sigma|^L$. In the realizable case, an ERM solution over this finite class obeys an Occam-style PAC guarantee:</p>
 
   <div class="eq-highlight">
     $$\text{test error} \;\le\; \frac{L \log|\Sigma| + \log(2L^2/\delta)}{m}$$
   </div>
 
-  <p>The sample complexity depends on <strong>description length</strong>, not on raw input dimension. A compact parity program can therefore generalize from surprisingly few examples — the number of samples needed grows with $k \log n$, not with $n^{k/2}$.</p>
+  <p>The sample complexity depends on <strong>description length</strong>, not raw input dimension. If the target is a short piece of code, the data only has to identify which short code it is. For planted parity, that means the statistical price scales like the support description, roughly $k\log n$, rather than the SQ-style $n^{k/2}$ barrier paid by the wrong optimization interface.</p>
 
   <h3>The central tension</h3>
 
@@ -346,7 +350,7 @@
     </table>
   </div>
 
-  <p>SGD is computationally cheap but statistically wasteful on these tasks. Program ERM is statistically efficient but computationally intractable under uniform search. The real question is whether one can keep ERM's statistical advantages while replacing uniform search with something more structured.</p>
+  <p>This is the central tension. SGD is computationally cheap per update but statistically wasteful on the wrong families. Program ERM is statistically elegant but computationally hopeless under uniform search. The missing ingredient is neither a new loss nor a bigger classifier. It is a better way to <em>propose</em> candidate programs.</p>
 
   <hr>
 
@@ -354,7 +358,9 @@
 
   <h3>From uniform search to proposal priors</h3>
 
-  <p>The real bottleneck in program ERM is not verification — given a candidate program, checking whether it fits the data is easy. The difficult part is <strong>proposing promising candidates</strong>. Uniform search over programs of length $L$ assigns probability roughly $|\Sigma|^{-L}$ to any fixed target. A pretrained LLM changes this: conditioned on labeled examples, it places probability mass on short, structured, plausible rules suggested by the data.</p>
+  <p>The real bottleneck in program ERM is not verification. Given a candidate program, we can compile it, run it, and score it on examples. The hard part is <strong>proposal</strong>: where should the search look first?</p>
+
+  <p>Uniform search treats every token string of length $L$ as equally plausible, so the target receives probability roughly $|\Sigma|^{-L}$. A pretrained code model is not uniform. Conditioned on examples, it has learned to place mass on programs that look like human-written explanations: loops for length-invariant rules, stacks for brackets, modular arithmetic for primality, Gaussian elimination for parity. LLM-PV asks whether that prior can be harvested without trusting the LLM's answer blindly.</p>
 
   <div class="pull-quote">&ldquo;The LLM does not replace ERM — it makes a previously impractical ERM procedure searchable.&rdquo;</div>
 
@@ -450,12 +456,32 @@
 
   <h2>Part IV — Results</h2>
 
+  <h3>What was compared?</h3>
+
+  <p>The experiment is intentionally small-data: $m=200$ labeled examples for the algorithmic tasks, split into training and validation, then evaluated on a large independent test set. The baselines are not strawmen; they cover the usual ways one might attack the problem without program ERM.</p>
+
+  <div class="table-wrap fade-in">
+    <table>
+      <thead>
+        <tr><th>Family</th><th>What it tries</th><th>Why it matters</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Classic ML</td><td>XGBoost, Random Forest, SVM, genetic programs</td><td>Strong feature-based learners and symbolic-search baselines with validation tuning.</td></tr>
+        <tr><td>Tabular foundation model</td><td>TabPFN</td><td>A pretrained model specialized for small tabular datasets.</td></tr>
+        <tr><td>SGD from scratch</td><td>1B-scale LMs trained as classifiers</td><td>Tests whether ordinary gradient training can recover the rule from examples.</td></tr>
+        <tr><td>Fine-tuning</td><td>Qwen, Llama, DeepSeek-Coder variants</td><td>Tests whether pretrained representations plus supervised adaptation solve the task.</td></tr>
+        <tr><td>Direct LLM / agents</td><td>ICL with large models, tool-use ICL, MLAgentBench, AIDE-ML</td><td>Tests whether prompting or generic agentic ML loops suffice without ERM-style program selection.</td></tr>
+        <tr><td class="td-llmpv">LLM-PV</td><td>LLM proposes executable programs; validation selects</td><td>The proposed route: use the LLM as a search prior, not as the final predictor.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <h3>Recovering exact rules from a handful of examples</h3>
 
-  <p>Across 13 algorithmic tasks at input length $n = 100$, LLM-PV recovers exact or near-exact rules from only 200 labeled examples:</p>
+  <p>Across 13 algorithmic tasks at input length $n=100$, LLM-PV often recovers the actual rule, not merely a high-accuracy surrogate. The cute thing is that the winning hypothesis usually looks like what you would hope to find: an XOR over the right coordinates, a stack parser, a palindrome check, a primality test, a graph component counter.</p>
 
   <div class="bar-chart fade-in">
-    <div class="bar-chart-title">Test accuracy (%) — 200 training examples, input length 100</div>
+    <div class="bar-chart-title">Test accuracy (%) — 200 labeled examples, input length 100</div>
     <div class="filter-tabs">
       <button class="filter-tab active" onclick="filterBars(this,'all')">All tasks</button>
       <button class="filter-tab" onclick="filterBars(this,'perfect')">LLM-PV perfect</button>
@@ -464,66 +490,97 @@
     <div id="bars-container"></div>
   </div>
 
-  <p class="figcaption"><strong>Fig. 3.</strong> LLM-PV achieves perfect accuracy on 10 of 13 tasks. On SHA-256 parity — intentionally pseudorandom with no exploitable short structure — it fails, confirming the method's dependence on compressible hypotheses.</p>
+  <p class="figcaption"><strong>Fig. 3.</strong> Teal bars show LLM-PV. Gray bars show the strongest non-PV baseline reported for that task, including classic ML, TabPFN, SGD/fine-tuning, direct ICL, and generic agent baselines. LLM-PV reaches 100% on 10 of 13 tasks. SHA-256 parity stays near chance, which is exactly the failure mode one should expect: the target is pseudorandom rather than compressible by a simple program the proposer can find.</p>
 
-  <p>The full comparison with baselines:</p>
+  <p>A compact task-by-task view:</p>
 
   <div class="table-wrap fade-in">
     <table>
       <thead>
         <tr>
           <th>Task</th>
-          <th>XGBoost</th>
-          <th>SGD (1B)</th>
-          <th>Fine-tune</th>
-          <th>ICL (30B)</th>
-          <th>TabPFN</th>
+          <th>Strongest non-PV</th>
+          <th>Who got it?</th>
           <th class="col-llmpv">LLM-PV</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Full parity</td><td class="td-chance">49.9</td><td class="td-chance">49.3</td><td class="td-chance">50.4</td><td class="td-chance">53.0</td><td class="td-chance">50.1</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>First-half parity</td><td class="td-chance">50.0</td><td class="td-chance">50.6</td><td class="td-chance">51.3</td><td class="td-chance">54.0</td><td class="td-chance">50.5</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>Pattern 1</td><td class="td-chance">50.6</td><td class="td-chance">51.5</td><td>61.5</td><td class="td-chance">56.0</td><td class="td-chance">49.2</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>Pattern 2</td><td class="td-chance">52.3</td><td class="td-chance">53.6</td><td>57.6</td><td class="td-chance">51.0</td><td class="td-chance">51.2</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>3-parity</td><td class="td-chance">49.9</td><td class="td-chance">49.7</td><td class="td-chance">51.0</td><td class="td-chance">50.0</td><td class="td-chance">49.3</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>10-parity</td><td class="td-chance">49.3</td><td class="td-chance">50.3</td><td class="td-chance">50.5</td><td class="td-chance">50.0</td><td class="td-chance">50.5</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>IsPalindrome</td><td>83.6</td><td class="td-chance">49.2</td><td class="td-chance">49.6</td><td class="td-chance">47.0</td><td class="td-chance">49.4</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>Dyck-2</td><td class="td-chance">49.7</td><td class="td-chance">51.4</td><td class="td-chance">52.7</td><td class="td-chance">48.0</td><td class="td-chance">50.5</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>CA parity</td><td class="td-chance">50.4</td><td class="td-chance">49.4</td><td class="td-chance">50.7</td><td class="td-chance">49.0</td><td class="td-chance">48.0</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>IsPrime</td><td>61.8</td><td>58.8</td><td>57.2</td><td class="td-chance">50.0</td><td>57.1</td><td class="td-llmpv td-best">100</td></tr>
-        <tr><td>IsPrime+47</td><td>59.3</td><td class="td-chance">53.6</td><td>58.7</td><td>58.0</td><td>65.4</td><td class="td-llmpv td-best">80.6</td></tr>
-        <tr><td>CycleCount</td><td class="td-chance">51.1</td><td class="td-chance">53.5</td><td>65.7</td><td class="td-chance">46.0</td><td class="td-chance">51.3</td><td class="td-llmpv td-best">96.9</td></tr>
-        <tr><td>SHA-256</td><td class="td-chance">50.3</td><td class="td-chance">49.8</td><td class="td-chance">50.8</td><td class="td-chance">54.0</td><td class="td-chance">50.6</td><td class="td-llmpv td-chance">50.1</td></tr>
+        <tr><td>Full parity</td><td>99.0</td><td>direct GPT-5 + tools</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>First-half parity</td><td>88.0</td><td>direct GPT-5 + tools</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>Pattern 1</td><td>83.0</td><td>direct Gemini + tools</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>Pattern 2</td><td>60.9</td><td>MLAgentBench</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>3-parity</td><td>75.0</td><td>direct GPT-5 + tools</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>10-parity</td><td>79.0</td><td>direct GPT-5 + tools</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>IsPalindrome</td><td>100.0</td><td>direct Gemini + tools</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>Dyck-2</td><td>59.0</td><td>direct GPT-5 + tools</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>CA parity</td><td>51.0</td><td>direct Gemini + tools</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>IsPrime</td><td>62.0</td><td>direct GPT-5 + tools</td><td class="td-llmpv td-best">100</td></tr>
+        <tr><td>IsPrime+47</td><td>65.4</td><td>TabPFN</td><td class="td-llmpv td-best">80.6</td></tr>
+        <tr><td>CycleCount</td><td>65.7</td><td>fine-tuned Llama-3.2-1B</td><td class="td-llmpv td-best">96.9</td></tr>
+        <tr><td>SHA-256</td><td>54.0</td><td>no-tool ICL</td><td class="td-llmpv td-chance">50.1</td></tr>
       </tbody>
     </table>
   </div>
 
+  <p>There are two lessons hidden in this table. First, direct tool use is not the same as LLM-PV. A tool-using LLM can sometimes reason its way to a useful answer, but it is not systematically maintaining a pool of executable hypotheses and selecting by validation error. Second, the success cases are not just high accuracies — they are <strong>program recoveries</strong>. The output is a rule one can read.</p>
+
   <h3>More data does not rescue SGD</h3>
 
-  <p>Even with up to 100,000 training examples, SGD-trained models can remain near chance on parity-style tasks while fitting the training data perfectly. These tasks are not difficult because they require huge datasets — they are difficult because the search procedure is poorly matched to the hypothesis class.</p>
+  <p>Increasing the number of examples does not automatically fix the gradient route. Even with up to 100,000 training examples, SGD-trained models can fit the training set while remaining near chance on random 10-parity and cellular-automata parity. That is the empirical face of the theory: the target is not statistically absent; it is hidden from the learner's search geometry.</p>
 
   <h3>Length generalization emerges naturally</h3>
 
-  <p>A particularly striking property of LLM-PV is that it often synthesizes <strong>dimension-invariant programs</strong>. When trained on short inputs ($n = 10$) and tested on much longer ones ($n = 100$), it can maintain perfect accuracy. This follows naturally from representing the hypothesis as code — a loop or invariant-checking procedure extends cleanly beyond the training input size, whereas a fixed-dimensional parametric map cannot.</p>
+  <p>A particularly striking property of LLM-PV is that it often synthesizes <strong>dimension-invariant programs</strong>. Train on short inputs and test on much longer ones, and a loop still loops. A stack still parses. A primality test still tests. This is the quiet superpower of code as a hypothesis class: a good program does not merely interpolate the observed length; it encodes the invariant.</p>
 
   <div class="finding-green">
     <div class="finding-label">Auditable output</div>
-    The output is executable code and the search trace is logged. The learned hypothesis can be read, tested, modified, and verified directly — a major conceptual difference from opaque neural predictors.
+    The output is executable code and the search trace is logged. The learned hypothesis can be read, tested, modified, and verified directly. The model does not hand you a mysterious vector; it hands you a little machine.
   </div>
 
+  <h3>Beyond toy algorithms: tabular datasets</h3>
+
+  <p>The paper also checks whether propose-and-verify is only a synthetic-algorithm trick. On standard tabular datasets, each with only 100 fixed training samples and 100 validation samples, LLM-PV is competitive with strong tabular learners. The inputs are randomly transformed so the LLM cannot simply recognize famous datasets; it must propose useful feature transformations and decision rules from the examples.</p>
+
+  <div class="table-wrap fade-in">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Adult Income</th>
+          <th>Mushroom</th>
+          <th>CDC Diabetes</th>
+          <th>HRTU2</th>
+          <th>Chess</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>SVM</td><td>52.8</td><td>68.1</td><td>69.1</td><td>91.5</td><td>89.4</td></tr>
+        <tr><td>Genetic Algorithm</td><td>75.2</td><td>64.7</td><td>69.0</td><td>90.6</td><td>92.5</td></tr>
+        <tr><td>Decision Tree</td><td>67.8</td><td>69.0</td><td>62.5</td><td>89.1</td><td class="td-best">94.1</td></tr>
+        <tr><td>Random Forest</td><td>74.2</td><td>70.8</td><td class="td-best">72.7</td><td>91.4</td><td>88.1</td></tr>
+        <tr><td>XGBoost</td><td>71.4</td><td>66.1</td><td>68.6</td><td>91.4</td><td>93.1</td></tr>
+        <tr><td>TabPFN</td><td class="td-best">77.7</td><td>69.9</td><td>72.1</td><td class="td-best">93.1</td><td>93.1</td></tr>
+        <tr><td class="td-llmpv">LLM-PV</td><td class="td-llmpv">75.8</td><td class="td-llmpv td-best">72.2</td><td class="td-llmpv">71.1</td><td class="td-llmpv">92.3</td><td class="td-llmpv">92.3</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="figcaption"><strong>Table 2.</strong> Tabular benchmark accuracy (%) with 100 train and 100 validation samples. LLM-PV is not uniformly best — nor should it be. The point is that propose-and-verify remains competitive with specialized tabular learners, suggesting that the method is not limited to exact symbolic recovery.</p>
+
   <div class="finding">
-    <div class="finding-label">Beyond algorithmic tasks</div>
-    On standard tabular datasets with only 100 training samples, LLM-PV is competitive with XGBoost, Random Forest, and TabPFN — the propose-and-verify view extends beyond exact program recovery.
+    <div class="finding-label">A useful distinction</div>
+    On algorithmic tasks, the win often comes from finding the exact hidden program. On tabular tasks, the win is softer: LLM-PV proposes small predictive pipelines and lets validation choose. Same philosophy, different kind of hypothesis.
   </div>
 
   <hr>
 
   <h2>What this does and does not say</h2>
 
-  <p>This argument does <strong>not</strong> say that LLM-PV replaces deep learning on standard vision, language, or audio tasks. In those domains, the usual pipeline remains extremely effective. The picture is narrower and cleaner.</p>
+  <p>This argument does <strong>not</strong> say that LLM-PV replaces deep learning on vision, language, or audio. In those domains, learned representations and gradient training are often exactly the right hammer. The claim is narrower and cleaner: when the target is better described as a short executable rule than as a smooth function to be fit, the hypothesis space should reflect that.</p>
 
-  <p>Classical ERM over programs is statistically attractive but computationally inaccessible under uniform search. A pretrained LLM changes the proposal distribution — making some short, structured hypotheses much easier to find. Verification and final selection still come from the data. If the target does not admit a short exploitable program, or if the LLM assigns negligible mass to useful candidates, the method fails. The SHA-256 result confirms exactly this regime.</p>
+  <p>Nor does the method magically solve arbitrary program synthesis. Its success depends on proposal mass. If the target has no short exploitable structure, or if the LLM assigns negligible probability to useful candidates, validation has nothing good to select. SHA-256 parity is the sanity check: pseudorandom labels remain pseudorandom, and LLM-PV stays near chance.</p>
+
+  <p>The conceptual shift is about the division of labor. The LLM supplies a biased search distribution over code; the sandbox supplies execution; the validation set supplies selection. The cute slogan is: <strong>the LLM dreams, the data decides</strong>.</p>
 
   <div class="steps">
     <div class="step">
@@ -544,18 +601,18 @@
 
   <div class="takeaway">
     <h3>Takeaway</h3>
-    <p>Pretrained LLMs can make program-based ERM practical by replacing brute-force search with guided search. The mechanism has four parts.</p>
-    <p><strong>Short programs generalize.</strong> If the target has a length-$L$ description, ERM needs only $O(L \log|\Sigma|)$ samples — independent of raw input dimension.</p>
-    <p><strong>SGD can still fail badly.</strong> On SQ-hard families such as parity, gradient-based learners may require exponentially many samples even when the target is simple as code.</p>
-    <p><strong>Brute-force ERM is computationally intractable.</strong> Uniform search over programs scales like $|\Sigma|^L$ — impractical even for short targets.</p>
-    <p><strong>LLM-PV changes the search distribution.</strong> A pretrained LLM proposes plausible candidates; held-out verification selects the best one. The ERM principle is preserved; only the proposal mechanism changes.</p>
-    <p>The resulting paradigm recovers exact algorithmic rules from a handful of examples, generalizes beyond the training distribution, and produces executable hypotheses that can be inspected and verified directly.</p>
+    <p>LLM-PV revives an old learning-theory dream: learn simple programs from few examples, but avoid brute-force enumeration.</p>
+    <p><strong>Short programs generalize.</strong> If the target has a length-$L$ description, ERM needs roughly $O(L\log|\Sigma|)$ samples. The statistical story is beautiful.</p>
+    <p><strong>Uniform search kills the beauty.</strong> Enumerating programs costs $|\Sigma|^L$, so classical ERM is usually computationally impossible.</p>
+    <p><strong>SGD is not a universal search engine.</strong> On SQ-hard families such as parity, gradient-trained predictors can fit the data and still miss the rule.</p>
+    <p><strong>The LLM supplies a prior, not a verdict.</strong> It proposes executable hypotheses; the sandbox runs them; validation selects. The ERM principle is preserved, but the candidate distribution is no longer uniform.</p>
+    <p>The result is a tiny but powerful change in perspective: use pretrained models not only to predict labels, but to search over verifiable programs. When the hidden rule is really code, this turns a few examples into an inspectable little machine.</p>
   </div>
 
 </article>
 
 <div class="post-footer">
-  <p>Published on <a href="https://dlfundamentals.github.io/blog/">Theory/Simplified</a> &nbsp;&middot;&nbsp; Based on <a href="#">Singhal, Mishra, Malach, Galanti — arXiv 2025</a></p>
+  <p>Published on <a href="https://dlfundamentals.github.io/blog/">Theory/Simplified</a> &nbsp;&middot;&nbsp; Based on <a href="#">Singhal, Mishra, Malach, Galanti — ICML 2026</a></p>
 </div>
 
 </div>
@@ -574,7 +631,7 @@
   /* ── PIPELINE ── */
   var pipeDetails = [
     '<strong>Step 1 — Prompt construction.</strong> The training examples are formatted as input-output pairs and placed into a prompt asking the LLM to write a Python function implementing the underlying rule. No gradient updates, no fine-tuning — just prompting.',
-    '<strong>Step 2 — Sampling.</strong> The LLM generates $k$ candidate programs (in the paper, up to $k=5$ trials). Each is a complete, executable Python function. The LLM acts purely as a proposal distribution — it does not optimize the learning objective.',
+    '<strong>Step 2 — Sampling.</strong> The LLM generates $k$ candidate programs (in the paper, up to $k=5$ trials). Each is a complete, executable Python function. The LLM acts purely as a proposal distribution — no gradient updates and no validation-feedback adaptation of the sampling distribution.',
     '<strong>Step 3 — Sandbox execution.</strong> Each candidate program is compiled and executed against training and validation examples in an isolated sandbox. Programs that crash, time out, or produce malformed output are discarded automatically.',
     '<strong>Step 4 — ERM selection.</strong> The program with the lowest error on held-out validation data is selected. This is classical empirical risk minimization — the LLM proposes, the data decides.'
   ];
@@ -589,19 +646,19 @@
 
   /* ── BAR CHART ── */
   var tasks = [
-    {name:'Full parity',     llmpv:100,  best_base:53.0, cat:'perfect'},
-    {name:'First-half parity',llmpv:100, best_base:54.0, cat:'perfect'},
-    {name:'Pattern 1',       llmpv:100,  best_base:61.5, cat:'perfect'},
-    {name:'Pattern 2',       llmpv:100,  best_base:57.6, cat:'perfect'},
-    {name:'3-parity',        llmpv:100,  best_base:51.0, cat:'perfect'},
-    {name:'10-parity',       llmpv:100,  best_base:50.5, cat:'perfect'},
-    {name:'IsPalindrome',    llmpv:100,  best_base:83.6, cat:'perfect'},
-    {name:'Dyck-2',          llmpv:100,  best_base:52.7, cat:'perfect'},
-    {name:'CA parity',       llmpv:100,  best_base:50.7, cat:'perfect'},
-    {name:'IsPrime',         llmpv:100,  best_base:61.8, cat:'perfect'},
-    {name:'IsPrime+47',      llmpv:80.6, best_base:65.4, cat:'hard'},
-    {name:'CycleCount',      llmpv:96.9, best_base:65.7, cat:'hard'},
-    {name:'SHA-256',         llmpv:50.1, best_base:54.0, cat:'hard'}
+    {name:'Full parity',      llmpv:100,  best_base:99.0, cat:'perfect'},
+    {name:'First-half parity',llmpv:100,  best_base:88.0, cat:'perfect'},
+    {name:'Pattern 1',        llmpv:100,  best_base:83.0, cat:'perfect'},
+    {name:'Pattern 2',        llmpv:100,  best_base:60.9, cat:'perfect'},
+    {name:'3-parity',         llmpv:100,  best_base:75.0, cat:'perfect'},
+    {name:'10-parity',        llmpv:100,  best_base:79.0, cat:'perfect'},
+    {name:'IsPalindrome',     llmpv:100,  best_base:100.0, cat:'perfect'},
+    {name:'Dyck-2',           llmpv:100,  best_base:59.0, cat:'perfect'},
+    {name:'CA parity',        llmpv:100,  best_base:51.0, cat:'perfect'},
+    {name:'IsPrime',          llmpv:100,  best_base:62.0, cat:'perfect'},
+    {name:'IsPrime+47',       llmpv:80.6, best_base:65.4, cat:'hard'},
+    {name:'CycleCount',       llmpv:96.9, best_base:65.7, cat:'hard'},
+    {name:'SHA-256',          llmpv:50.1, best_base:54.0, cat:'hard'}
   ];
 
   function renderBars(filter){
@@ -613,7 +670,7 @@
       var r1 = document.createElement('div'); r1.className = 'bar-row';
       r1.innerHTML = '<div class="bar-label">'+t.name+'</div><div class="bar-track"><div class="bar-fill" style="width:'+t.llmpv+'%;background:'+barColor+'">'+(t.llmpv>12?'<span class="bar-value">'+t.llmpv+'</span>':'')+'</div></div>'+(t.llmpv<=12?'<span class="bar-value-out">'+t.llmpv+'</span>':'');
       var r2 = document.createElement('div'); r2.className = 'bar-row'; r2.style.marginBottom='12px';
-      r2.innerHTML = '<div class="bar-label" style="font-size:9.5px;color:var(--muted-lt);">best baseline</div><div class="bar-track"><div class="bar-fill" style="width:'+t.best_base+'%;background:var(--muted-lt);opacity:.5">'+(t.best_base>12?'<span class="bar-value">'+t.best_base+'</span>':'')+'</div></div>'+(t.best_base<=12?'<span class="bar-value-out">'+t.best_base+'</span>':'');
+      r2.innerHTML = '<div class="bar-label" style="font-size:9.5px;color:var(--muted-lt);">strongest non-PV</div><div class="bar-track"><div class="bar-fill" style="width:'+t.best_base+'%;background:var(--muted-lt);opacity:.5">'+(t.best_base>12?'<span class="bar-value">'+t.best_base+'</span>':'')+'</div></div>'+(t.best_base<=12?'<span class="bar-value-out">'+t.best_base+'</span>':'');
       c.appendChild(r1); c.appendChild(r2);
     });
   }
