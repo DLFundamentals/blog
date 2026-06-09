@@ -152,7 +152,7 @@
     <span>&middot;</span>
     <span>14 min read</span>
     <span>&middot;</span>
-    <span class="paper-badge">&#9670; Luthra, Salunkhe, Galanti — ICML 2026</span>
+    <span class="paper-badge">&#9670; Luthra, Salunkhe, Galanti — arXiv 2026</span>
   </div>
 </div>
 
@@ -203,7 +203,7 @@
   </div>
 
   <div class="paper-note">
-    Based on: A. Luthra, Y. Salunkhe, T. Galanti. &ldquo;Directional Neural Collapse Explains Few-Shot Transfer in Self-Supervised Learning&rdquo;, ICML, 2026.
+    Based on: A. Luthra, Y. Salunkhe, T. Galanti. &ldquo;Directional Neural Collapse Explains Few-Shot Transfer in Self-Supervised Learning&rdquo;, arXiv:2603.03530, 2026.
   </div>
 
   <hr>
@@ -255,7 +255,7 @@
       <!-- nuisance direction arrow -->
       <line x1="552" y1="55" x2="552" y2="195" stroke="#a09880" stroke-width="1.4"/>
       <path d="M552,50 l-4,8 l8,0 Z" fill="#a09880"/><path d="M552,200 l-4,-8 l8,0 Z" fill="#a09880"/>
-      <text x="566" y="128" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7060" transform="rotate(90 566 128)" text-anchor="middle">nuisance direction</text>
+      <text x="566" y="128" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7060" transform="rotate(90 566 128)" text-anchor="middle">nuisance direction — large variance, harmless</text>
       <!-- midpoint boundary -->
       <line x1="320" y1="38" x2="320" y2="212" stroke="#8f2a2a" stroke-width="1" stroke-dasharray="4 4"/>
       <text x="320" y="32" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#8f2a2a" text-anchor="middle">NCC boundary</text>
@@ -291,13 +291,20 @@
 
   <h2>Part III — A sharp few-shot bound</h2>
 
-  <p>The main theorem turns this picture into a guarantee. With $m$ shots per class and $C'$ classes, the average NCC error (which also upper-bounds the linear probe) is governed by directional CDNV, plus corrections that vanish as you get more shots:</p>
+  <p>The main theorem turns this picture into a guarantee. With $m$ shots per class and $C'$ classes (for $C'\ge 2$, $m\ge 10$), the average NCC error — which also upper-bounds the linear probe — splits into a clean decision-axis term and a fully explicit finite-shot remainder:</p>
 
-  <div class="eq-highlight">
-    $$\mathrm{err}^{\mathrm{NCC}}_{m,\mathcal{C}}(f) \;\le\; \frac{1}{C'}\sum_{i}\sum_{j\ne i}\frac{4\,\tilde V_{ij}}{\big(1+\tfrac{v_j-v_i}{m\,d_{ij}^2}\big)^2}\;+\;\big(\text{finite-shot corrections}\big)$$
+  <div class="math-display">
+    <div class="math-label">Theorem 4.1 — finite-shot NCC bound</div>
+    $$\mathrm{err}^{\mathrm{NCC}}_{m,\mathcal{C}}(f) \;\le\; \underbrace{\frac{1}{C'}\sum_{i}\sum_{j\ne i}\frac{4\,\tilde V_{ij}}{\big(1+\tfrac{v_j-v_i}{m\,d_{ij}^2}\big)^2}}_{\text{decision-axis term}} \;+\; \underbrace{\frac{1}{C'}\sum_{i}\sum_{j\ne i}\frac{\big(\sqrt{E^1_{ij}}+\sqrt{E^2_{ij}}+\sqrt{E^3_{ij}}\,\big)^2}{\big(1+\tfrac{v_j-v_i}{m\,d_{ij}^2}\big)^2}}_{\text{finite-shot remainder}}$$
   </div>
 
-  <p>Two things make this tighter and more honest than prior bounds. First, the leading term is <strong>directional</strong> CDNV, not the coarse classical one — so it stays informative in exactly the anisotropic regime where SSL lives. Second, the analysis cleanly separates the genuine decision-axis difficulty from the cost of <em>estimating centroids from few samples</em>. There are three finite-shot pieces: a linear centroid-estimation term ($\sim V_{ij}/m$), a quadratic one ($\sim V_{ij}^2/m$), and a fourth-moment tail term ($\sim \Theta_{ij}/m^3$). All decay with $m$, leaving the directional certificate behind.</p>
+  <p>The three correction terms are written out in full — no hand-waving placeholder. Each isolates a different finite-sample effect, with $\Theta_{ij}=\big(M_{4,i}+M_{4,j}\big)/d_{ij}^4$ the normalized fourth moment ($M_{4,i}=\mathbb{E}\|f(x)-\mu_i\|^4$):</p>
+
+  <div class="eq-highlight">
+    $$E^{1}_{ij}=\frac{4}{m}\Big(V_{ij}^2+\tfrac14 V_{ij}\Big),\qquad E^{2}_{ij}=\frac{V_{ij}}{m},\qquad E^{3}_{ij}=\frac{\Theta_{ij}+2(m-1)V_{ij}^2}{m^3}$$
+  </div>
+
+  <p>Reading them in order of size: $E^{2}_{ij}\asymp V_{ij}/m$ is the <strong>linear centroid-estimation leakage</strong> — the dominant finite-shot cost, the price of locating each class mean from only $m$ samples. $E^{1}_{ij}\asymp V_{ij}^2/m$ is a <strong>quadratic</strong> correction, and $E^{3}_{ij}\asymp \Theta_{ij}/m^3 + V_{ij}^2/m^2$ is the <strong>heavy-tail</strong> term that the fourth moment controls. The two things that make this tighter than prior work: the leading term is <em>directional</em> CDNV $\tilde V_{ij}$, not the coarse classical $V_{ij}$, so it stays informative in the anisotropic SSL regime; and every correction is governed by the global $V_{ij}$ but carries an explicit $1/m$, $1/m$, and $1/m^3$ rate, so all of them vanish as shots grow — leaving the pure directional certificate $p^{\mathrm{NCC}}_{i\to j}\lesssim 4\tilde V_{ij}$ behind.</p>
 
   <div class="finding-green">
     <div class="finding-label">The constant 4 is optimal</div>
@@ -332,14 +339,56 @@
 
   <h2>Part IV — Many tasks at once, forced orthogonal</h2>
 
-  <p>Here is where directional CDNV pays a second dividend. A single SSL representation is asked to support many labelings at once — color, shape, size, texture. Each labeling has its own decision axis. The paper proves a structural consequence: if directional CDNV is simultaneously small for two independent balanced labelings, their decision axes must be <strong>nearly orthogonal</strong>.</p>
+  <p>Here is where directional CDNV pays a second dividend. A single SSL representation is asked to support many labelings at once — color, shape, size, texture. The paper makes this concrete with a <strong>factor model</strong>: $M$ independent binary tasks, each carried by its own orthonormal direction $v_\ell$, with the embedding</p>
 
-  <p>The intuition is a budget argument. Small directional CDNV along axis $A$ means each class is tightly concentrated in that direction. If axis $B$ were aligned with $A$, then $B$'s classes would also have to be separated along nearly the same direction — but the two labelings are independent, so that would force the same coordinate to carry two unrelated bits of information without overlap. The only way to keep both directional variances small is to route the second task into a direction the first one isn't using. Orthogonality is what lets one representation hold many tasks without interference.</p>
+  <div class="math-display">
+    <div class="math-label">Orthogonal factor model (§4.3)</div>
+    $$z \;=\; \sum_{\ell=1}^{M}\frac{\Delta_\ell}{2}\,t^{(\ell)}\,v_\ell \;+\; \eta \;+\; \xi$$
+  </div>
+
+  <p>Each task label $t^{(\ell)}\in\{\pm1\}$ shifts $z$ by $\pm\tfrac{\Delta_\ell}{2}$ along its axis $v_\ell$, so the task-$\ell$ centroid gap is $\mu^{(\ell)}_+ - \mu^{(\ell)}_- = \Delta_\ell v_\ell$ and $v_\ell$ <em>is</em> the decision axis. The term $\xi$ is small noise along the axes; $\eta$ is nuisance living in the orthogonal complement of all of them. Plugging in gives the punchline directly: directional CDNV stays small while classical CDNV is unbounded,</p>
+
+  <div class="eq-highlight">
+    $$\tilde V^{(\ell)} = \frac{v_\ell^\top \mathrm{Cov}(\xi)\,v_\ell}{\Delta_\ell^2}\ \text{(small)}, \qquad V^{(\ell)} \ge \frac{2\,\mathrm{tr}\!\big(\mathrm{Cov}(\eta)\big)}{\Delta_\ell^2}\ \text{(arbitrarily large)}$$
+  </div>
+
+  <p>With three tasks this is a box. The eight combinations of $(t^{(1)},t^{(2)},t^{(3)})$ are eight <strong>granular class centers</strong> at the corners of a hyperrectangle whose three edge directions are the decision axes $v_1,v_2,v_3$; samples scatter tightly around each corner along those axes (the big nuisance variance $\eta$ lives in dimensions outside the box, which is why no picture can show it). Drag to rotate:</p>
+
+  <div class="explorer fade-in" id="cube-sim">
+    <div class="explorer-header">
+      <span class="explorer-title">Three tasks, one representation</span>
+      <span class="explorer-subtitle">— drag to rotate · 3 orthogonal decision axes · 8 granular centers</span>
+    </div>
+    <div class="explorer-body">
+      <div class="bd-controls">
+        <div class="bd-ctrl"><label>on-axis noise <span>ξ</span> <b><span id="cube-xi-val">0.16</span></b></label><input type="range" id="cube-xi" min="0.03" max="0.5" step="0.01" value="0.16" oninput="cubeUpdate()"></div>
+        <div class="bd-ctrl"><label>sample clouds <b><span id="cube-pts-lbl">shown</span></b></label><input type="range" id="cube-pts" min="0" max="1" step="1" value="1" oninput="cubeUpdate()"></div>
+      </div>
+      <div class="cl-svg" id="cube-svg" style="touch-action:none;cursor:grab;user-select:none;"></div>
+      <div class="bd-result" id="cube-note"></div>
+    </div>
+  </div>
+
+  <p class="figcaption"><strong>Fig. 4.</strong> The factor model with $M=3$. Eight granular centers (◆) sit at the corners of a hyperrectangle with unequal gaps $\Delta_1,\Delta_2,\Delta_3$. The three colored double-arrows are the decision axes: each task splits the box across one axis (blue = task A, green = task B, purple = task C). Sample clouds hug the corners along the axes; turning up $\xi$ loosens them and raises directional CDNV. Axes are orthogonal by construction — the geometry Proposition 4.2 forces from small directional CDNV alone.</p>
+
+  <h3>The orthogonalization theorem, stated</h3>
+
+  <p>The factor model is only a convenient illustration; the structural fact needs none of it. For two <em>independent</em> balanced labelings $y^{(1)}\in[K_1]$ and $y^{(2)}\in[K_2]$, write $u^{(1)}_{aa'}$ for the unit decision axis between classes $a,a'$ of task 1 (gap $d^{(1)}_{aa'}$), and $\tilde V^{(1)}_{aa'}=\max_{c}\,(u^{(1)}_{aa'})^\top\Sigma^{(1)}_c\,u^{(1)}_{aa'}/(d^{(1)}_{aa'})^2$ for its directional CDNV; likewise for task 2.</p>
+
+  <div class="finding">
+    <div class="finding-label">Proposition 4.2 — near-orthogonality from small directional CDNV</div>
+    For any pair $a\ne a'$ in task 1 and $b\ne b'$ in task 2,
+    <div class="math-display" style="background:transparent;border:none;margin:.7rem 0 .2rem;padding:.3rem 0;">
+      $$\Big|\,(u^{(1)}_{aa'})^{\top} u^{(2)}_{bb'}\,\Big| \;\le\; \min\!\left\{\, \frac{d^{(1)}_{aa'}}{d^{(2)}_{bb'}}\sqrt{2K_2\,\tilde V^{(1)}_{aa'}}\;,\;\; \frac{d^{(2)}_{bb'}}{d^{(1)}_{aa'}}\sqrt{2K_1\,\tilde V^{(2)}_{bb'}} \,\right\}$$
+    </div>
+  </div>
+
+  <p>Read it as a budget. The left side is the cosine of the angle between any decision axis of task 1 and any decision axis of task 2 — their alignment. The right side shrinks like $\sqrt{\tilde V}$: drive the directional CDNV of either task toward zero and the two families of axes are <em>forced</em> apart, because a representation cannot reuse the same tight direction to separate two independent labelings. The off-axis nuisance is free to be enormous; it never enters this inequality. For two balanced <em>binary</em> tasks ($K_1=K_2=2$) with equal gaps the bound reads $|\cos\theta|\le\sqrt{4\tilde V}=2\sqrt{\tilde V}$ — the relation the slider below traces.</p>
 
   <div class="explorer fade-in" id="orth-sim">
     <div class="explorer-header">
-      <span class="explorer-title">Multitask orthogonality</span>
-      <span class="explorer-subtitle">— smaller directional CDNV forces decision axes apart</span>
+      <span class="explorer-title">Two binary tasks — the bound in action</span>
+      <span class="explorer-subtitle">— smaller directional CDNV forces the axes apart</span>
     </div>
     <div class="explorer-body">
       <div class="bd-controls">
@@ -350,7 +399,7 @@
     </div>
   </div>
 
-  <p class="figcaption"><strong>Fig. 4.</strong> Two tasks' decision axes (blue, green) with their class blobs. As directional CDNV shrinks, the geometry is squeezed toward right angles — low alignment means task $B$'s separation barely projects onto task $A$'s axis, so adapting one task leaves the other untouched. The angle shown is an illustrative worst case consistent with the orthogonality result.</p>
+  <p class="figcaption"><strong>Fig. 5.</strong> The binary case of Proposition 4.2 with equal gaps: the guaranteed alignment ceiling is $|\cos\theta|\le 2\sqrt{\tilde V}$. As directional CDNV shrinks the worst-case angle is pushed toward $90^\circ$, so task B's separation barely projects onto task A's axis and adapting one leaves the other untouched.</p>
 
   <hr>
 
@@ -391,7 +440,7 @@
       <path d="M60,78 C160,150 320,172 560,178" fill="none" stroke="#1a7a5c" stroke-width="2.4"/>
       <text x="470" y="170" font-family="IBM Plex Mono,monospace" font-size="10" fill="#1a7a5c" text-anchor="middle">directional CDNV (Ṽ)</text>
     </svg>
-    <p class="diagram-caption">Fig. 5 — Schematic of the reported qualitative finding (not measured values). During SSL pretraining, directional CDNV collapses toward zero while classical CDNV stays high — the gap is the anisotropy that classical clustering measures misread.</p>
+    <p class="diagram-caption">Fig. 6 — Schematic of the reported qualitative finding (not measured values). During SSL pretraining, directional CDNV collapses toward zero while classical CDNV stays high — the gap is the anisotropy that classical clustering measures misread.</p>
   </div>
 
   <p>The multitask prediction holds up too. On controlled synthetic data with independent visual factors — shape, size, color, pattern — SSL encoders map distinct factors to <strong>approximately orthogonal</strong> directions: the median absolute cosine similarity between decision axes from different labelings decays toward zero over training, staying below the curve the theory predicts.</p>
@@ -563,14 +612,104 @@
     svg+='</svg>';
     document.getElementById('o-svg').innerHTML=svg;
 
-    var note='Allowed alignment between axes: <b>|cos&#952;| &le; '+cosmax.toFixed(2)+'</b> (angle &#8776; '+deg.toFixed(0)+'&#176;). ';
+    var note='Guaranteed by Prop. 4.2: <b>|cos&#952;| &le; 2&#8730;Ṽ = '+cosmax.toFixed(2)+'</b> (angle &#8807; '+deg.toFixed(0)+'&#176;). ';
     if(vt<0.05) note+='With directional CDNV this small, the two tasks are forced almost <b>orthogonal</b> — adapting one leaves the other essentially untouched.';
-    else note+='As directional CDNV grows, the geometry permits more alignment, so the tasks begin to <b>interfere</b>.';
+    else note+='As directional CDNV grows, the bound relaxes and the geometry permits more alignment, so the tasks begin to <b>interfere</b>.';
     document.getElementById('o-note').innerHTML=note;
   };
 
+  /* ── ROTATABLE 3D HYPERRECTANGLE (factor model, M=3) ── */
+  (function(){
+    var svgEl=document.getElementById('cube-svg');
+    if(!svgEl) return;
+    var W=440,H=300,cx=220,cy=150,scale=70;
+    var ax=-0.45, ay=0.62;               // pitch, yaw
+    var D=[1.7,1.2,0.85];                // half-gaps Δ/2 along the 3 axes (unequal => hyperrectangle)
+    // 8 granular centers at (±D0,±D1,±D2)
+    var corners=[];
+    for(var sx=-1;sx<=1;sx+=2)for(var sy=-1;sy<=1;sy+=2)for(var sz=-1;sz<=1;sz+=2)
+      corners.push([sx*D[0],sy*D[1],sz*D[2]]);
+    // cube edges (pairs of corner indices differing in one coord)
+    var edges=[];
+    for(var i=0;i<8;i++)for(var j=i+1;j<8;j++){
+      var diff=0; for(var k=0;k<3;k++) if(corners[i][k]!==corners[j][k]) diff++;
+      if(diff===1) edges.push([i,j]);
+    }
+    // fixed sample offsets per corner (seeded, stable across rotations)
+    var seed=12345; function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff-0.5;}
+    var NS=7, offs=[];
+    for(var c=0;c<8;c++){var arr=[];for(var s=0;s<NS;s++)arr.push([rnd(),rnd(),rnd()]);offs.push(arr);}
+
+    function proj(p){
+      var x=p[0],y=p[1],z=p[2];
+      var x1=x*Math.cos(ay)+z*Math.sin(ay), z1=-x*Math.sin(ay)+z*Math.cos(ay), y1=y;
+      var y2=y1*Math.cos(ax)-z1*Math.sin(ax), z2=y1*Math.sin(ax)+z1*Math.cos(ax);
+      return {x:cx+x1*scale, y:cy-y2*scale, z:z2};
+    }
+    var taskCol=['#1e4f7a','#1a7a5c','#6e48aa'];
+
+    window.cubeRender=function(){
+      var xi=+document.getElementById('cube-xi').value;
+      var showPts=+document.getElementById('cube-pts').value;
+      document.getElementById('cube-xi-val').textContent=xi.toFixed(2);
+      document.getElementById('cube-pts-lbl').textContent=showPts?'shown':'hidden';
+
+      var parts=[]; // {z, svg}
+      // edges
+      for(var e=0;e<edges.length;e++){
+        var a=proj(corners[edges[e][0]]), b=proj(corners[edges[e][1]]);
+        parts.push({z:(a.z+b.z)/2-5, s:'<line x1="'+a.x.toFixed(1)+'" y1="'+a.y.toFixed(1)+'" x2="'+b.x.toFixed(1)+'" y2="'+b.y.toFixed(1)+'" stroke="#cfc8ba" stroke-width="1"/>'});
+      }
+      // 3 decision axes through origin, slightly beyond the box
+      var axEnds=[[D[0]*1.5,0,0],[0,D[1]*1.8,0],[0,0,D[2]*1.9]];
+      var lbls=[['A','+','−'],['B','+','−'],['C','+','−']];
+      for(var t=0;t<3;t++){
+        var p1=proj([-axEnds[t][0],-axEnds[t][1],-axEnds[t][2]]);
+        var p2=proj([axEnds[t][0],axEnds[t][1],axEnds[t][2]]);
+        var col=taskCol[t];
+        parts.push({z:Math.max(p1.z,p2.z)+1, s:'<line x1="'+p1.x.toFixed(1)+'" y1="'+p1.y.toFixed(1)+'" x2="'+p2.x.toFixed(1)+'" y2="'+p2.y.toFixed(1)+'" stroke="'+col+'" stroke-width="2.2" stroke-linecap="round"/>'
+          +'<circle cx="'+p2.x.toFixed(1)+'" cy="'+p2.y.toFixed(1)+'" r="3" fill="'+col+'"/>'
+          +'<text x="'+(p2.x+5).toFixed(1)+'" y="'+(p2.y-3).toFixed(1)+'" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="500" fill="'+col+'">task '+lbls[t][0]+'</text>'});
+      }
+      // sample clouds
+      if(showPts){
+        for(var c=0;c<8;c++){
+          for(var s=0;s<NS;s++){
+            var o=offs[c][s];
+            var pt=proj([corners[c][0]+o[0]*xi, corners[c][1]+o[1]*xi, corners[c][2]+o[2]*xi]);
+            var depth=(pt.z+2)/4; var op=(0.28+0.42*Math.max(0,Math.min(1,depth))).toFixed(2);
+            parts.push({z:pt.z-2, s:'<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="1.7" fill="#7a7060" opacity="'+op+'"/>'});
+          }
+        }
+      }
+      // granular centers (corners) on top
+      for(var c2=0;c2<8;c2++){
+        var pc=proj(corners[c2]);
+        var depth2=(pc.z+2)/4; var r=(3.0+1.6*Math.max(0,Math.min(1,depth2)));
+        parts.push({z:pc.z+0.5, s:'<rect x="'+(pc.x-r).toFixed(1)+'" y="'+(pc.y-r).toFixed(1)+'" width="'+(2*r).toFixed(1)+'" height="'+(2*r).toFixed(1)+'" transform="rotate(45 '+pc.x.toFixed(1)+' '+pc.y.toFixed(1)+')" fill="#b8860b" stroke="#7a5a08" stroke-width="0.8"/>'});
+      }
+      parts.sort(function(p,q){return p.z-q.z;});
+      var svg='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:440px">';
+      for(var i=0;i<parts.length;i++) svg+=parts[i].s;
+      svg+='</svg>';
+      svgEl.innerHTML=svg;
+
+      var Vt=(xi*xi)/(4*D[0]*D[0]); // illustrative directional CDNV along the widest axis (gap=2*D0)
+      document.getElementById('cube-note').innerHTML='Eight granular centers (◆), three orthogonal decision axes. Directional CDNV here is tiny (≈ <b>'+Vt.toFixed(3)+'</b> on the longest axis) — set by how tightly samples hug the corners along the axes — while the model\u2019s <b>classical</b> CDNV is dominated by nuisance variance in directions outside this box. That gap is exactly what lets one representation carry all three tasks.';
+    };
+    window.cubeUpdate=window.cubeRender;
+
+    // drag-to-rotate
+    var dragging=false, lx=0, ly=0;
+    function down(e){dragging=true;svgEl.style.cursor='grabbing';var p=e.touches?e.touches[0]:e;lx=p.clientX;ly=p.clientY;if(e.touches)e.preventDefault();}
+    function move(e){if(!dragging)return;var p=e.touches?e.touches[0]:e;ay+=(p.clientX-lx)*0.01;ax+=(p.clientY-ly)*0.01;ax=Math.max(-1.4,Math.min(1.4,ax));lx=p.clientX;ly=p.clientY;window.cubeRender();if(e.touches)e.preventDefault();}
+    function up(){dragging=false;svgEl.style.cursor='grab';}
+    svgEl.addEventListener('mousedown',down); window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+    svgEl.addEventListener('touchstart',down,{passive:false}); svgEl.addEventListener('touchmove',move,{passive:false}); svgEl.addEventListener('touchend',up);
+  })();
+
   /* ── INIT ── */
-  clRender(); boundRender(); orthRender();
+  clRender(); boundRender(); orthRender(); if(window.cubeRender) cubeRender();
 
   if('IntersectionObserver' in window){
     var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.1});
