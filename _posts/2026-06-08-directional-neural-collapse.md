@@ -144,7 +144,7 @@
 <div class="hero">
   <div class="hero-eyebrow">Self-Supervised Learning &middot; Neural Collapse &middot; Few-Shot Theory</div>
   <h1>Directional <em>Neural Collapse</em></h1>
-  <p class="hero-subtitle">Frozen self-supervised features transfer with only a few labels, across many tasks at once — yet their clusters look messy and spread out. The resolution is that only one direction per pair of classes actually matters, and that's the direction self-supervised training quietly tightens.</p>
+  <p class="hero-subtitle">Frozen self-supervised features can transfer from a handful of labels, even when their class clusters look wide, anisotropic, and nothing like classical neural collapse. The trick is beautifully geometric: decisions only care about variance along one line, and SSL quietly suppresses exactly that direction.</p>
   <div class="hero-meta">
     <span>By Tomer Galanti</span>
     <span>&middot;</span>
@@ -152,7 +152,7 @@
     <span>&middot;</span>
     <span>14 min read</span>
     <span>&middot;</span>
-    <span class="paper-badge">&#9670; Luthra, Salunkhe, Galanti — arXiv 2026</span>
+    <span class="paper-badge">&#9670; Luthra, Salunkhe, Galanti — ICML 2026</span>
   </div>
 </div>
 
@@ -160,81 +160,90 @@
 
   <h2>Introduction</h2>
 
-  <p class="lead">A frozen self-supervised encoder is a strange object. It was never shown a single label, yet attach a tiny classifier on top — a handful of examples per class — and it works, often across several unrelated tasks simultaneously. We have known this empirically for years. What we have lacked is a clean geometric reason.</p>
+  <p class="lead">A frozen self-supervised encoder is a strange little miracle. It was never told what a dog, chair, texture, or shape is. Yet after pretraining, attach a nearest-centroid classifier or a tiny linear probe on top, give it only a few labeled examples per class, and it often behaves as if the relevant categories were already drawn in the feature space.</p>
 
-  <p>In supervised networks, the explanation is <em>neural collapse</em>: by the end of training, each class's features concentrate near a single mean, the means spread into a tidy simplex, and the classifier aligns with them. Small within-class scatter relative to between-class separation is exactly what makes a nearest-centroid rule succeed from few examples. The trouble is that self-supervised learning (SSL) has no labels, so nothing pushes the features to collapse globally. Measured the usual way, SSL clusters stay fat and anisotropic — and yet they transfer beautifully. The standard geometry says they shouldn't.</p>
+  <p>For supervised classifiers, we have a satisfying story: <em>neural collapse</em>. Late in training, examples from the same class concentrate near their class mean, different class means spread apart in a nearly symmetric pattern, and the last-layer classifier aligns with those means. This is exactly the geometry a nearest-class-center rule wants. But self-supervised learning (SSL) is not trained with those labels. It has no explicit reason to compress every semantic class into a tiny ball. Measured by the usual global clustering statistics, SSL features remain broad and highly anisotropic — and still transfer beautifully. So the classical ruler is reading the wrong thing.</p>
 
   <div class="callout">
     <strong>The resolution in one line</strong>
-    For a pair of classes, the only within-class variability that can change a decision is the part <em>along the line joining their means</em>. SSL suppresses exactly that — the <em>directional</em> variance — while leaving large, harmless variance in every other direction.
+    For two classes, a nearest-centroid decision only depends on the projection onto the line joining their means. SSL need not collapse a whole class cloud; it only has to shrink the variance in this <em>decision direction</em>. The rest of the cloud can stay fluffy.
   </div>
 
-  <p>The paper builds the whole story on one geometric quantity, <strong>directional CDNV</strong> (decision-axis variance), and shows it governs two good behaviors at once:</p>
+  <p>The paper turns this observation into a compact theory built around one quantity: <strong>directional CDNV</strong>, the class-distance-normalized variance after projecting onto the decision axis. It explains two phenomena that otherwise look unrelated:</p>
 
   <div class="steps">
     <div class="step">
       <div class="step-num red">I</div>
       <div class="step-body">
         <div class="step-title">The anisotropy puzzle.</div>
-        <div class="step-desc">Classical clustering measures average variance over <em>all</em> directions, so they look pessimistic for SSL — even when the features are well organized for decisions.</div>
+        <div class="step-desc">Classical CDNV measures total within-class scatter, so it punishes harmless nuisance directions and badly underestimates SSL transfer geometry.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num teal">II</div>
       <div class="step-body">
         <div class="step-title">Only one direction matters.</div>
-        <div class="step-desc">Directional CDNV keeps only the variance along the class-separating axis and ignores the rest. That is the right target for anisotropic representations.</div>
+        <div class="step-desc">The NCC decision is a one-dimensional margin test after projection onto the line between class means. Directional CDNV measures exactly that margin noise.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num amber">III</div>
       <div class="step-body">
         <div class="step-title">A sharp few-shot bound.</div>
-        <div class="step-desc">Few-shot error is bounded by $4\times$ directional CDNV plus finite-shot corrections — and the constant $4$ is provably optimal.</div>
+        <div class="step-desc">The few-shot NCC error is controlled by $4\tilde V$ plus explicit centroid-estimation and fourth-moment corrections; the leading constant cannot be improved distribution-free.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num purple">IV</div>
       <div class="step-body">
         <div class="step-title">Many tasks, forced orthogonal.</div>
-        <div class="step-desc">If directional CDNV is small for several independent labelings, their decision axes must be nearly orthogonal — so one representation serves many tasks with little interference.</div>
+        <div class="step-desc">Small directional CDNV across independent labelings forces their decision axes apart, giving a geometric reason multitask transfer can coexist inside one frozen encoder.</div>
       </div>
     </div>
   </div>
 
   <div class="paper-note">
-    Based on: A. Luthra, Y. Salunkhe, T. Galanti. &ldquo;Directional Neural Collapse Explains Few-Shot Transfer in Self-Supervised Learning&rdquo;, arXiv:2603.03530, 2026.
+    Based on: A. Luthra, Y. Salunkhe, T. Galanti. &ldquo;Directional Neural Collapse Explains Few-Shot Transfer in Self-Supervised Learning&rdquo;, ICML 2026.
   </div>
 
   <hr>
 
   <h2>Part I — The anisotropy puzzle</h2>
 
-  <p>Start with the standard predictor of few-shot transfer, the <strong>class-distance-normalized variance</strong> (CDNV). For two classes it is the total within-class scatter divided by the squared gap between their means:</p>
+  <p>Start with the classical quantity used to certify few-shot transfer: <strong>class-distance-normalized variance</strong> (CDNV). For two classes, it compares how much the feature clouds spread inside each class to how far apart their means are:</p>
 
   <div class="math-display">
     <div class="math-label">Classical CDNV</div>
     $$V_{ij} = \frac{v_i + v_j}{\|\mu_i-\mu_j\|^2}, \qquad v_c = \mathbb{E}_{x\sim D_c}\,\|f(x)-\mu_c\|^2$$
   </div>
 
-  <p>Small CDNV means tight clusters far apart — ideal for nearest-class-centroid (NCC) and linear probes. In supervised training, neural collapse drives $v_c \to 0$ while the gaps stay large, so CDNV shrinks and the few-shot bound tightens. Clean.</p>
+  <p>Small $V_{ij}$ says that the two clouds are tight compared with the gap $d_{ij}=\|\mu_i-\mu_j\|$. In supervised training, this is the familiar neural-collapse picture: $v_c$ shrinks, the class means remain separated, and a nearest-class-centroid (NCC) classifier becomes almost inevitable. A few labeled examples are enough because the representation has already done the hard geometric work.</p>
 
-  <p>SSL breaks the assumption. With no labels, there is no pressure to shrink <em>total</em> within-class variance. Instead, SSL features are strongly <strong>anisotropic</strong>: lots of variance survives in nuisance directions — think augmentation-induced wobble, lighting, pose — that have nothing to do with telling classes apart. Because $v_c$ sums variance over <em>all</em> directions, classical CDNV stays large and predicts poor transfer. But the features transfer fine. The measure, not the representation, is the problem.</p>
+  <p>SSL breaks this story in the most interesting way. Without labels, there is no obvious force making every semantic class collapse into a small Euclidean ball. Instead, SSL representations are <strong>anisotropic</strong>: they often keep large variance in directions corresponding to style, pose, background, augmentation, or other nuisance factors. Classical CDNV adds all of those directions into $v_c$, so it can remain large even when the representation is perfectly organized for the downstream decision. The transfer succeeds; the scalar summary is too blunt.</p>
 
-  <div class="pull-quote">&ldquo;Only the variance along the line between two class means can flip the decision. Everything orthogonal to it is free.&rdquo;</div>
+  <div class="pull-quote">&ldquo;A class cloud can be huge and still easy to classify — provided it is thin in the one direction where the boundary lives.&rdquo;</div>
 
   <hr>
 
   <h2>Part II — Only one direction matters</h2>
 
-  <p>Fix two classes $i$ and $j$. The nearest-centroid rule compares distances to the two means, which is decided entirely by where a point falls along the <strong>decision axis</strong> — the unit vector pointing from one mean to the other:</p>
+  <p>Fix two classes $i$ and $j$. The NCC rule compares the two squared distances, but after expanding the algebra almost everything cancels. A point from class $i$ is misclassified as $j$ exactly when its projection along the line from $\mu_i$ to $\mu_j$ crosses the midpoint. All orthogonal coordinates vanish from the decision.</p>
+
+  <div class="math-display">
+    <div class="math-label">NCC is a one-dimensional margin test</div>
+    $$\|f(x)-\mu_j\|^2 \le \|f(x)-\mu_i\|^2
+    \quad\Longleftrightarrow\quad
+    u_{ij}^{\top}\!\big(f(x)-\mu_i\big) \ge \frac{\|\mu_i-\mu_j\|}{2}$$
+  </div>
+
+  <p>This identity tells us the right variance to measure. The decision axis is the unit vector pointing from one mean to the other, and directional CDNV is the variance of class $i$ after projecting onto that axis, normalized by the squared gap:</p>
 
   <div class="math-display">
     <div class="math-label">Decision axis &amp; directional CDNV</div>
     $$u_{ij} = \frac{\mu_j-\mu_i}{\|\mu_j-\mu_i\|}, \qquad \tilde V_{ij} = \frac{u_{ij}^\top \Sigma_i\, u_{ij}}{\|\mu_i-\mu_j\|^2}$$
   </div>
 
-  <p>Directional CDNV $\tilde V_{ij}$ keeps only the class-$i$ variance <em>projected onto</em> $u_{ij}$, normalized by the gap. Variance orthogonal to $u_{ij}$ can stretch the cluster as far as it likes; it never moves a point across the midpoint, so it never changes an NCC decision. That is the geometry the figure below makes concrete — and the explorer after it lets you feel it.</p>
+  <p>So $\tilde V_{ij}$ is not merely another clustering score; it is the second moment of the actual margin variable. Variance orthogonal to $u_{ij}$ can make the cluster visually enormous, but it cannot move the point through the NCC boundary. That is the geometry the figure below makes concrete — and the explorer after it lets you feel it.</p>
 
   <div class="diagram-wrap fade-in">
     <svg viewBox="0 0 640 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:640px;display:block;margin:auto">
@@ -260,7 +269,7 @@
       <line x1="320" y1="38" x2="320" y2="212" stroke="#8f2a2a" stroke-width="1" stroke-dasharray="4 4"/>
       <text x="320" y="32" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#8f2a2a" text-anchor="middle">NCC boundary</text>
     </svg>
-    <p class="diagram-caption">Fig. 1 — Anisotropic clusters. Both classes carry large within-class variance, but it lives mostly in the nuisance (vertical) direction. Classical CDNV averages over all directions and looks large; directional CDNV reads only the tight spread along $u$ and is small. Only the latter governs the decision.</p>
+    <p class="diagram-caption">Fig. 1 — Anisotropic clusters. The clouds are tall, so classical CDNV sees a lot of variance. But the boundary is vertical and the decision axis is horizontal; only horizontal spread can cause mistakes. Directional CDNV reads that narrow projection and ignores the harmless height.</p>
   </div>
 
   <div class="explorer fade-in" id="cluster-sim">
@@ -291,27 +300,27 @@
 
   <h2>Part III — A sharp few-shot bound</h2>
 
-  <p>The main theorem turns this picture into a guarantee. With $m$ shots per class and $C'$ classes (for $C'\ge 2$, $m\ge 10$), the average NCC error — which also upper-bounds the linear probe — splits into a clean decision-axis term and a fully explicit finite-shot remainder:</p>
+  <p>The main theorem turns the one-dimensional margin picture into a finite-shot guarantee. Suppose each target class is represented by only $m$ labeled examples, so the class means used by NCC are empirical centroids rather than population means. Then the average few-shot NCC error over $C'$ classes splits into two pieces: the intrinsic decision-axis overlap, and the extra noise introduced by estimating the centroids from few samples.</p>
 
   <div class="math-display">
     <div class="math-label">Theorem 4.1 — finite-shot NCC bound</div>
     $$\mathrm{err}^{\mathrm{NCC}}_{m,\mathcal{C}}(f) \;\le\; \underbrace{\frac{1}{C'}\sum_{i}\sum_{j\ne i}\frac{4\,\tilde V_{ij}}{\big(1+\tfrac{v_j-v_i}{m\,d_{ij}^2}\big)^2}}_{\text{decision-axis term}} \;+\; \underbrace{\frac{1}{C'}\sum_{i}\sum_{j\ne i}\frac{\big(\sqrt{E^1_{ij}}+\sqrt{E^2_{ij}}+\sqrt{E^3_{ij}}\,\big)^2}{\big(1+\tfrac{v_j-v_i}{m\,d_{ij}^2}\big)^2}}_{\text{finite-shot remainder}}$$
   </div>
 
-  <p>The three correction terms are written out in full — no hand-waving placeholder. Each isolates a different finite-sample effect, with $\Theta_{ij}=\big(M_{4,i}+M_{4,j}\big)/d_{ij}^4$ the normalized fourth moment ($M_{4,i}=\mathbb{E}\|f(x)-\mu_i\|^4$):</p>
+  <p>The theorem keeps the correction terms explicit, which is useful because each one corresponds to a real statistical cost. Let $\Theta_{ij}=\big(M_{4,i}+M_{4,j}\big)/d_{ij}^4$ be the normalized fourth moment, with $M_{4,i}=\mathbb{E}\|f(x)-\mu_i\|^4$. Then the finite-shot price decomposes as:</p>
 
   <div class="eq-highlight">
     $$E^{1}_{ij}=\frac{4}{m}\Big(V_{ij}^2+\tfrac14 V_{ij}\Big),\qquad E^{2}_{ij}=\frac{V_{ij}}{m},\qquad E^{3}_{ij}=\frac{\Theta_{ij}+2(m-1)V_{ij}^2}{m^3}$$
   </div>
 
-  <p>Reading them in order of size: $E^{2}_{ij}\asymp V_{ij}/m$ is the <strong>linear centroid-estimation leakage</strong> — the dominant finite-shot cost, the price of locating each class mean from only $m$ samples. $E^{1}_{ij}\asymp V_{ij}^2/m$ is a <strong>quadratic</strong> correction, and $E^{3}_{ij}\asymp \Theta_{ij}/m^3 + V_{ij}^2/m^2$ is the <strong>heavy-tail</strong> term that the fourth moment controls. The two things that make this tighter than prior work: the leading term is <em>directional</em> CDNV $\tilde V_{ij}$, not the coarse classical $V_{ij}$, so it stays informative in the anisotropic SSL regime; and every correction is governed by the global $V_{ij}$ but carries an explicit $1/m$, $1/m$, and $1/m^3$ rate, so all of them vanish as shots grow — leaving the pure directional certificate $p^{\mathrm{NCC}}_{i\to j}\lesssim 4\tilde V_{ij}$ behind.</p>
+  <p>Here is the intuition. $E^{2}_{ij}\asymp V_{ij}/m$ is the ordinary centroid-estimation cost: with few shots, the empirical class mean wiggles. $E^{1}_{ij}$ is a quadratic correction coming from the interaction between class spread and the random centroid. $E^{3}_{ij}$ is the higher-moment term that protects the theorem from heavy tails. The important asymmetry is that the <em>leading</em> term is directional CDNV $\tilde V_{ij}$, while the finite-shot corrections depend on the coarser global CDNV $V_{ij}$ but shrink with $m$. In the many-shot limit, all that remains is the sharp directional certificate.</p>
 
   <div class="finding-green">
     <div class="finding-label">The constant 4 is optimal</div>
-    In the known-centroid limit, a pairwise NCC error is a one-sided tail event along the axis with variance $d_{ij}^2\,\tilde V_{ij}$. Cantelli's inequality gives $p^{\mathrm{NCC}}_{i\to j}\le \tfrac{4\tilde V_{ij}}{1+4\tilde V_{ij}}\le 4\tilde V_{ij}$, and a two-point construction shows no distribution-free second-moment bound can beat the factor $4$. The leading coefficient is not slack in the proof — it is the best possible without extra tail assumptions.
+    In the known-centroid limit, the pairwise NCC error is a one-sided tail event for the scalar random variable $u_{ij}^{\top}(f(x)-\mu_i)$. Its variance is $d_{ij}^2\tilde V_{ij}$ and the mistake threshold is $d_{ij}/2$. Cantelli's inequality gives $p^{\mathrm{NCC}}_{i\to j}\le \tfrac{4\tilde V_{ij}}{1+4\tilde V_{ij}}\le 4\tilde V_{ij}$, and a two-point construction shows that no distribution-free bound using only second moments can improve the leading factor. The $4$ is not proof slack; it is the geometry of one-sided deviation.
   </div>
 
-  <p>The explorer below decomposes the bound. Notice the shape of it: the centroid and tail terms shrink as shots grow, but the floor is set by $4\tilde V$ — the irreducible decision-axis difficulty. More shots help you <em>find</em> the centroids; they cannot fix a representation whose classes genuinely overlap along the axis.</p>
+  <p>The explorer below decomposes the bound. Its moral is simple: more shots help estimate centroids, but they do not repair a representation whose class clouds overlap along the decision axis. The asymptotic floor is $4\tilde V$; the rest is the price of learning the centers from a tiny support set.</p>
 
   <div class="explorer fade-in" id="bound-sim">
     <div class="explorer-header">
@@ -339,20 +348,20 @@
 
   <h2>Part IV — Many tasks at once, forced orthogonal</h2>
 
-  <p>Here is where directional CDNV pays a second dividend. A single SSL representation is asked to support many labelings at once — color, shape, size, texture. The paper makes this concrete with a <strong>factor model</strong>: $M$ independent binary tasks, each carried by its own orthonormal direction $v_\ell$, with the embedding</p>
+  <p>Directional CDNV also explains why one frozen SSL encoder can support many downstream labelings at once. Real images have several semantic factors — object identity, color, texture, pose, shape, size — and a good representation should let us read out many of them without rewriting the whole space. The clean model is a <strong>factor model</strong>: $M$ independent binary tasks, each carried by its own orthonormal direction $v_\ell$, with the embedding</p>
 
   <div class="math-display">
     <div class="math-label">Orthogonal factor model (§4.3)</div>
     $$z \;=\; \sum_{\ell=1}^{M}\frac{\Delta_\ell}{2}\,t^{(\ell)}\,v_\ell \;+\; \eta \;+\; \xi$$
   </div>
 
-  <p>Each task label $t^{(\ell)}\in\{\pm1\}$ shifts $z$ by $\pm\tfrac{\Delta_\ell}{2}$ along its axis $v_\ell$, so the task-$\ell$ centroid gap is $\mu^{(\ell)}_+ - \mu^{(\ell)}_- = \Delta_\ell v_\ell$ and $v_\ell$ <em>is</em> the decision axis. The term $\xi$ is small noise along the axes; $\eta$ is nuisance living in the orthogonal complement of all of them. Plugging in gives the punchline directly: directional CDNV stays small while classical CDNV is unbounded,</p>
+  <p>Each task label $t^{(\ell)}\in\{\pm1\}$ shifts $z$ by $\pm\tfrac{\Delta_\ell}{2}$ along its own axis. Thus the task-$\ell$ centroid gap is $\mu^{(\ell)}_+ - \mu^{(\ell)}_- = \Delta_\ell v_\ell$, so $v_\ell$ is literally the decision axis for that task. The term $\xi$ is small on-axis noise; $\eta$ is nuisance variation in the orthogonal complement. Plugging this into the definitions gives the whole phenomenon in one line: directional CDNV can be tiny while classical CDNV can be arbitrarily large,</p>
 
   <div class="eq-highlight">
     $$\tilde V^{(\ell)} = \frac{v_\ell^\top \mathrm{Cov}(\xi)\,v_\ell}{\Delta_\ell^2}\ \text{(small)}, \qquad V^{(\ell)} \ge \frac{2\,\mathrm{tr}\!\big(\mathrm{Cov}(\eta)\big)}{\Delta_\ell^2}\ \text{(arbitrarily large)}$$
   </div>
 
-  <p>With three tasks this is a box. The eight combinations of $(t^{(1)},t^{(2)},t^{(3)})$ are eight <strong>granular class centers</strong> at the corners of a hyperrectangle whose three edge directions are the decision axes $v_1,v_2,v_3$; samples scatter tightly around each corner along those axes (the big nuisance variance $\eta$ lives in dimensions outside the box, which is why no picture can show it). Drag to rotate:</p>
+  <p>With three tasks, the picture is a box. The eight combinations of $(t^{(1)},t^{(2)},t^{(3)})$ become eight <strong>granular class centers</strong> at the corners of a hyperrectangle. Each edge direction is a task axis; each task cuts the box in half. The large nuisance variance $\eta$ lives outside this displayed subspace, which is exactly why a low-dimensional picture of SSL can look deceptively tidy while the full feature cloud remains broad. Drag to rotate:</p>
 
   <div class="explorer fade-in" id="cube-sim">
     <div class="explorer-header">
@@ -373,7 +382,7 @@
 
   <h3>The orthogonalization theorem, stated</h3>
 
-  <p>The factor model is only a convenient illustration; the structural fact needs none of it. For two <em>independent</em> balanced labelings $y^{(1)}\in[K_1]$ and $y^{(2)}\in[K_2]$, write $u^{(1)}_{aa'}$ for the unit decision axis between classes $a,a'$ of task 1 (gap $d^{(1)}_{aa'}$), and $\tilde V^{(1)}_{aa'}=\max_{c}\,(u^{(1)}_{aa'})^\top\Sigma^{(1)}_c\,u^{(1)}_{aa'}/(d^{(1)}_{aa'})^2$ for its directional CDNV; likewise for task 2.</p>
+  <p>The factor model is only a cartoon; the structural theorem does not assume such a clean generative story. Take two <em>independent</em> balanced labelings $y^{(1)}\in[K_1]$ and $y^{(2)}\in[K_2]$ of the same representation. Let $u^{(1)}_{aa'}$ be the decision axis between two classes of task 1, with gap $d^{(1)}_{aa'}$, and let $\tilde V^{(1)}_{aa'}$ be the worst directional CDNV along that axis; define the analogous quantities for task 2.</p>
 
   <div class="finding">
     <div class="finding-label">Proposition 4.2 — near-orthogonality from small directional CDNV</div>
@@ -383,7 +392,7 @@
     </div>
   </div>
 
-  <p>Read it as a budget. The left side is the cosine of the angle between any decision axis of task 1 and any decision axis of task 2 — their alignment. The right side shrinks like $\sqrt{\tilde V}$: drive the directional CDNV of either task toward zero and the two families of axes are <em>forced</em> apart, because a representation cannot reuse the same tight direction to separate two independent labelings. The off-axis nuisance is free to be enormous; it never enters this inequality. For two balanced <em>binary</em> tasks ($K_1=K_2=2$) with equal gaps the bound reads $|\cos\theta|\le\sqrt{4\tilde V}=2\sqrt{\tilde V}$ — the relation the slider below traces.</p>
+  <p>Read the inequality as an interference budget. The left side is the cosine similarity between a decision axis for task 1 and a decision axis for task 2. The right side shrinks like $\sqrt{\tilde V}$: if either task has very small directional CDNV, the two decision-axis families are forced toward orthogonality. Intuitively, a single direction cannot simultaneously be a low-variance separator for two independent labelings; if it tried, one labeling would inject variance into the other. For balanced binary tasks with equal gaps, the clean form is $|\cos\theta|\le 2\sqrt{\tilde V}$ — the relation the slider below traces.</p>
 
   <div class="explorer fade-in" id="orth-sim">
     <div class="explorer-header">
@@ -405,7 +414,7 @@
 
   <h2>Part V — What SSL actually does</h2>
 
-  <p>The experiments check the whole chain across a broad span of self-supervised paradigms — contrastive (SimCLR), masked prediction (MAE), distillation (DINO-v2), redundancy reduction (VICReg), and multimodal pretraining (CLIP, SigLIP). The findings line up with the theory:</p>
+  <p>The experiments are deliberately broad: contrastive learning (SimCLR), masked prediction (MAE), distillation-style pretraining (DINO-v2), redundancy reduction (VICReg), and multimodal pretraining (CLIP, SigLIP). These objectives are very different, but the same geometric signature appears:</p>
 
   <div class="stat-strip fade-in">
     <div class="stat">
@@ -422,7 +431,7 @@
     </div>
   </div>
 
-  <p>The defining signature is the gap between the two curves: variability <em>along</em> the decision axis falls steadily with training, while substantial variance persists in the orthogonal, task-irrelevant subspace. Suppressing variance along discriminative directions appears to be an implicit, method-agnostic outcome of self-supervision — even though no objective asks for it and total within-class variance stays high.</p>
+  <p>The important observation is not merely that $\tilde V$ is smaller than $V$. It is that training moves them differently. Variability <em>along</em> downstream decision axes falls steadily, while substantial orthogonal variance persists. SSL is not producing classical class collapse; it is producing a subtler, task-compatible collapse of margins. Different objectives arrive at the same geometry, suggesting that directional collapse is a broad consequence of learning invariances rather than an artifact of one loss.</p>
 
   <div class="diagram-wrap fade-in">
     <svg viewBox="0 0 620 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:auto">
@@ -443,15 +452,15 @@
     <p class="diagram-caption">Fig. 6 — Schematic of the reported qualitative finding (not measured values). During SSL pretraining, directional CDNV collapses toward zero while classical CDNV stays high — the gap is the anisotropy that classical clustering measures misread.</p>
   </div>
 
-  <p>The multitask prediction holds up too. On controlled synthetic data with independent visual factors — shape, size, color, pattern — SSL encoders map distinct factors to <strong>approximately orthogonal</strong> directions: the median absolute cosine similarity between decision axes from different labelings decays toward zero over training, staying below the curve the theory predicts.</p>
+  <p>The multitask prediction also survives the empirical check. On controlled synthetic data with independent visual factors — shape, size, color, pattern — SSL encoders map distinct factors to <strong>approximately orthogonal</strong> directions. The median absolute cosine similarity between decision axes from different labelings decays toward zero over training, staying within the qualitative envelope predicted by the theorem. In plain language: the representation learns a little coordinate system for independent factors.</p>
 
   <hr>
 
   <h2>What this does and does not say</h2>
 
-  <p>The claim is geometric and specific. It does not say SSL induces full neural collapse — it explicitly does not, and the persistence of large orthogonal variance is the whole point. It does not certify a particular accuracy number for a particular encoder; it identifies the one quantity that <em>controls</em> few-shot error and proves the dependence is sharp. The bound is distribution-free at second order, which is why the constant $4$ is unimprovable without assuming light tails — and the fourth-moment term is there precisely to handle the heavy ones.</p>
+  <p>The claim is geometric and specific. It does not say SSL induces full neural collapse; it says something more delicate and more useful. The total class cloud may remain large, but the projection that controls the decision becomes small. The theorem also does not promise a precise accuracy number for every encoder and every dataset. It identifies the right control variable, proves a sharp dependence in a distribution-free setting, and separates representation error from finite-shot centroid-estimation error.</p>
 
-  <p>It also rests on the NCC / linear-probe family of downstream rules and on having enough shots to estimate centroids; the finite-shot terms are honest about that cost. And the multitask orthogonality result is proved for independent balanced binary labelings, a clean idealization of the messier real-world case. What survives all of this is a reframing: stop averaging variance over directions that decisions ignore, and a frozen SSL encoder stops looking mysterious.</p>
+  <p>The scope matters. The analysis is centered on NCC and linear-probe-style downstream rules, so it is a theory of geometry seen by simple heads, not a universal theorem about every possible adaptation procedure. The finite-shot terms are honest about the fact that support-set centroids must be estimated. And the orthogonality theorem assumes independent balanced labelings, a clean abstraction of real visual factors. Still, the message survives these caveats: stop averaging over directions the decision ignores, and SSL transfer stops looking mysterious.</p>
 
   <div class="steps">
     <div class="step">
@@ -472,16 +481,16 @@
 
   <div class="takeaway">
     <h3>Takeaway</h3>
-    <p>Frozen self-supervised features transfer from a few labels because the variance that <strong>matters for decisions</strong> collapses, even though total within-class variance does not.</p>
-    <p><strong>Directional CDNV is the right ruler.</strong> Project within-class variance onto the line between two class means; ignore everything orthogonal. That single number governs few-shot error.</p>
-    <p><strong>The bound is sharp.</strong> Few-shot NCC error is at most $4\,\tilde V$ plus finite-shot corrections that vanish with more shots, and the constant $4$ is provably optimal under second-moment information.</p>
+    <p>Frozen self-supervised features transfer from a few labels because the variance that <strong>matters for decisions</strong> collapses, even when the full class cloud remains broad and anisotropic.</p>
+    <p><strong>Directional CDNV is the right ruler.</strong> Project within-class variance onto the line between two class means. That projection is the NCC margin noise; everything orthogonal is mostly scenery.</p>
+    <p><strong>The bound is sharp.</strong> In the known-centroid limit, few-shot NCC error is controlled by $4\tilde V$, and no distribution-free second-moment argument can improve that leading constant.</p>
     <p><strong>Orthogonality comes for free.</strong> When directional CDNV is small across independent tasks, the decision axes are forced apart, letting one frozen encoder serve many tasks at once. Across SimCLR, MAE, DINO-v2, VICReg, CLIP, and SigLIP, this directional collapse shows up while classical CDNV stays large — anisotropy is the rule, and it is exactly what makes SSL transfer.</p>
   </div>
 
 </article>
 
 <div class="post-footer">
-  <p>Published on <a href="https://dlfundamentals.github.io/blog/">Theory/Simplified</a> &nbsp;&middot;&nbsp; Based on Luthra, Salunkhe &amp; Galanti — arXiv:2603.03530, 2026</p>
+  <p>Published on <a href="https://dlfundamentals.github.io/blog/">Theory/Simplified</a> &nbsp;&middot;&nbsp; Based on Luthra, Salunkhe &amp; Galanti — ICML 2026</p>
 </div>
 
 </div>
