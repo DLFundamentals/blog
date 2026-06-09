@@ -255,7 +255,7 @@
       <!-- nuisance direction arrow -->
       <line x1="552" y1="55" x2="552" y2="195" stroke="#a09880" stroke-width="1.4"/>
       <path d="M552,50 l-4,8 l8,0 Z" fill="#a09880"/><path d="M552,200 l-4,-8 l8,0 Z" fill="#a09880"/>
-      <text x="566" y="128" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7060" transform="rotate(90 566 128)" text-anchor="middle">nuisance direction — large variance, harmless</text>
+      <text x="566" y="128" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7060" transform="rotate(90 566 128)" text-anchor="middle">nuisance direction</text>
       <!-- midpoint boundary -->
       <line x1="320" y1="38" x2="320" y2="212" stroke="#8f2a2a" stroke-width="1" stroke-dasharray="4 4"/>
       <text x="320" y="32" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#8f2a2a" text-anchor="middle">NCC boundary</text>
