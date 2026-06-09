@@ -99,7 +99,7 @@
 <div class="hero">
   <div class="hero-eyebrow">Pre-Training &middot; Few-Shot Learning &middot; Neural Collapse</div>
   <h1>Why Pretrained Classifiers Work So Well in <em>Few-Shot Learning</em></h1>
-  <p class="hero-subtitle">A geometric explanation for why ordinary supervised pretraining transfers remarkably well to new classes with only a few labeled examples — and the precise quantity that controls when this works.</p>
+  <p class="hero-subtitle">A deeper geometric explanation for why supervised pretraining can make new classes learnable from only a few labels: neural collapse shrinks class clouds, spreads their centers, and leaves behind a feature space where nearest-center classification becomes statistically cheap.</p>
   <div class="hero-meta">
     <span>By Tomer Galanti</span>
     <span>&middot;</span>
@@ -107,105 +107,115 @@
     <span>&middot;</span>
     <span>14 min read</span>
     <span>&middot;</span>
-    <span class="paper-badge">&#9670; Galanti, György, Hutter — arXiv 2022</span>
+    <span class="paper-badge">&#9670; Galanti, György, Hutter — JMLR 2026</span>
   </div>
 </div>
+
 
 <article>
 
   <h2>Introduction</h2>
 
-  <p class="lead">Deep networks trained on large classification benchmarks such as ImageNet often transfer surprisingly well to new tasks. One trains on a large source dataset, freezes the learned representation, fits a simple head on only a handful of labeled examples from new classes, and the result often works remarkably well.</p>
+  <p class="lead">Few-shot transfer has a slightly magical flavor. We train a classifier on a large source problem — say, many ImageNet-like classes — throw away the last layer, freeze the representation, and then classify entirely new classes from only one or five labeled examples. In practice, this simple recipe is often shockingly strong.</p>
 
-  <p>From a theoretical perspective, however, this is not obvious. A classifier trained on ImageNet is optimized to separate the ImageNet classes. Why should the same representation make it easy to separate <strong>new</strong> classes that never appeared during training? And why should only a few labeled examples be enough?</p>
+  <p>The puzzle is mathematical. The source classifier was never asked to separate the target classes. It only saw its own labels. So why should its penultimate layer arrange <strong>unseen</strong> classes in a way that a nearest-center classifier can recover from a handful of samples?</p>
+
+  <p>The answer in the paper is not that pretraining learns every future task. It is subtler and prettier: supervised pretraining can learn a <em>geometry of classes</em>. If features from the same class concentrate tightly, and class means are far apart, then the class identity is almost encoded by the location of its center. Few-shot learning then becomes less like learning a new classifier from scratch and more like placing a few pins on an already organized map.</p>
 
   <div class="callout">
     <strong>The main idea</strong>
-    Few-shot transfer is not mysterious once the right geometric quantity is identified. What matters is not just that source classes are separated, but that their within-class variability is small relative to the distance between class means. If this geometry generalizes from source samples to source classes, and from source classes to unseen target classes, then few-shot learning becomes possible.
+    A pretrained classifier transfers well when its feature map makes classes look like small, well-separated clouds. The key quantity is <em>class-distance normalized variance</em> (CDNV): within-class spread divided by squared distance to another class mean. If this quantity is small on many source classes, and those classes are representative of a larger population, then nearest-center classification can succeed on new classes with very few examples.
   </div>
 
-  <p>The argument has three parts:</p>
+  <p>The mathematical story has four moving parts:</p>
 
   <div class="steps">
     <div class="step">
       <div class="step-num" style="background:#5a4ab8;">1</div>
       <div class="step-body">
-        <div class="step-title">Classes as random draws.</div>
-        <div class="step-desc">Model source and target classes as i.i.d. draws from a common population $\mathcal{D}$, so transfer to unseen classes becomes a well-posed question.</div>
+        <div class="step-title">Treat classes as random objects.</div>
+        <div class="step-desc">Source and target classes are modeled as independent draws from a common population $\mathcal{D}$ of class-conditional distributions.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num" style="background:var(--teal);">2</div>
       <div class="step-body">
-        <div class="step-title">Measure CDNV.</div>
-        <div class="step-desc">The class-distance normalized variance compares within-class spread to between-class separation — the single quantity that controls transfer.</div>
+        <div class="step-title">Use nearest centers as the test-time rule.</div>
+        <div class="step-desc">At transfer time, freeze the representation and estimate each new class center from only $n$ examples.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-body">
-        <div class="step-title">Double generalization.</div>
-        <div class="step-desc">Small source CDNV generalizes twice: from samples to source distributions, then from source classes to unseen target classes.</div>
+        <div class="step-title">Relate few-shot error to CDNV.</div>
+        <div class="step-desc">A soft-margin NCC loss turns geometric collapse into a controllable classification error.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--amber);">4</div>
+      <div class="step-body">
+        <div class="step-title">Generalize twice.</div>
+        <div class="step-desc">The source geometry must generalize from finite samples to source distributions, and then from source classes to unseen target classes.</div>
       </div>
     </div>
   </div>
 
   <div class="paper-note">
-    Based on: T. Galanti, A. György, M. Hutter. <a href="https://arxiv.org/abs/2212.12532">&ldquo;Generalization Bounds for Few-Shot Transfer Learning with Pretrained Classifiers&rdquo;</a>, arXiv 2022.
+    Based on: T. Galanti, A. György, M. Hutter. <a href="https://arxiv.org/abs/2212.12532">&ldquo;Generalization Bounds for Few-Shot Transfer Learning with Pretrained Classifiers&rdquo;</a>, JMLR 2026 / arXiv 2022.
   </div>
 
   <hr>
 
   <h2>Interactive — Neural collapse and transfer in 3D</h2>
 
-  <p>The visualization below shows neural collapse unfolding in a 3D feature space. Drag the <strong>epoch slider</strong> to watch source-class features (filled dots) tighten into clusters while target-class features (rings) inherit the same geometry. Drag the viewport to rotate.</p>
+  <p>The visualization below is a toy version of the paper's geometry. Drag the <strong>epoch slider</strong>. The filled source points tighten into clusters, while the class means spread apart. The target points, shown as rings, were never used during pretraining — but in this cartoon they inherit the same geometry. Drag the viewport to rotate.</p>
 
   <div class="nc3d-wrap fade-in" id="nc3d-wrap">
-    <div class="nc3d-legend">
-      <span><span class="nc3d-dot" style="background:#7F77DD"></span><span style="color:#7F77DD">src 1</span></span>
-      <span><span class="nc3d-dot" style="background:#1D9E75"></span><span style="color:#1D9E75">src 2</span></span>
-      <span><span class="nc3d-dot" style="background:#D85A30"></span><span style="color:#D85A30">src 3</span></span>
-      <span><span class="nc3d-dot" style="background:#378ADD"></span><span style="color:#378ADD">src 4</span></span>
-      <span><span class="nc3d-ring" style="border-color:#D4537E"></span><span style="color:#D4537E">tgt A</span></span>
-      <span><span class="nc3d-ring" style="border-color:#BA7517"></span><span style="color:#BA7517">tgt B</span></span>
-      <span><span class="nc3d-ring" style="border-color:#639922"></span><span style="color:#639922">tgt C</span></span>
-    </div>
-    <div class="nc3d-info">
-      <div style="font-family:var(--mono);font-size:9.5px;color:#6a6460;letter-spacing:.04em;">Drag to rotate</div>
-      <div id="nc3d-stage" style="font-family:var(--mono);font-size:10.5px;color:#d4a820;font-weight:500;margin-top:3px;letter-spacing:.02em;">Pre-training: features scattered</div>
-    </div>
-    <canvas id="nc3d-canvas"></canvas>
-    <div class="nc3d-hud">
-      <div class="nc3d-stats">
-        <div class="nc3d-st"><div class="nc3d-st-l">Source CDNV</div><div class="nc3d-st-v" id="nc3d-scdnv">—</div></div>
-        <div class="nc3d-st"><div class="nc3d-st-l">Target CDNV</div><div class="nc3d-st-v" id="nc3d-tcdnv">—</div></div>
-        <div class="nc3d-st"><div class="nc3d-st-l">NCC accuracy</div><div class="nc3d-st-v" id="nc3d-acc">—</div></div>
-        <div class="nc3d-st"><div class="nc3d-st-l">Min class sep.</div><div class="nc3d-st-v" id="nc3d-sep">—</div></div>
-      </div>
-      <div class="nc3d-slider-row">
-        <span style="font-family:var(--mono);font-size:9.5px;color:#6a6460;">Epoch 0</span>
-        <input type="range" min="0" max="200" value="0" step="1" id="nc3d-epoch">
-        <span style="font-family:var(--mono);font-size:9.5px;color:#6a6460;">200</span>
-        <span id="nc3d-epval" style="font-family:var(--mono);font-size:11px;color:#d4a820;min-width:28px;text-align:right;">0</span>
-      </div>
-    </div>
-  </div>
+<div class="nc3d-legend">
+<span><span class="nc3d-dot" style="background:#7F77DD"></span><span style="color:#7F77DD">src 1</span></span>
+<span><span class="nc3d-dot" style="background:#1D9E75"></span><span style="color:#1D9E75">src 2</span></span>
+<span><span class="nc3d-dot" style="background:#D85A30"></span><span style="color:#D85A30">src 3</span></span>
+<span><span class="nc3d-dot" style="background:#378ADD"></span><span style="color:#378ADD">src 4</span></span>
+<span><span class="nc3d-ring" style="border-color:#D4537E"></span><span style="color:#D4537E">tgt A</span></span>
+<span><span class="nc3d-ring" style="border-color:#BA7517"></span><span style="color:#BA7517">tgt B</span></span>
+<span><span class="nc3d-ring" style="border-color:#639922"></span><span style="color:#639922">tgt C</span></span>
+</div>
+<div class="nc3d-info">
+<div style="font-family:var(--mono);font-size:9.5px;color:#6a6460;letter-spacing:.04em;">Drag to rotate</div>
+<div id="nc3d-stage" style="font-family:var(--mono);font-size:10.5px;color:#d4a820;font-weight:500;margin-top:3px;letter-spacing:.02em;">Pre-training: features scattered</div>
+</div>
+<canvas id="nc3d-canvas"></canvas>
+<div class="nc3d-hud">
+<div class="nc3d-stats">
+<div class="nc3d-st"><div class="nc3d-st-l">Source CDNV</div><div class="nc3d-st-v" id="nc3d-scdnv">—</div></div>
+<div class="nc3d-st"><div class="nc3d-st-l">Target CDNV</div><div class="nc3d-st-v" id="nc3d-tcdnv">—</div></div>
+<div class="nc3d-st"><div class="nc3d-st-l">NCC accuracy</div><div class="nc3d-st-v" id="nc3d-acc">—</div></div>
+<div class="nc3d-st"><div class="nc3d-st-l">Min class sep.</div><div class="nc3d-st-v" id="nc3d-sep">—</div></div>
+</div>
+<div class="nc3d-slider-row">
+<span style="font-family:var(--mono);font-size:9.5px;color:#6a6460;">Epoch 0</span>
+<input id="nc3d-epoch" max="200" min="0" step="1" type="range" value="0"/>
+<span style="font-family:var(--mono);font-size:9.5px;color:#6a6460;">200</span>
+<span id="nc3d-epval" style="font-family:var(--mono);font-size:11px;color:#d4a820;min-width:28px;text-align:right;">0</span>
+</div>
+</div>
+</div>
 
-  <p class="figcaption"><strong>Fig. 1.</strong> 3D feature space during training. Source classes (filled dots, 4 classes × 18 samples) collapse toward an equiangular tight frame as the epoch slider advances. Target classes (rings, 3 classes × 5 samples) are unseen during training but inherit the same favorable geometry. CDNV drops as within-class variance shrinks and class means separate. At epoch ~170+, nearest-center classification achieves 100% on target classes.</p>
+  <p class="figcaption"><strong>Fig. 1.</strong> 3D feature space during training. Source classes (filled dots, 4 classes × 18 samples) collapse toward an equiangular tight frame as the epoch slider advances. Target classes (rings, 3 classes × 5 samples) are unseen during training but inherit the same favorable geometry. CDNV drops because within-class variance shrinks while class means separate. At epoch ~170+, nearest-center classification succeeds from only a few target examples.</p>
 
   <div class="steps">
     <div class="step">
       <div class="step-num" style="background:#5a4ab8;">→</div>
       <div class="step-body">
-        <div class="step-title">Watch the collapse.</div>
-        <div class="step-desc">Drag the epoch slider from 0 to ~120. Source features tighten into distinct clusters (NC1). Then from ~120 to 200, class means spread toward the vertices of a regular tetrahedron (NC2).</div>
+        <div class="step-title">Watch the numerator shrink.</div>
+        <div class="step-desc">Early in training, points from the same class scatter broadly. As NC1 emerges, each class becomes a tight little cloud around its feature mean.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num" style="background:var(--teal);">→</div>
       <div class="step-body">
-        <div class="step-title">Watch the transfer.</div>
-        <div class="step-desc">Target classes (rings) were never seen during training — yet they cluster and separate in lockstep with source classes. By epoch ~170, nearest-center classification hits 100% from just 5 examples per target class.</div>
+        <div class="step-title">Watch the denominator grow.</div>
+        <div class="step-desc">Later, class means spread toward a maximally separated configuration. Transfer improves when both effects happen together: small clouds, large gaps.</div>
       </div>
     </div>
   </div>
@@ -216,22 +226,34 @@
 
   <h3>Classes as random objects</h3>
 
-  <p>To reason about transfer to new classes, we need a model relating source and target tasks. The key step is to treat classes themselves as random objects. There is an unknown distribution $\mathcal{D}$ over a collection $\mathcal{E}$ of class-conditional distributions. Source classes are i.i.d. draws $\tilde{P}_1, \dots, \tilde{P}_\ell \sim \mathcal{D}$, and target classes are new, independent draws $P_1, \dots, P_k \sim \mathcal{D}$.</p>
-
-  <h3>Feature means and within-class variance</h3>
-
-  <p>Let $f: \mathcal{X} \to \mathbb{R}^p$ be the learned feature map. For any class-conditional distribution $Q$:</p>
+  <p>To make transfer a theorem rather than a slogan, the paper models <em>classes themselves</em> as random objects. There is an unknown distribution $\mathcal{D}$ over class-conditional distributions. A source task is formed by drawing $\tilde P_1,\dots,\tilde P_\ell \sim \mathcal{D}$. A target task is formed later by drawing fresh classes $P_1,\dots,P_k \sim \mathcal{D}$, independently of the source draw.</p>
 
   <div class="math-display">
-    <div class="math-label">Population feature mean and variance</div>
-    $$\mu_f(Q) := \mathbb{E}_{x \sim Q}[f(x)], \qquad \text{Var}_f(Q) := \mathbb{E}_{x \sim Q}\|f(x) - \mu_f(Q)\|^2$$
+    <div class="math-label">Source and target classes</div>
+    $$\tilde P_1,\dots,\tilde P_\ell \sim \mathcal{D}, \qquad P_1,\dots,P_k \sim \mathcal{D}$$
   </div>
 
-  <p>At transfer time, we freeze $f$. For each new target class $P_c$, we observe only a few labeled examples $S_c \sim P_c^n$ and classify by <strong>nearest empirical class center</strong>:</p>
+  <p>This assumption is doing real work. Without some shared population of classes, there is no reason for a representation learned on the source task to help on the target task. But the assumption is also modest: $\mathcal{D}$ is not known to the algorithm and does not need a parametric form. It is a mathematical way to say that the source labels are a sample from the kind of classes we hope to see again.</p>
+
+  <h3>What gets learned, and what gets adapted</h3>
+
+  <p>Pretraining learns a feature map $f:\mathcal{X}\to\mathbb{R}^p$. At transfer time, $f$ is frozen. For each new class $P_c$, we only get $n$ examples $S_c\sim P_c^n$, and we classify by the nearest empirical class center:</p>
 
   <div class="eq-highlight">
-    $$h(x) = \arg\min_{c \in [k]} \|f(x) - \mu_f(S_c)\|$$
+    $$h_{f,S}^{\mathrm{NCC}}(x)=\arg\min_{c\in[k]}\|f(x)-\mu_f(S_c)\|$$
   </div>
+
+  <p>The object of interest is not the training error on one lucky target task. It is the expected few-shot error over a random future task and over the small random support set used to estimate the centers:</p>
+
+  <div class="math-display">
+    <div class="math-label">Transfer risk</div>
+    $$\mathcal{L}_\mathcal{D}(f)=
+    \mathbb{E}_{P_1,\dots,P_k\sim\mathcal{D}}
+    \mathbb{E}_{S_c\sim P_c^n}
+    \big[L_P(h_{f,S}^{\mathrm{NCC}})\big]$$
+  </div>
+
+  <p>This is the right quantity for foundation models. The feature map is trained before the target classes are known, and the target sample size $n$ may remain tiny. The theorem asks whether $\mathcal{L}_\mathcal{D}(f)$ can still go to zero as the source problem becomes rich: many source classes $\ell$, many samples per source class $m$, and increasingly collapsed feature geometry.</p>
 
   <hr>
 
@@ -239,91 +261,206 @@
 
   <h3>Class-distance normalized variance (CDNV)</h3>
 
-  <p>For two class-conditionals $Q_i$ and $Q_j$, define:</p>
+  <p>For a class-conditional distribution $Q$, write its feature mean and feature variance as</p>
 
-  <div class="eq-highlight">
-    $$V_f(Q_i, Q_j) = \frac{\text{Var}_f(Q_i)}{\|\mu_f(Q_i) - \mu_f(Q_j)\|^2}$$
+  <div class="math-display">
+    <div class="math-label">Feature mean and feature variance</div>
+    $$\mu_f(Q)=\mathbb{E}_{x\sim Q}[f(x)], \qquad
+    \operatorname{Var}_f(Q)=\mathbb{E}_{x\sim Q}\|f(x)-\mu_f(Q)\|^2.$$
   </div>
 
-  <p>This compares within-class spread to between-class separation in a single scale-free number. Small CDNV is the favorable regime — same-class samples stay concentrated while different class means stay well separated.</p>
+  <p>For two classes $Q_i$ and $Q_j$, the paper's basic geometric quantity is</p>
 
-  <div class="pull-quote">&ldquo;CDNV is improved by neural collapse from both sides: NC1 shrinks the numerator, NC2 expands the denominator.&rdquo;</div>
+  <div class="eq-highlight">
+    $$V_f(Q_i,Q_j)=
+    \frac{\operatorname{Var}_f(Q_i)}{\|\mu_f(Q_i)-\mu_f(Q_j)\|^2}.$$
+  </div>
+
+  <p>CDNV is deliberately local and pairwise. The numerator asks: how fuzzy is class $i$ in feature space? The denominator asks: how far is its center from class $j$? The ratio is scale-free, which is important because multiplying all features by a constant should not make transfer magically easier.</p>
+
+  <div class="pull-quote">&ldquo;Neural collapse helps twice: NC1 shrinks the clouds; NC2 pulls the class means apart.&rdquo;</div>
+
+  <p>The ratio is asymmetric because it measures mistakes made by samples from $Q_i$ when competing against the center of $Q_j$. In the final bound, the average is taken over ordered pairs, so both directions matter. This asymmetry is not a cosmetic detail — it is what lets the proof control the pairwise nearest-center error more directly.</p>
+
+  <h3>The bridge: a soft-margin nearest-center loss</h3>
+
+  <p>To connect geometry to classification, compare the distance from a point $x\sim Q_i$ to its own center with the distance to the competing center. Define the nearest-center margin</p>
+
+  <div class="math-display">
+    <div class="math-label">Pairwise NCC margin</div>
+    $$r_{ij}(x)=\|f(x)-\mu_f(Q_i)\|-\|f(x)-\mu_f(Q_j)\|.$$
+  </div>
+
+  <p>If $r_{ij}(x)<0$, the point is closer to its own class center. If $r_{ij}(x)>0$, it is closer to the wrong center. The paper uses a softened version of this mistake indicator, with margin parameter $\Delta>0$:</p>
+
+  <div class="math-display">
+    <div class="math-label">Soft-margin loss</div>
+    $$\ell_\Delta(r)=
+    \begin{cases}
+    0, & r<-\Delta,\\
+    1+r/\Delta, & -\Delta\le r\le 0,\\
+    1, & r>0.
+    \end{cases}$$
+  </div>
+
+  <p>This little loss is the proof's workhorse. It upper-bounds the actual nearest-center mistake, lower-bounds a stricter margin mistake, and is $1/\Delta$-Lipschitz. That last property is what allows concentration tools to compare finite source samples with the underlying class distributions.</p>
+
+  <div class="eq-highlight">
+    $$\mathbf{1}\{r>0\}\le \ell_\Delta(r)\le \mathbf{1}\{r>-\Delta\}, \qquad
+    \ell_\Delta \text{ is } \frac1\Delta\text{-Lipschitz}.$$
+  </div>
+
+  <p>Now CDNV enters through a clean geometric implication: when the clouds are small relative to their separation, the soft-margin nearest-center loss is small. Very roughly, the paper proves bounds of the form</p>
+
+  <div class="eq-highlight">
+    $$\ell_\Delta(f;Q_i,Q_j)
+    \;\lesssim\;
+    \left(1+\frac1n\right)V_f(Q_i,Q_j)
+    +\frac1n\,V_f(Q_j,Q_i),$$
+  </div>
+
+  <p>provided the margin scale $\Delta$ is chosen below a constant fraction of the class-mean distance. The exact statement has constants and a symmetric center-estimation term, but the intuition is simple: a few-shot center is noisy, yet if the class cloud is tiny compared to the gap between class means, even a noisy center is enough.</p>
 
   <h3>The double generalization</h3>
 
-  <p>The stepper below illustrates how CDNV drives the two-stage generalization argument:</p>
+  <p>The stepper below illustrates the two-level argument. First, the empirical source geometry must reflect the true geometry of the source class-conditionals. Second, because the source classes are themselves random draws from $\mathcal{D}$, the average geometry of many source classes estimates the average geometry of new target classes.</p>
 
   <div class="gen-stepper fade-in">
-    <div class="gen-tabs">
-      <button class="gen-tab active" onclick="showGen(0)">Step 1 — Empirical clustering</button>
-      <button class="gen-tab" onclick="showGen(1)">Step 2 — Samples → distributions</button>
-      <button class="gen-tab" onclick="showGen(2)">Step 3 — Source → target</button>
-    </div>
-    <div class="gen-panel">
-      <canvas id="gen-canvas" style="width:100%;height:250px;"></canvas>
-      <div class="gen-desc" id="gen-desc"></div>
-    </div>
-  </div>
+<div class="gen-tabs">
+<button class="gen-tab active" onclick="showGen(0)">Step 1 — Empirical clustering</button>
+<button class="gen-tab" onclick="showGen(1)">Step 2 — Samples → distributions</button>
+<button class="gen-tab" onclick="showGen(2)">Step 3 — Source → target</button>
+</div>
+<div class="gen-panel">
+<canvas id="gen-canvas" style="width:100%;height:250px;"></canvas>
+<div class="gen-desc" id="gen-desc"></div>
+</div>
+</div>
 
-  <p class="figcaption"><strong>Fig. 2.</strong> The double generalization in 2D. Step 1: Source training points cluster around empirical class centers. Step 2: With enough samples, this reflects the true class-conditional distributions (confidence ellipses). Step 3: Because classes are i.i.d. from the same population, unseen target classes inherit the same favorable geometry — and a few labeled examples suffice for nearest-center classification.</p>
+  <p class="figcaption"><strong>Fig. 2.</strong> The double generalization in 2D. Step 1: empirical source points cluster around empirical centers. Step 2: with enough samples per source class, this reflects the source class-conditional distributions. Step 3: with enough source classes, the average pairwise geometry reflects the population $\mathcal{D}$, so unseen target classes inherit the same favorable nearest-center behavior.</p>
 
   <hr>
 
   <h2>Part III — The transfer bound</h2>
 
-  <h3>The main result</h3>
+  <h3>The theorem in one line</h3>
 
-  <p>The transfer error of a pretrained feature map $f$ is controlled by the average empirical CDNV on source classes, together with terms quantifying the two generalization steps:</p>
+  <p>Suppressing universal constants and logarithmic factors, the CDNV version of the transfer bound says that with high probability over the source classes and source samples,</p>
 
   <div class="eq-highlight">
-    $$\mathcal{L}_{\mathcal{D}}(f) \;\lesssim\; k\,\text{Avg}_{i \neq j}\, V_f(\tilde{S}_i, \tilde{S}_j) \;+\; \frac{k\,\mathcal{C}(f)}{\min_{i \neq j}\|\mu_f(\tilde{S}_i) - \mu_f(\tilde{S}_j)\|}\left(\frac{n^2}{\sqrt{m}} + \frac{1}{\sqrt{\ell}}\right)$$
+    $$\mathcal{L}_\mathcal{D}(f)
+    \;\lesssim\;
+    (k-1)\operatorname{Avg}_{i\ne j}V_f(\tilde S_i,\tilde S_j)
+    +
+    \frac{(k-1)\alpha_f B}{\Lambda}
+    \,\widetilde{O}\!\left(\frac{n^2}{\sqrt m}+\frac1{\sqrt\ell}\right).$$
   </div>
+
+  <p>Here $k$ is the number of target classes, $n$ is the number of target examples per class, $m$ is the number of source examples per class, and $\ell$ is the number of source classes. The quantity $\alpha_f$ is a norm/complexity proxy for the network, $B$ bounds the input radius, and</p>
+
+  <div class="math-display">
+    <div class="math-label">Minimum empirical source separation</div>
+    $$\Lambda=\min_{i\ne j}\|\mu_f(\tilde S_i)-\mu_f(\tilde S_j)\|.$$
+  </div>
+
+  <p>This display is not the full theorem — the paper keeps the constants, the confidence parameter, the margin scale, and several logarithms. But this is the mathematical shape that matters for intuition.</p>
 
   <h3>What each term means</h3>
 
   <div class="finding">
-    <div class="finding-label">Geometric term — $k \cdot \text{Avg}\, V_f$</div>
-    Small when source training classes are tightly clustered relative to their separation. This is the observable signature of favorable few-shot transfer — visible in the 3D visualization as CDNV drops.
+    <div class="finding-label">Empirical CDNV — the observable geometric term</div>
+    This is the term pretraining directly improves. Small source CDNV says that source training classes are already arranged as tight, separated clouds. In the neural-collapse picture, this is the measurable certificate that the representation has become few-shot-friendly.
   </div>
 
   <div class="finding">
-    <div class="finding-label">$1/\sqrt{m}$ — first generalization: samples → distributions</div>
-    More samples per source class means empirical clustering better reflects the true geometry of the underlying source-class distributions.
+    <div class="finding-label">$1/\sqrt{m}$ — samples → distributions</div>
+    More examples per source class make empirical class means and variances reliable estimates of the true source class-conditionals. This is the usual sample-level concentration step.
   </div>
 
   <div class="finding">
-    <div class="finding-label">$1/\sqrt{\ell}$ — second generalization: source → target classes</div>
-    More source classes means the average geometry better reflects the full population $\mathcal{D}$, letting the argument extend to unseen target classes.
+    <div class="finding-label">$1/\sqrt{\ell}$ — source classes → target classes</div>
+    More source classes improve the estimate of the class population $\mathcal{D}$. This term cannot be replaced by more samples per class: if every class had identical duplicate images, increasing $m$ would not teach us about new classes.
   </div>
 
   <div class="finding">
-    <div class="finding-label">Min class distance</div>
-    The minimum pairwise distance between source class means captures worst-case separation. Neural collapse pushes this up — the equiangular tight frame is the maximal configuration.
+    <div class="finding-label">$\Lambda$ — the price of small margins</div>
+    If two empirical class means are too close, nearest-center classification is fragile. Neural collapse helps by pushing class means toward a well-spread configuration, effectively increasing the margin scale available to the theorem.
   </div>
 
-  <p>The key point is that the bound remains informative even when $n$ is small. The downstream learner doesn't need to discover complicated structure from limited target data. That structure was already built into the feature space during pretraining.</p>
+  <div class="finding">
+    <div class="finding-label">$\alpha_f B$ — complexity and scale</div>
+    The representation cannot wiggle arbitrarily. The bound pays for the network norm and the input radius because concentration for composed neural features depends on the size of the function class.
+  </div>
+
+  <h3>Why this is genuinely few-shot</h3>
+
+  <p>The striking part is the role of $n$. Ordinary learning guarantees usually need the number of target samples to grow. Here, $n$ can remain a small constant. If the average empirical CDNV goes to zero during pretraining, and if $m$ and $\ell$ grow so the two generalization terms vanish, the transfer risk can converge to zero even though the target task still supplies only a few examples per class.</p>
+
+  <div class="pull-quote">&ldquo;The target examples do not learn the representation. They only locate the new class centers inside a representation that was already organized.&rdquo;</div>
+
+  <p>The somewhat awkward $n^2$ dependence in the simplified bound is not the philosophical point. The paper explicitly treats it as a proof artifact and focuses on the small-$n$ regime. The important message is that few-shot transfer is possible because the hard statistical work has moved upstream into source pretraining.</p>
+
+  <h3>What the proof is doing, without the proof</h3>
+
+  <p>At a high level, the proof is a chain of reductions:</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num" style="background:#5a4ab8;">I</div>
+      <div class="step-body">
+        <div class="step-title">Reduce $k$-class error to pairwise errors.</div>
+        <div class="step-desc">A target mistake means some wrong class center beats the correct one, so a union bound introduces the factor $(k-1)$.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--teal);">II</div>
+      <div class="step-body">
+        <div class="step-title">Compare target pairs to source pairs.</div>
+        <div class="step-desc">Because source and target classes are i.i.d. from $\mathcal{D}$, average pairwise behavior over many source classes estimates future pairwise behavior.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">III</div>
+      <div class="step-body">
+        <div class="step-title">Estimate source-pair losses from finite samples.</div>
+        <div class="step-desc">The soft-margin loss is Lipschitz, so Rademacher-style concentration controls the gap between empirical and population pairwise losses.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--amber);">IV</div>
+      <div class="step-body">
+        <div class="step-title">Upper-bound soft-margin loss by CDNV.</div>
+        <div class="step-desc">This final geometric step converts neural collapse into a concrete few-shot transfer guarantee.</div>
+      </div>
+    </div>
+  </div>
+
+  <p>That is the whole mechanism. The theorem does not require the target learner to discover a complicated classifier. It only requires the target support set to estimate a few class centers in a geometry where centers already carry the class identity.</p>
 
   <hr>
 
   <h2>What this does and does not claim</h2>
 
-  <p>This theory does <strong>not</strong> say that every pretrained classifier transfers well to every target task, or that exact neural collapse must hold perfectly, or that source and target may come from unrelated class populations.</p>
+  <p>This theory does <strong>not</strong> say that every pretrained classifier transfers to every possible target task. The source and target classes must be meaningfully modeled as draws from the same class population. If the target classes come from a different world, the theorem has no reason to apply.</p>
 
-  <p>What it <em>does</em> say is more precise: if the learned representation exhibits small CDNV on many source training classes, then this geometry first generalizes to the underlying source-class distributions and then, because classes are i.i.d. draws from a common population, to unseen target classes.</p>
+  <p>It also does not say that exact neural collapse is necessary, or that NCC is always the best downstream classifier. The paper uses NCC because it makes the geometry transparent and because NC3/NC4 suggest that trained linear heads become closely related to nearest-center rules. In practice, linear probes, ridge regression, or logistic regression may do better. The theorem is explaining why a very simple rule can already work.</p>
+
+  <p>Finally, the bound is a generalization bound, not a sharp prediction of test accuracy. It has constants, logarithms, norm factors, and worst-case margins. Its value is conceptual: it identifies a route by which a single supervised classifier can produce a representation that transfers in the few-shot regime.</p>
 
   <div class="takeaway">
     <h3>Takeaway</h3>
-    <p>Few-shot transfer works because pretraining learns a feature geometry that generalizes twice.</p>
-    <p><strong>From source samples to source classes.</strong> If source training points cluster tightly and class means are well separated, then with enough samples per class this reflects the true geometry of the source-class distributions.</p>
-    <p><strong>From source classes to unseen classes.</strong> Because classes are i.i.d. draws from a common population, favorable geometry on many source classes extends to new target classes.</p>
-    <p><strong>From geometry to few-shot learning.</strong> Once unseen classes also form tight, well-separated clusters, a nearest-center classifier can learn them from only a handful of labeled examples.</p>
-    <p>The hard part of few-shot learning is therefore not done at transfer time. It is done during pretraining, by shaping a representation whose clustering geometry survives both kinds of generalization.</p>
+    <p>Few-shot transfer works when pretraining learns a class geometry that survives two kinds of randomness.</p>
+    <p><strong>Geometry:</strong> neural collapse makes each class a small cloud and pushes class means apart. CDNV measures exactly this ratio: cloud size divided by squared inter-center distance.</p>
+    <p><strong>Statistics:</strong> the geometry observed on finite source samples must generalize to the true source classes, and the average over source classes must generalize to new classes drawn from the same population.</p>
+    <p><strong>Few-shot adaptation:</strong> once unseen classes inherit this geometry, a few labeled examples are enough to estimate class centers. The target learner is not discovering the representation; it is placing names on an already structured feature space.</p>
+    <p>The cute picture is this: pretraining turns the feature space into a constellation. Few-shot learning only has to identify which little cluster is which.</p>
   </div>
 
 </article>
 
+
 <div class="post-footer">
-  <p>Published on <a href="https://dlfundamentals.github.io/blog/">Theory/Simplified</a> &nbsp;&middot;&nbsp; Based on <a href="https://arxiv.org/abs/2212.12532">Galanti, György, Hutter — arXiv 2022</a></p>
+  <p>Published on <a href="https://dlfundamentals.github.io/blog/">Theory/Simplified</a> &nbsp;&middot;&nbsp; Based on <a href="https://arxiv.org/abs/2212.12532">Galanti, György, Hutter — JMLR 2026 / arXiv 2022</a></p>
 </div>
 
 </div>
@@ -401,7 +538,7 @@
     var genCtx=genCanvas.getContext('2d'),currentStep=0,rng=[];
     function gR(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(6.2832*v);}
     for(var i=0;i<500;i++)rng.push([gR(),gR()]);
-    var descs=['During pretraining, source training samples concentrate around empirical class centers. The colored dots are training points; the crosses mark empirical class centers. This is the geometry we can directly observe.','With enough samples per source class, the empirical clustering reflects the true geometry of the underlying source-class distributions (shown as confidence ellipses). The observed clustering is not a finite-sample artifact — it represents real distributional structure. This is the first generalization: samples → distributions.','Because classes are i.i.d. draws from the same population 𝒟, new unseen target classes (right side) inherit the same favorable geometry. A few labeled examples (large dots) are enough to estimate their centers. This is the second generalization: source classes → target classes.'];
+    var descs=['Step 1 is what we can actually measure after pretraining: source training samples cluster around empirical class centers. This is the finite-sample geometry visible to the algorithm.','Step 2 is sample-level generalization: with enough examples per source class, empirical centers and variances reflect the underlying source class-conditionals. This is where the 1/√m term comes from.','Step 3 is class-level generalization: because classes are i.i.d. draws from the same population 𝒟, averages over many source classes predict the geometry of unseen target classes. This is where the 1/√ℓ term comes from.'];
     var cls=['#5a4ab8','#1a7a5c','#c45028','#a06810','#d85a30'],clsF=['rgba(90,74,184,0.18)','rgba(26,122,92,0.18)','rgba(196,80,40,0.18)','rgba(160,104,16,0.18)','rgba(216,90,48,0.18)'];
     window.showGen=function(step){currentStep=step;root.querySelectorAll('.gen-tab').forEach(function(t,i){t.classList.toggle('active',i===step);});document.getElementById('gen-desc').textContent=descs[step];drawStep(step);};
     function drawStep(step){
