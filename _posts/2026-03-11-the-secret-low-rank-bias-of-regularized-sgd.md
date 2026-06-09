@@ -510,7 +510,7 @@
       <span>&middot;</span>
       <span>12 min read</span>
       <span>&middot;</span>
-      <span class="paper-badge">&#9670; Galanti et al., CPAL 2025</span>
+      <span class="paper-badge">&#9670; Galanti, Siegel, Gupte, Poggio -- CPAL 2025</span>
     </div>
   </div>
 
