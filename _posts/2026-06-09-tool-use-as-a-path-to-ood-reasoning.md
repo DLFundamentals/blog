@@ -144,7 +144,7 @@
 <div class="hero">
   <div class="hero-eyebrow">Reasoning &middot; Tool Use &middot; Out-of-Distribution Generalization</div>
   <h1>Tool Use Reduces <em>Depth-Induced Collapse</em></h1>
-  <p class="hero-subtitle">Force a model to take many genuinely out-of-distribution reasoning steps, with every shortcut blocked, and even frontier systems collapse toward chance as the chain grows. Let them write, run, and revise code, and the collapse largely disappears — small models start to rival frontier ones.</p>
+  <p class="hero-subtitle">Force a model through many out-of-distribution reasoning steps, block the usual shortcuts, and standalone systems lose reliable next-step accuracy as the chain grows. Let them write, run, and revise code, and the collapse largely disappears — even small models begin to rival frontier ones.</p>
   <div class="hero-meta">
     <span>By Tomer Galanti</span>
     <span>&middot;</span>
@@ -160,44 +160,44 @@
 
   <h2>Introduction</h2>
 
-  <p class="lead">A lot of optimism about where AI is heading rests on a single assumption: that a language model which has learned relationships on in-distribution data can recombine them to solve genuinely new, out-of-distribution problems. The trouble is that this is remarkably hard to measure. On most benchmarks, a model can reach the right answer by leaning on a few memorized subproblems or a sliver of the available data. That is interpolation. Real generalization means using <em>all</em> the evidence, every step, with no shortcut available.</p>
+  <p class="lead">A lot of optimism about where AI is heading rests on one assumption: that a language model which has learned relationships on in-distribution data can recombine them to solve genuinely new, out-of-distribution problems. The trouble is that this ability is hard to measure cleanly. On many benchmarks, a model can reach the right final answer by leaning on memorized subproblems, redundant cues, or a small slice of the available evidence. That is still interpolation. Real generalization means using <em>all</em> the relevant evidence, step after step, when no shortcut is available.</p>
 
-  <p>There is an elegant way to frame the stakes. The Diligent Learner framework models reasoning as a search over partial solutions, where everything hinges on one number: $\gamma$, the probability that the model proposes a useful next step. If $\gamma$ stays bounded away from zero, search scales to long horizons. If $\gamma$ decays as the reasoning gets deeper, even a powerful search procedure becomes brittle. That turns a grand question into a concrete, testable one:</p>
+  <p>There is an elegant way to frame the stakes. The Diligent Learner framework models reasoning as search over partial solutions, where everything hinges on one number: $\gamma$, the probability that the model proposes a useful next step. If $\gamma$ stays bounded away from zero, search can scale to long horizons. If $\gamma$ decays with depth, even a powerful search procedure becomes brittle. That turns a broad question about generalization into a concrete, testable one:</p>
 
   <div class="callout">
     <strong>The question</strong>
-    Do today's language models keep a non-trivial next-step success probability on hard problems — or are they reliable only when the task can be cracked with memorized pieces and redundant information?
+    Do today's language models preserve a non-trivial next-step success probability on hard problems — or do they look reliable mainly when the task can be solved with memorized pieces, redundant cues, or partial information?
   </div>
 
-  <p>To answer it you need a benchmark where each step has exactly one correct continuation, and that continuation is recoverable only by fusing the revealed history with new evidence. This paper builds one out of Boolean circuit reconstruction over GF(2), wraps it in an adversarial sampling oracle that blocks every partial-information shortcut, and measures $\gamma$ as a function of depth. The answer comes in two parts:</p>
+  <p>To answer it, you need a benchmark where each step has exactly one correct continuation, and that continuation is recoverable only by combining the revealed history with new evidence. This paper builds one from Boolean reconstruction over GF(2), wraps it in a prefix-conditioned sampling oracle that blocks partial-information shortcuts, and measures $\gamma_g$ as a function of depth. The story has four parts:</p>
 
   <div class="steps">
     <div class="step">
       <div class="step-num red">I</div>
       <div class="step-body">
         <div class="step-title">Benchmarks reward interpolation.</div>
-        <div class="step-desc">Scoring final answers, allowing many valid paths, or leaving redundancy lets models exploit memorized subproblems instead of sustaining stepwise out-of-distribution reasoning.</div>
+        <div class="step-desc">Final-answer scoring, many valid paths, and redundant cues can reward memorized subproblems rather than sustained stepwise out-of-distribution reasoning.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num teal">II</div>
       <div class="step-body">
         <div class="step-title">A shortcut-proof benchmark.</div>
-        <div class="step-desc">A GF(2) reconstruction game where the revealed prefix acts as a cryptographic key: without it, new evidence is masked to near-noise; with it, the next term is recoverable in polynomial time.</div>
+        <div class="step-desc">A GF(2) reconstruction game where the revealed prefix acts like a key: without it, new evidence is masked to near-noise; with it, the next term is recoverable in polynomial time.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num amber">III</div>
       <div class="step-body">
         <div class="step-title">Standalone LLMs collapse with depth.</div>
-        <div class="step-desc">Small and frontier models alike lose next-step accuracy as the chain lengthens — even though a polynomial-time solution exists at every step. Scale delays the collapse; it does not remove it.</div>
+        <div class="step-desc">Small standalone models collapse rapidly, and frontier no-tool models still degrade with depth — even though a polynomial-time recovery procedure exists at every step.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num purple">IV</div>
       <div class="step-body">
         <div class="step-title">Tool synthesis is the remedy.</div>
-        <div class="step-desc">When models can generate, execute, and iteratively refine code, even small architectures sustain accurate reasoning over long horizons and rival frontier models.</div>
+        <div class="step-desc">When models can generate, execute, and iteratively refine code, even small architectures sustain accurate reasoning over long horizons and approach frontier-level behavior.</div>
       </div>
     </div>
   </div>
@@ -210,7 +210,7 @@
 
   <h2>Part I — Why benchmarks reward interpolation</h2>
 
-  <p>Picture training as a cloud of datapoints in an idea space, linked by the relationships a model learns. At inference, the model walks those relationships from a query to an answer. If the answer sits close to the training cloud, the walk is short and familiar — that is <strong>in-distribution</strong> reasoning. If it sits far away, the model has to extend learned relationships into territory it has never seen — <strong>out-of-distribution</strong> reasoning. Most benchmarks only ever ask for the short walk.</p>
+  <p>Picture training as a cloud of datapoints in an idea space, linked by the relationships a model learns. At inference, the model walks those relationships from a query to an answer. If the answer sits close to the training cloud, the walk is short and familiar — that is <strong>in-distribution</strong> reasoning. If it sits far away, the model has to extend learned relationships into territory it has never seen — <strong>out-of-distribution</strong> reasoning. Many benchmarks do not force that long walk.</p>
 
   <div class="diagram-wrap fade-in">
     <svg viewBox="0 0 640 270" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:640px;display:block;margin:auto">
@@ -239,51 +239,51 @@
       <text x="404" y="105" font-family="IBM Plex Mono,monospace" font-size="10" fill="#7a7060" text-anchor="middle">tool synthesis</text>
       <text x="404" y="119" font-family="DM Sans,sans-serif" font-size="9.5" fill="#a09880" text-anchor="middle">extends the reach of reasoning</text>
     </svg>
-    <p class="diagram-caption">Fig. 1 — In-distribution reasoning stays inside the dashed neighborhood of the training cloud; out-of-distribution reasoning must reach a target far outside it. A synthesized tool (gray arrow) extends how far the model can reliably travel.</p>
+    <p class="diagram-caption">Fig. 1 — In-distribution reasoning stays inside the dashed neighborhood of the training cloud; out-of-distribution reasoning must reach a target far outside it. A synthesized tool (gray arrow) can extend how far the model travels reliably.</p>
   </div>
 
-  <p>The fix is a benchmark in which ignoring either the history or the new data guarantees failure, so that a high score can only mean sustained stepwise reasoning. The catch is that full Boolean-circuit recovery is the wrong tool off the shelf: in its usual form you try to recover every term at once from exponentially many examples, and even checking whether an intermediate circuit could yield the final one is super-exponential. The paper restricts to a structured subclass where each stage has a unique correct continuation and each candidate can be checked in polynomial time.</p>
+  <p>The fix is a benchmark in which ignoring either the history or the new data guarantees failure, so a high score can only mean sustained stepwise reasoning. The catch is that unrestricted Boolean-circuit recovery is the wrong object off the shelf: in its usual form, one tries to recover all terms at once from an enormous example set, and even validating arbitrary intermediate circuits can be intractable. The paper therefore restricts to a structured subclass where every stage has a unique correct continuation and every candidate next step can be checked efficiently.</p>
 
   <hr>
 
   <h2>Part II — A shortcut-proof benchmark</h2>
 
-  <p>The targets are Boolean functions written in algebraic normal form over GF(2) — XORs of monomials. Each input splits into address bits $a$ and payload bits $v$, and the function is a sum of terms, each gated by one address bit and a payload conjunction of fixed degree:</p>
+  <p>The targets are Boolean functions written in algebraic normal form over GF(2) — XORs of monomials. Each input splits into address bits $a$ and payload bits $v$. The function is a sum of terms, where each address bit gates one fixed-degree payload conjunction:</p>
 
   <div class="math-display">
     <div class="math-label">Target in algebraic normal form</div>
     $$f(a,v)=\bigoplus_{j=1}^{n} a_j\,M_j(v), \qquad M_j(v)=\prod_{i\in S_j} v_i, \qquad |S_j| = d-1$$
   </div>
 
-  <p>An instance fixes an ordered list of supports $(S_1,\dots,S_n)$. Reasoning becomes an iterative decoding game: at step $g$ the model is handed the prefix $P_g=(t_1,\dots,t_g)$ already recovered, plus a fresh batch of labeled examples $S_g$, and must name the next monomial $t_{g+1}$. Because the instance commits to an order, there is exactly one correct continuation, so step-success is a clean probability:</p>
+  <p>An instance fixes an ordered list of supports $(S_1,\dots,S_n)$. Reasoning becomes an iterative decoding game: at step $g$, the model is handed the already-recovered prefix $P_g=(t_1,\dots,t_g)$ plus a fresh batch of labeled examples $S_g$, and must name the next monomial $t_{g+1}$. Because the instance commits to an order, there is exactly one correct continuation, so step-success is a clean probability:</p>
 
   <div class="math-display">
     <div class="math-label">Step-success at depth g</div>
     $$\gamma_g \;:=\; \Pr_{(P_g,\,S_g,\,t_{g+1}),\ \hat t\,\sim\,\pi_\theta(\cdot\,|\,P_g,S_g)}\big[\,\hat t = t_{g+1}\,\big]$$
   </div>
 
-  <p>This is the empirical stand-in for the Diligent Learner's $\gamma$. To make sure it measures reasoning rather than shortcut-spotting, the paper separates solvers by what they can see — the full-information <strong>diligent</strong> solver (prefix + data), a <strong>data-only</strong> solver, a <strong>history-only</strong> solver, and a <strong>partial</strong> solver — and engineers the oracle so only the diligent one can win:</p>
+  <p>This is the empirical stand-in for the Diligent Learner's $\gamma$. To make sure it measures reasoning rather than shortcut-spotting, the paper separates solvers by what they can see — the full-information <strong>diligent</strong> solver (prefix + data), a <strong>data-only</strong> solver, a <strong>history-only</strong> solver, and a <strong>partial</strong> solver — then engineers the oracle so only the diligent one can succeed reliably:</p>
 
   <div class="eq-highlight">
     $$\min_g \gamma^{\mathrm{A}}_g \;\ge\; Q \qquad\text{while}\qquad \gamma^{\mathrm{B}}_g,\ \gamma^{\mathrm{C}}_g,\ \gamma^{\mathrm{D}}_g \;\approx\; \frac{1}{\binom{p}{\,d-1}}$$
   </div>
 
-  <h3>The oracle: history as a cryptographic key</h3>
+  <h3>The oracle: history as a key</h3>
 
-  <p>Here is the mechanism that blocks the shortcuts. At step $g$ the oracle turns on the target address bit, zeros out all later ones, flips the prefix address bits like fair coins, and draws a balanced payload. The resulting label splits cleanly in two:</p>
+  <p>Here is the mechanism that blocks the shortcuts. At step $g$, the oracle turns on the target address bit, zeros out all later address bits, flips the prefix address bits like fair coins, and draws a nearly balanced payload. The resulting label splits cleanly in two:</p>
 
   <div class="math-display">
     <div class="math-label">Label = prefix mask &oplus; next-term signal</div>
     $$y \;=\; \underbrace{\bigoplus_{j=1}^{g} a_j\,M_j(v)}_{\text{prefix obfuscation mask}} \;\oplus\; \underbrace{M_{g+1}(v)}_{\text{next-term signal}}$$
   </div>
 
-  <p>The mask is computable from the prefix — so a diligent solver subtracts it and reads the signal. To a solver without the prefix, the mask is a high-entropy scrambler. Its edge over a coin flip from any single example decays geometrically in the number of active prefix bits $m$, which is about $g/2$ at depth $g$:</p>
+  <p>The mask is computable from the prefix, so a diligent solver subtracts it and reads the signal. To a solver without the prefix, the same mask behaves like a high-entropy scrambler. Its edge over a coin flip from any single example decays geometrically in the number of active prefix bits $m$, which is about $g/2$ at depth $g$:</p>
 
   <div class="eq-highlight">
     $$\Big|\Pr[\,y = b \mid a,v\,]-\tfrac12\Big| \;=\; \tfrac12\,\big|1-2\rho\big|^{\,m(a)}, \qquad \rho=\frac{\binom{w}{d-1}}{\binom{p}{d-1}}$$
   </div>
 
-  <p>Three guarantees fall out of this design, and together they pin the difficulty to depth alone. Supports are drawn independently, so the prefix says nothing about the next support — <strong>no history-only shortcut</strong>. The Hamming weight is tuned so each monomial fires with probability near one-half — <strong>no statistical-leakage shortcut</strong>. And the mask drives the data-only Bayes advantage to near zero as depth grows — <strong>no data-only shortcut</strong>. The slider below is that last guarantee in motion.</p>
+  <p>Three guarantees fall out of this design, and together they pin the difficulty to depth. Supports are drawn independently, so the prefix says nothing about the next support — <strong>no history-only shortcut</strong>. The Hamming weight is tuned so each monomial fires with probability near one-half — <strong>no statistical-leakage shortcut</strong>. And the mask drives the data-only Bayes advantage toward zero as depth grows — <strong>no data-only shortcut</strong>. The slider below puts that last guarantee in motion.</p>
 
   <div class="explorer fade-in" id="mask-sim">
     <div class="explorer-header">
@@ -303,13 +303,13 @@
     </div>
   </div>
 
-  <p class="figcaption"><strong>Fig. 2.</strong> The data-only Bayes advantage is $\tfrac12|1-2\rho|^{m}$ with $m\approx g/2$ active mask bits. As depth climbs — or as $\rho$ approaches the balanced $\tfrac12$ — it collapses toward zero, so new evidence alone is uninformative. The diligent solver subtracts the prefix mask and recovers the next term in $O(\log p)$ samples regardless of depth. Once unmasked, each step is a single Boolean-conjunction recovery: solvable in polynomial time, independent of $g$.</p>
+  <p class="figcaption"><strong>Fig. 2.</strong> The data-only Bayes advantage is $\tfrac12|1-2\rho|^{m}$ with $m\approx g/2$ active mask bits. As depth climbs — or as $\rho$ approaches the balanced $\tfrac12$ — this advantage collapses toward zero, so new evidence alone becomes uninformative. The diligent solver subtracts the prefix mask and recovers the next term from a small batch, independent of depth. Once unmasked, each step is a single Boolean-conjunction recovery: polynomial-time, and not intrinsically harder at larger $g$.</p>
 
   <hr>
 
   <h2>Part III — Depth-induced collapse</h2>
 
-  <p>Run real models on this benchmark and a sharp pattern appears: as depth grows, next-step accuracy collapses, even though a polynomial-time solution exists at every step. The information is all there; the difficulty is using it reliably across a long chain. The estimator simulations confirm the benchmark behaves as designed — only the full-information solver sustains high $\gamma_g$, while data-only and partial solvers decay and history-only sits at chance. Then the language models follow the same script.</p>
+  <p>Run real models on this benchmark and a sharp pattern appears: as depth grows, next-step accuracy falls, even though a polynomial-time recovery procedure exists at every step. The information is present; the difficulty is carrying out the prefix-conditioned computation reliably across a long chain. The estimator simulations confirm the benchmark behaves as designed — only the full-information solver sustains high $\gamma_g$, while data-only and partial solvers decay and history-only stays near chance. Then the language models begin to follow the same script.</p>
 
   <div class="explorer fade-in" id="collapse-sim">
     <div class="explorer-header">
@@ -325,11 +325,11 @@
     </div>
   </div>
 
-  <p class="figcaption"><strong>Fig. 3.</strong> Illustrative curves — the <em>shapes</em> match the paper's measured figures (log-scale $\gamma_g$ versus depth), not exact values. Standalone small models fade to the chance line $\gamma_{\mathrm{triv}}=1/\binom{12}{3}\approx0.45\%$ by moderate depth; frontier models delay the fall but still slide; tool-enabled models stay flat and high across the whole range.</p>
+  <p class="figcaption"><strong>Fig. 3.</strong> Illustrative curves — the <em>shapes</em> match the paper's measured figures (log-scale $\gamma_g$ versus depth), not exact values. Standalone small models fade toward the chance line $\gamma_{\mathrm{triv}}=1/\binom{12}{3}\approx0.45\%$ by moderate depth; frontier no-tool models delay the fall but still degrade; tool-enabled models stay much flatter across the whole range.</p>
 
   <h3>How much of the prefix does a model actually use?</h3>
 
-  <p>There is a clean way to quantify the collapse. Take the partial-information solver and give it only the first $k$ prefix terms; ask which $k$ would reproduce a given model's observed accuracy at depth $g$. That $k^\star(g)$ is the <strong>effective prefix</strong> — how much history the model behaves as if it integrated. Full integration is the line $k^\star=g$. The paper's linear fits tell the story: without tools the slopes sit below one, so the gap to full integration widens with depth; with tools the slopes snap back to one and the error rate stops depending on depth at all.</p>
+  <p>There is a clean way to quantify the collapse. Take the partial-information solver and give it only the first $k$ prefix terms; ask which $k$ would reproduce a given model's observed accuracy at depth $g$. That $k^\star(g)$ is the <strong>effective prefix</strong> — how much history the model behaves as if it integrated. Full integration is the line $k^\star=g$. The paper's linear fits tell the story: without tools, the slopes usually sit below one, so the gap to full integration widens with depth; with tools, the slopes move back toward one and the error rate becomes far less depth-dependent.</p>
 
   <div class="explorer fade-in" id="kstar-sim">
     <div class="explorer-header">
@@ -351,19 +351,19 @@
     </div>
   </div>
 
-  <p class="figcaption"><strong>Fig. 4.</strong> Exact linear fits $k^\star\approx\max(0,\,f g - a)$ from the paper. Without tools the 30B variants have $f=0.71$–$0.85$, so the shaded gap to the $k^\star=g$ line opens with depth and accuracy drifts toward the random-guess boundary. With tools, slopes land at $0.96$–$1.08$ and the gap stays flat. (4B-Thinking's no-tool slope of $1.04$ is misleading: partial integration scores by luck at small $g$, then accuracy falls off a cliff once full integration becomes necessary.)</p>
+  <p class="figcaption"><strong>Fig. 4.</strong> Exact linear fits $k^\star\approx\max(0,\,f g - a)$ from the paper. Without tools, the 30B variants have $f=0.71$–$0.85$, so the shaded gap to the $k^\star=g$ line opens with depth and accuracy drifts toward the random-guess boundary. With tools, slopes land at $0.96$–$1.08$ and the gap stays nearly flat. (4B-Thinking's no-tool slope of $1.04$ is misleading: partial integration scores by luck at small $g$, then accuracy falls off a cliff once full integration becomes necessary.)</p>
 
-  <p>Frontier systems — GPT-5.2 with extended thinking, Claude Opus 4.5 with maximum thinking, and Gemini 3 Pro — change the magnitude but not the verdict. They start higher and hold on longer, so where a small standalone model is already guessing, a frontier model still retains real accuracy. But the valid no-tool frontier runs still degrade as depth grows. <strong>Scale delays the collapse; it does not remove it.</strong></p>
+  <p>Frontier systems — GPT-5.2 with extended thinking, Claude Opus 4.5 with maximum thinking, and Gemini 3 Pro — change the magnitude but not the qualitative verdict. They start higher and hold on longer, so where a small standalone model is already guessing, a frontier model can still retain real accuracy. But the valid no-tool frontier runs still degrade as depth grows. <strong>Scale delays the collapse; it does not remove the depth dependence.</strong></p>
 
   <hr>
 
   <h2>Part IV — Tools change the computational structure</h2>
 
-  <p>Each step of the game really demands two different things: inferring the constraint from the prefix and the new examples, then carrying out the GF(2) computation. A standalone model has to do both token by token, so as depth grows the prefix-conditioned computation gets longer and more fragile, and $\gamma_g$ decays. Tool use splits the two jobs apart. The model specifies the computation once in code, hands execution to an interpreter, inspects the result, and revises if it was wrong.</p>
+  <p>Each step of the game demands two different things: inferring the constraint from the prefix and the new examples, then carrying out the GF(2) computation. A standalone model has to do both token by token. As depth grows, the prefix-conditioned computation gets longer and more fragile, and $\gamma_g$ decays. Tool use splits the two jobs apart: the model specifies the computation in code, hands execution to an interpreter, inspects the result, and revises the procedure when it fails.</p>
 
-  <div class="pull-quote">&ldquo;Tools do not merely add capabilities; they reduce the effective reasoning depth that must be carried internally.&rdquo;</div>
+  <div class="pull-quote">&ldquo;Tools do not merely add capabilities; they move exact computation out of the token stream.&rdquo;</div>
 
-  <p>The effect is dramatic. Given a sandbox to generate, run, and revise code over up to ten iterations, the small Qwen3-2507 models sustain high accuracy out to depths of $g=127$ — approaching the optimal Bayesian baseline and, in places, rivaling frontier models. And the <em>iteration</em> is what matters: a 4B model handed a single, un-revised code attempt still fails at large depth; its recovery depends on proposing code, observing how it behaves, and repairing it. Externalizing the deterministic computation is the whole point.</p>
+  <p>The effect is dramatic. Given a sandbox to generate, run, and revise code over up to ten iterations, the small Qwen3-2507 models sustain high accuracy out to depths of $g=127$ — approaching the full-information estimator and, in places, rivaling frontier models. And the <em>iteration</em> is what matters: a 4B model handed a single, unrevised code attempt still fails at large depth; its recovery depends on proposing code, observing how it behaves, and repairing it. Externalizing the deterministic computation is the whole point.</p>
 
   <div class="stat-strip fade-in">
     <div class="stat">
@@ -372,7 +372,7 @@
     </div>
     <div class="stat">
       <div class="stat-num gold">g = 127</div>
-      <div class="stat-lbl">depth at which tool-enabled small models still sustain high accuracy</div>
+      <div class="stat-lbl">deep setting where tool-enabled small models still sustain high accuracy</div>
     </div>
     <div class="stat">
       <div class="stat-num">&le; 10</div>
@@ -380,22 +380,22 @@
     </div>
   </div>
 
-  <p>The same lift appears for frontier models: once they can run and revise code, $\gamma_g$ stabilizes near the top of the range even at the deepest settings, far above the $0.45\%$ chance line. By moving exact symbolic execution out of the model and into an executable artifact, tool-enabled systems hold a steady step-success probability over long horizons.</p>
+  <p>The same lift appears for frontier models: once they can run and revise code, $\gamma_g$ remains high even at the deepest settings, far above the $0.45\%$ chance line. By moving exact symbolic execution out of the model and into an executable artifact, tool-enabled systems maintain a much more stable step-success probability over long horizons.</p>
 
   <hr>
 
   <h2>What this does and does not say</h2>
 
-  <p>The benchmark is deliberately narrow. Symbolic GF(2) reconstruction was chosen precisely because shortcuts can be controlled and the next step is exactly verifiable — which makes the failure mode easy to measure, but does not by itself establish how often the same collapse shows up in messier natural-language or interactive tasks where the carried-forward state is less algebraic. The tool-use results were collected in a sandboxed code-execution setting, so the gains come bundled with real costs in latency, execution infrastructure, and interface reliability. And the frontier evaluation is a smaller diagnostic — a handful of queries per model, depth, and tool setting — rather than the full protocol used for the small models.</p>
+  <p>The benchmark is deliberately narrow. Symbolic GF(2) reconstruction was chosen precisely because shortcuts can be controlled and the next step is exactly verifiable — which makes the failure mode easy to measure, but does not by itself establish how often the same collapse appears in messier natural-language or interactive tasks where the carried-forward state is less algebraic. The tool-use results were collected in a sandboxed code-execution setting, so the gains come bundled with practical costs in latency, execution infrastructure, and interface reliability. And the frontier evaluation is a smaller diagnostic — a handful of queries per model, depth, and tool setting — rather than the full protocol used for the small models.</p>
 
-  <p>What survives those caveats is a specific, measurable claim. The Diligent Learner framework assumes a non-vanishing next-step probability; on a benchmark built to demand exactly that, standalone models — including frontier ones — do not deliver it, drifting toward the partial-information regime as depth grows. Tool synthesis restores it. That points somewhere slightly against the grain: scalable reasoning may depend less on ever-deeper test-time search inside the model, and more on giving models reliable interfaces for building, executing, and revising their own tools.</p>
+  <p>What survives those caveats is a specific, measurable claim. The Diligent Learner framework assumes a non-vanishing next-step probability; on a benchmark built to demand exactly that, standalone models do not maintain it uniformly as depth grows. Small models drift toward the partial-information regime, and frontier models still show depth dependence. Tool synthesis largely restores the missing stability. That points somewhere slightly against the grain: scalable reasoning may depend less on ever-deeper search inside the model, and more on giving models reliable interfaces for building, executing, and revising their own tools.</p>
 
   <div class="takeaway">
     <h3>Takeaway</h3>
-    <p>On a benchmark engineered so that <strong>every step needs all the evidence</strong> and no shortcut survives, standalone language models suffer depth-induced collapse: next-step accuracy slides toward chance as the reasoning chain grows.</p>
-    <p><strong>The information was never missing.</strong> A polynomial-time solver exists at every depth; the failure is in carrying a lengthening, prefix-conditioned computation reliably through token-by-token reasoning.</p>
-    <p><strong>Scale delays, tools dissolve.</strong> Frontier models postpone the collapse but still degrade. Models that generate, execute, and iteratively revise code sustain high step-success over long horizons — and small models start to rival frontier ones.</p>
-    <p><strong>The role of tools is sharper than "more capabilities."</strong> By externalizing deterministic computation into an artifact the model can inspect and repair, tool use lowers the effective reasoning depth carried internally — and that, more than raw scale, is what keeps out-of-distribution reasoning from falling apart.</p>
+    <p>On a benchmark engineered so that <strong>every step needs all the evidence</strong> and no partial-information shortcut survives, standalone language models suffer depth-induced collapse: next-step accuracy degrades as the reasoning chain grows.</p>
+    <p><strong>The information was never missing.</strong> A polynomial-time recovery procedure exists at every depth; the failure is in carrying a lengthening, prefix-conditioned computation reliably through token-by-token reasoning.</p>
+    <p><strong>Scale delays, tools restructure.</strong> Frontier models postpone the collapse but still degrade. Models that generate, execute, and iteratively revise code sustain high step-success over long horizons — and small models start to approach frontier-level behavior.</p>
+    <p><strong>The role of tools is sharper than "more capabilities."</strong> By externalizing deterministic computation into an artifact the model can inspect and repair, tool use lowers the effective reasoning depth carried internally — and that may be the key difference between brittle extrapolation and stable out-of-distribution reasoning.</p>
   </div>
 
 </article>
