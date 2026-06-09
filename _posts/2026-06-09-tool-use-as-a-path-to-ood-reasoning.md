@@ -152,7 +152,7 @@
     <span>&middot;</span>
     <span>15 min read</span>
     <span>&middot;</span>
-    <span class="paper-badge">&#9670; NeurIPS 2026 — under review</span>
+    <span class="paper-badge">&#9670; arXiv, 2026</span>
   </div>
 </div>
 
@@ -162,7 +162,7 @@
 
   <p class="lead">A lot of optimism about where AI is heading rests on one assumption: that a language model which has learned relationships on in-distribution data can recombine them to solve genuinely new, out-of-distribution problems. The trouble is that this ability is hard to measure cleanly. On many benchmarks, a model can reach the right final answer by leaning on memorized subproblems, redundant cues, or a small slice of the available evidence. That is still interpolation. Real generalization means using <em>all</em> the relevant evidence, step after step, when no shortcut is available.</p>
 
-  <p>There is an elegant way to frame the stakes. The Diligent Learner framework models reasoning as search over partial solutions, where everything hinges on one number: $\gamma$, the probability that the model proposes a useful next step. If $\gamma$ stays bounded away from zero, search can scale to long horizons. If $\gamma$ decays with depth, even a powerful search procedure becomes brittle. That turns a broad question about generalization into a concrete, testable one:</p>
+  <p>There is an elegant way to frame the stakes. The Diligent Learner framework (Shalev-Shwartz et al. 2025) models reasoning as search over partial solutions, where everything hinges on one number: $\gamma$, the probability that the model proposes a useful next step. If $\gamma$ stays bounded away from zero, search can scale to long horizons. If $\gamma$ decays with depth, even a powerful search procedure becomes brittle. That turns a broad question about generalization into a concrete, testable one:</p>
 
   <div class="callout">
     <strong>The question</strong>
@@ -203,7 +203,7 @@
   </div>
 
   <div class="paper-note">
-    Based on: &ldquo;Tool Use Reduces Depth-Induced Collapse in OOD Reasoning&rdquo;, NeurIPS 2026 submission (under review). Builds on the Diligent Learner framework of Shalev-Shwartz &amp; Shashua, 2025.
+    Based on: &ldquo;Tool Use Reduces Depth-Induced Collapse in OOD Reasoning&rdquo;, arXiv 2026.
   </div>
 
   <hr>
