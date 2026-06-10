@@ -262,7 +262,7 @@
 
   <div class="callout">
     <strong>The central claim</strong>
-    Samples can improve <em>computation</em>, not just accuracy. The reusable object is a <strong>solver hint</strong>: structure inferred from the sample, compressed once, and compiled into specialized solver code. A pretrained LLM agent can search over these hints by proposing hypotheses, writing analysis programs, and producing deployment solvers.
+    Samples can improve <em>computation</em>, not just accuracy. The reusable object is a solver hint: structure inferred from the sample, compressed once, and compiled into specialized solver code. A pretrained LLM agent can search over these hints by proposing hypotheses, writing analysis programs, and producing deployment solvers.
   </div>
 
   <p>The paper's conceptual move is to put runtime inside the learning problem. A sample does not merely choose among labels; it chooses among computations. In this view, a successful learned solver is not just a model with good average quality. It is a small piece of amortized algorithm design: pay once to infer the hidden structure, then reuse that structure cheaply on every future instance.</p>
