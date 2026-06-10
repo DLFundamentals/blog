@@ -184,7 +184,7 @@
 <div class="hero">
   <div class="hero-eyebrow">Algorithm Design &middot; Program Synthesis &middot; LLM Agents</div>
   <h1>Distribution-Aware <em>Programming</em></h1>
-  <p class="hero-subtitle">A program is usually one fixed recipe meant to work on every possible input. But the inputs you actually run on are not worst-case — they have structure. What if you learned a solver for the distribution you'll really see, and judged it not just by whether it's correct, but by how fast it runs?</p>
+  <p class="hero-subtitle">A program is usually one fixed recipe meant to survive every possible input. But real workloads are not worst-case: they repeat, they carry hidden structure, and that structure can be learned. What if samples did not merely improve predictions, but improved the computation itself?</p>
   <div class="hero-meta">
     <span>By Tomer Galanti</span>
     <span>&middot;</span>
@@ -200,16 +200,18 @@
 
   <h2>Introduction</h2>
 
-  <p class="lead">Classical learning theory is organized around correctness. A hypothesis is good if it predicts well on fresh draws from the distribution, and generalization is measured by accuracy. But when the object you are learning is an <strong>executable procedure</strong> — an algorithm, a solver, a piece of code — correctness is only half the story.</p>
+  <p class="lead">Classical learning theory is organized around correctness. A hypothesis is good if it predicts well on fresh draws from the distribution, and generalization is measured by accuracy. But when the thing being learned is an <strong>executable procedure</strong> — an algorithm, a solver, a piece of code — correctness is only the entry ticket.</p>
 
-  <p>Two solvers can both return valid answers on every instance you will ever see, and still be wildly different. One finishes in microseconds; the other grinds for seconds. By the usual accuracy yardstick they are tied. By any honest standard they have not learned equally well. When the learned object is code, the algorithm must generalize not only in <em>quality</em>, but in <em>computation</em>.</p>
+  <p>Two solvers can both return valid answers on every instance you will ever see, and still be profoundly different. One spends milliseconds; the other spends seconds. One searches the full ambient space; the other has discovered the few degrees of freedom that matter. By an accuracy-only yardstick they are tied. Computationally, one has learned much more.</p>
 
-  <p>This is the question behind <strong>distribution-aware program learning</strong>: from samples of an unknown deployment distribution, a learner returns solver code that is then evaluated on fresh instances by <em>both</em> solution quality and runtime. The goal is not to solve the ambient problem class in the worst case, but to learn an algorithm whose execution is specialized to the regime you actually operate in.</p>
+  <p>This is the question behind <strong>distribution-aware program learning</strong>: from samples of an unknown deployment distribution, a learner returns solver code that is evaluated on fresh instances by <em>both</em> solution quality and runtime. The goal is not to defeat the worst case for SAT, coloring, packing, or TSP. The goal is to learn an algorithm whose execution is specialized to the regime you actually operate in.</p>
 
   <div class="callout">
     <strong>The central claim</strong>
-    Samples can improve <em>computation</em>, not just accuracy. The mechanism is a <strong>solver hint</strong> — reusable structure inferred from samples and compiled into specialized solver code — and a pretrained LLM agent can discover and compile these hints automatically.
+    Samples can improve <em>computation</em>, not just accuracy. The reusable object is a <strong>solver hint</strong>: structure inferred from the sample, compressed once, and compiled into specialized solver code. A pretrained LLM agent can search over these hints by proposing hypotheses, writing analysis programs, and producing deployment solvers.
   </div>
+
+  <p>The paper's conceptual move is to put runtime inside the learning problem. A sample does not merely choose among labels; it chooses among computations. In this view, a successful learned solver is not just a model with good average quality. It is a small piece of amortized algorithm design: pay once to infer the hidden structure, then reuse that structure cheaply on every future instance.</p>
 
   <p>The story has four parts:</p>
 
@@ -218,28 +220,28 @@
       <div class="step-num" style="background:var(--red);">I</div>
       <div class="step-body">
         <div class="step-title">Runtime is part of generalization.</div>
-        <div class="step-desc">When the learned object is code, two correct solvers can differ arbitrarily in runtime. Correctness is a feasibility constraint; the real objective is fast, correct computation on the deployment distribution.</div>
+        <div class="step-desc">When the learned object is code, two correct solvers can differ arbitrarily in runtime. Correctness is a feasibility constraint; the objective is fast, correct computation on the deployment distribution.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num gold">II</div>
       <div class="step-body">
-        <div class="step-title">Three ways to design against a distribution.</div>
-        <div class="step-desc">Worst-case design assumes nothing about $D$. Average-case complexity assumes an analytic $D$. We study the regime in between: $D$ is accessible only through samples.</div>
+        <div class="step-title">There are three access models for a distribution.</div>
+        <div class="step-desc">Worst-case design assumes no useful information about $D$. Average-case complexity assumes $D$ is specified analytically. Here $D$ is unknown but sampled, so the solver must infer the useful regularities directly from examples.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num amber">III</div>
       <div class="step-body">
         <div class="step-title">Solver hints make samples actionable.</div>
-        <div class="step-desc">The sample-to-solver map factors through a hint: $S \mapsto \widehat h_S \mapsto \widehat c_S = \mathrm{Comp}(\widehat h_S)$. Identifiable hints are recoverable from polynomially many samples and compiled into fast solvers — with a complete fallback for correctness.</div>
+        <div class="step-desc">The sample-to-solver map factors through a hint: $S \mapsto \widehat h_S \mapsto \widehat c_S = \mathrm{Comp}(\widehat h_S)$. Identifiable hints are recoverable from polynomially many samples and can be compiled into fast solvers, with fallback preserving correctness.</div>
       </div>
     </div>
     <div class="step">
       <div class="step-num" style="background:var(--accent);">IV</div>
       <div class="step-body">
         <div class="step-title">LLM agents synthesize them.</div>
-        <div class="step-desc">Across 21 structured optimization distributions, synthesized solvers reach mean quality 0.971 and run hundreds of times faster than strong heuristics and exact backends — by changing the computational scale.</div>
+        <div class="step-desc">Across 21 structured optimization distributions, synthesized solvers reach mean quality 0.971 and are 564.9&times; faster than a fast high-quality heuristic baseline, 345.1&times; faster than Gurobi, and 16.9&times; faster than selected time-limited exact backends.</div>
       </div>
     </div>
   </div>
@@ -475,7 +477,9 @@
 
   <h3>High quality, far lower runtime</h3>
 
-  <p>The benchmark spans 21 structured combinatorial-optimization target distributions across seven problem classes — coloring, MAXSAT, maximum independent set, minimum dominating set, packing LP, multidimensional knapsack, and TSP — each pairing a problem with a hidden distribution family. Aggregated over all 21 targets:</p>
+  <p>The benchmark spans 21 structured combinatorial-optimization target distributions across seven problem classes — coloring, MAXSAT, maximum independent set, minimum dominating set, packing LP, multidimensional knapsack, and TSP. Each target pairs a familiar hard optimization problem with a hidden distribution family. The learner sees public samples and the scoring rule, but not the family identity, hidden rule, optimum solutions, optimum objective values, or test performance.</p>
+
+  <p>The aggregate story is strong, but the corrected comparison is important: the current paper compares against the <em>fast high-quality heuristic</em> $h_{\mathrm{fast}}^{95}$, not the old quality-best heuristic summary. This baseline is the fastest heuristic whose quality is at least 95% of the best heuristic quality for the problem family. That makes the runtime comparison tougher and more meaningful: it asks whether synthesis beats a heuristic that is already trying to be both good and fast.</p>
 
   <div class="stat-strip fade-in">
     <div class="stat">
@@ -483,34 +487,34 @@
       <div class="stat-lbl">mean normalized quality<br>(1.0 = optimal)</div>
     </div>
     <div class="stat">
-      <div class="stat-num">+0.098</div>
-      <div class="stat-lbl">quality over the<br>best heuristic</div>
+      <div class="stat-num">+0.109</div>
+      <div class="stat-lbl">quality over the<br>fast high-quality heuristic</div>
     </div>
     <div class="stat">
-      <div class="stat-num teal">336.9&times;</div>
-      <div class="stat-lbl">faster than the<br>quality-best heuristic</div>
+      <div class="stat-num teal">564.9&times;</div>
+      <div class="stat-lbl">faster than the<br>fast high-quality heuristic</div>
     </div>
     <div class="stat">
-      <div class="stat-num teal">342.8&times;</div>
+      <div class="stat-num teal">345.1&times;</div>
       <div class="stat-lbl">faster than Gurobi<br>(10s budget)</div>
     </div>
   </div>
 
-  <p>The synthesized solvers also beat the average heuristic pool by $+0.224$ in quality and run $16.1\times$ faster than the selected time-limited exact backend, at a mean per-instance runtime of about $12.8$ ms. Toggle the chart between quality and speedup:</p>
+  <p>The synthesized solvers also improve by $+0.224$ over the average heuristic pool and by $+0.023$ over the learned ML baseline in mean normalized quality. Their geometric-mean per-instance runtime is $12.7$ ms. Against exact-style methods, they are $16.9\times$ faster than the selected time-limited exact backend. The ML comparison is more nuanced: the synthesized solvers are slightly higher quality on average, but ML inference is often faster on CPU or GPU. So the claim is not &ldquo;LLMs dominate every baseline&rdquo;; the claim is that the LLM-generated programs recover a surprisingly strong quality--runtime frontier.</p>
 
   <div class="bar-chart fade-in">
     <div class="bar-chart-title" id="bars-title">Solution quality (normalized, higher is better)</div>
     <div class="filter-tabs">
       <button class="filter-tab active" onclick="setBars(this,'quality')">Solution quality</button>
-      <button class="filter-tab" onclick="setBars(this,'sp_best')">Speedup vs best heuristic</button>
+      <button class="filter-tab" onclick="setBars(this,'sp_best')">Speedup vs fast high-quality heuristic</button>
       <button class="filter-tab" onclick="setBars(this,'sp_gur')">Speedup vs Gurobi</button>
     </div>
     <div id="bars-container"></div>
   </div>
 
-  <p class="figcaption"><strong>Fig. 3.</strong> Per-family results. In quality mode, the synthesized solver (teal) is compared against the best heuristic for that family (muted). In speedup modes the bar length is on a log scale; the multiplier is the geometric-mean runtime ratio (above $1\times$ means the synthesized solver is faster).</p>
+  <p class="figcaption"><strong>Fig. 3.</strong> Per-family results. In quality mode, the synthesized solver (teal) is compared against $h_{\mathrm{fast}}^{95}$ for that family (muted). In speedup modes the bar length is on a log scale; the multiplier is the geometric-mean runtime ratio, so values above $1\times$ mean the synthesized solver is faster.</p>
 
-  <p>The full headline summary:</p>
+  <p>The corrected headline summary:</p>
 
   <div class="table-wrap fade-in">
     <table>
@@ -519,31 +523,32 @@
           <th>Family</th>
           <th class="col-llmpv">Quality</th>
           <th>&Delta;Q vs avg</th>
-          <th>&Delta;Q vs best</th>
+          <th>&Delta;Q vs fast-hq</th>
+          <th>&Delta;Q vs ML</th>
           <th>Runtime</th>
-          <th>vs best heur.</th>
+          <th>vs fast-hq</th>
           <th>vs Gurobi</th>
           <th>vs exact</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Coloring</td><td class="td-llmpv">0.868</td><td class="td-best">+0.217</td><td class="td-best">+0.121</td><td>2.7 ms</td><td>1326.3&times;</td><td>2285.6&times;</td><td>23.1&times;</td></tr>
-        <tr><td>MAXSAT</td><td class="td-llmpv td-best">1.000</td><td class="td-best">+0.122</td><td class="td-best">+0.074</td><td>17.1 ms</td><td>217.4&times;</td><td>328.8&times;</td><td>1.0&times;</td></tr>
-        <tr><td>MIS</td><td class="td-llmpv">0.992</td><td class="td-best">+0.218</td><td class="td-best">+0.106</td><td>18.8 ms</td><td>530.8&times;</td><td>155.8&times;</td><td>39.7&times;</td></tr>
-        <tr><td>MDS</td><td class="td-llmpv">0.973</td><td class="td-best">+0.148</td><td class="td-best">+0.122</td><td>13.3 ms</td><td>718.9&times;</td><td>443.0&times;</td><td>17.4&times;</td></tr>
-        <tr><td>Packing LP</td><td class="td-llmpv">0.994</td><td class="td-best">+0.301</td><td class="td-best">+0.259</td><td>3.3 ms</td><td>3004.2&times;</td><td>2829.1&times;</td><td>37.2&times;</td></tr>
-        <tr><td>MDKP</td><td class="td-llmpv">0.973</td><td class="td-best">+0.215</td><td class="td-best">+0.009</td><td>94.0 ms</td><td>46.4&times;</td><td>33.8&times;</td><td>12.4&times;</td></tr>
-        <tr><td>TSP</td><td class="td-llmpv">0.993</td><td class="td-best">+0.348</td><td class="td-chance">&minus;0.007</td><td>15.3 ms</td><td>32.1&times;</td><td>112.1&times;</td><td>36.6&times;</td></tr>
-        <tr class="row-all"><td>All (21)</td><td class="td-llmpv td-best">0.971</td><td class="td-best">+0.224</td><td class="td-best">+0.098</td><td>12.8 ms</td><td>336.9&times;</td><td>342.8&times;</td><td>16.1&times;</td></tr>
+        <tr><td>Coloring</td><td class="td-llmpv">0.868</td><td class="td-best">+0.217</td><td class="td-best">+0.121</td><td class="td-chance">&minus;0.127</td><td>2.7 ms</td><td>1326.3&times;</td><td>2285.6&times;</td><td>23.1&times;</td></tr>
+        <tr><td>MAXSAT</td><td class="td-llmpv td-best">1.000</td><td class="td-best">+0.122</td><td class="td-best">+0.083</td><td>0.000</td><td>17.1 ms</td><td>212.2&times;</td><td>328.8&times;</td><td>1.2&times;</td></tr>
+        <tr><td>MIS</td><td class="td-llmpv">0.992</td><td class="td-best">+0.218</td><td class="td-best">+0.113</td><td class="td-chance">&minus;0.002</td><td>18.8 ms</td><td>1904.2&times;</td><td>155.8&times;</td><td>41.2&times;</td></tr>
+        <tr><td>MDS</td><td class="td-llmpv">0.973</td><td class="td-best">+0.148</td><td class="td-best">+0.124</td><td class="td-best">+0.021</td><td>13.3 ms</td><td>1626.8&times;</td><td>443.0&times;</td><td>21.6&times;</td></tr>
+        <tr><td>Packing LP</td><td class="td-llmpv">0.994</td><td class="td-best">+0.301</td><td class="td-best">+0.317</td><td class="td-best">+0.186</td><td>3.3 ms</td><td>13483.7&times;</td><td>2829.1&times;</td><td>44.1&times;</td></tr>
+        <tr><td>MDKP</td><td class="td-llmpv">0.973</td><td class="td-best">+0.215</td><td class="td-best">+0.009</td><td>0.000</td><td>94.0 ms</td><td>46.4&times;</td><td>33.8&times;</td><td>9.6&times;</td></tr>
+        <tr><td>TSP</td><td class="td-llmpv">0.993</td><td class="td-best">+0.348</td><td class="td-chance">&minus;0.007</td><td class="td-best">+0.084</td><td>14.6 ms</td><td>33.7&times;</td><td>117.5&times;</td><td>37.2&times;</td></tr>
+        <tr class="row-all"><td>All (21)</td><td class="td-llmpv td-best">0.971</td><td class="td-best">+0.224</td><td class="td-best">+0.109</td><td class="td-best">+0.023</td><td>12.7 ms</td><td>564.9&times;</td><td>345.1&times;</td><td>16.9&times;</td></tr>
       </tbody>
     </table>
   </div>
 
-  <p>The exceptions are informative. On MDKP the solver is faster but trails the quality-best heuristic by a hair, and on TSP it slightly underperforms the best heuristic on quality while still being fast. The method improves the average quality&ndash;runtime frontier; it does not always recover the single cheapest or most accurate specialized procedure.</p>
+  <p>The exceptions are just as useful as the wins. On TSP, synthesis is slightly below the fast high-quality heuristic in solution quality, though it is much faster. On Coloring, the learned ML baseline attains higher quality. Across several families, ML inference can also be faster than the synthesized code. The result is therefore not a universal dominance statement; it is a distribution-aware algorithm-design result. The agent often finds a specialized computation that is high quality, very fast, and interpretable enough to inspect.</p>
 
   <h3>What the agent actually compiled</h3>
 
-  <p>The speedups are not just tighter implementations of the same algorithm. In most cases the selected solver <strong>changes the effective computation</strong>: it replaces an ambient worst-case search or a general-purpose optimizer with a distribution-specific procedure inferred from samples.</p>
+  <p>The speedups are not just tighter implementations of the same algorithm. In most cases the selected solver <strong>changes the effective computation</strong>: it replaces ambient worst-case search, full mathematical programming, or broad local search with a distribution-specific procedure inferred from samples. This is the most interesting part of the result, because it makes the learned object look less like a tuned heuristic and more like a small specialized algorithm for the sampled regime.</p>
 
   <div class="table-wrap fade-in">
     <table>
@@ -561,7 +566,7 @@
     </table>
   </div>
 
-  <p>Coloring becomes template verification plus bounded repair. MAXSAT becomes a distributionally seeded local search. MIS and MDS become greedy construction plus tiny residual enumeration over the few hard pieces. Packing LP becomes density sorting over the active resources instead of a full LP solve. TSP becomes structured candidate generation plus bounded 2-opt rather than exponential tour search. The exponential terms that survive are over tiny residuals — not the whole instance.</p>
+  <p>Coloring becomes template verification plus bounded repair. MAXSAT becomes distributionally seeded local search. MIS and MDS become greedy construction plus tiny residual enumeration over the few hard pieces. Packing LP becomes density sorting over active resources instead of a full LP solve. TSP becomes structured candidate generation plus bounded 2-opt rather than Held--Karp-style dynamic programming. The exponential terms that survive are over tiny residuals — not the whole instance.</p>
 
   <div class="finding-green">
     <div class="finding-label">The mechanism, confirmed</div>
@@ -570,7 +575,7 @@
 
   <h3>An external stress test: PACE 2025 Dominating Set</h3>
 
-  <p>To test the procedure outside its own benchmark, the authors evaluate on the released PACE 2025 Dominating Set instances, against highly engineered competition solvers. Trained on the public set and reported on the released private set, the synthesized solver is valid on all 100 graphs and runs about two orders of magnitude faster — at a moderate quality cost.</p>
+  <p>To test the procedure outside its own benchmark, the authors evaluate on the released PACE 2025 Dominating Set instances, against highly engineered competition solvers. The agent uses the public PACE set as its development distribution, then reports on the released private set. The synthesized solver is valid on all 100 private graphs and runs roughly two orders of magnitude faster than the released PACE solvers, while returning moderately larger dominating sets.</p>
 
   <div class="table-wrap fade-in">
     <table>
@@ -597,7 +602,7 @@
 
   <p>This is <strong>not</strong> a claim of new worst-case algorithms for SAT, coloring, knapsack, or TSP. Several of the generated solvers are bounded heuristics with fallback. The faithful claim is distributional and mechanistic: on these deployment distributions, the synthesized programs often replace generic optimization over a large ambient space with a much smaller, distribution-specific computation — and that is exactly the kind of win that accuracy-only generalization cannot see.</p>
 
-  <p>The same lens names the limitations. A one-time synthesis cost only pays off when amortized over enough future instances. The resulting solver is specialized to the sampled regime, so its advantage can degrade under distribution shift — a relabeling perturbation already moves quality on a couple of targets. And because the agent searches a rich program space, different runs may recover different hints, some of them brittle proxies rather than the true structure.</p>
+  <p>The same lens names the limitations. A one-time synthesis cost only pays off when amortized over enough future instances. The resulting solver is specialized to the sampled regime, so its advantage can degrade under distribution shift; even presentation changes such as relabeling can move quality on some targets. And because the agent searches a rich program space, different runs may recover different hints: some genuine structural summaries, some useful proxies, and some brittle shortcuts.</p>
 
   <div class="steps">
     <div class="step">
@@ -621,7 +626,7 @@
     <p>When the learned object is code, generalization has two axes — quality <strong>and</strong> computation. Distribution-aware programming targets both.</p>
     <p><strong>Runtime is part of the objective.</strong> Among correct solvers, the sample's job is to find the one whose computation is specialized to the distribution you actually deploy on.</p>
     <p><strong>A solver hint is the unit of reuse.</strong> Identifiable structure can be recovered from $O(\log N / \gamma^2)$ samples and compiled into a fast solver, with a complete fallback keeping every answer correct.</p>
-    <p><strong>LLM agents can discover hints.</strong> Across 21 structured distributions, synthesized solvers reach $0.971$ mean quality and run hundreds of times faster than strong heuristics and exact backends — by changing the computational scale, not just the implementation.</p>
+    <p><strong>LLM agents can discover hints.</strong> Across 21 structured distributions, synthesized solvers reach $0.971$ mean quality, improve by $+0.109$ over a fast high-quality heuristic baseline, and run $564.9\times$ faster than that baseline, $345.1\times$ faster than Gurobi, and $16.9\times$ faster than selected time-limited exact backends.</p>
     <p>The learned object ends up closer to a specialized algorithm for the deployment regime than to a tuned heuristic for isolated instances.</p>
   </div>
 
@@ -693,13 +698,13 @@
 
   /* ── RESULTS BAR CHART ── */
   var fams = [
-    {name:'Coloring',   q:0.868, qbest:0.747, sp_best:1326.3, sp_gur:2285.6},
-    {name:'MAXSAT',     q:1.000, qbest:0.926, sp_best:217.4,  sp_gur:328.8},
-    {name:'MIS',        q:0.992, qbest:0.886, sp_best:530.8,  sp_gur:155.8},
-    {name:'MDS',        q:0.973, qbest:0.851, sp_best:718.9,  sp_gur:443.0},
-    {name:'Packing LP', q:0.994, qbest:0.735, sp_best:3004.2, sp_gur:2829.1},
-    {name:'MDKP',       q:0.973, qbest:0.964, sp_best:46.4,   sp_gur:33.8},
-    {name:'TSP',        q:0.993, qbest:1.000, sp_best:32.1,   sp_gur:112.1}
+    {name:'Coloring',   q:0.868, qbest:0.747, sp_best:1326.3,  sp_gur:2285.6},
+    {name:'MAXSAT',     q:1.000, qbest:0.917, sp_best:212.2,   sp_gur:328.8},
+    {name:'MIS',        q:0.992, qbest:0.879, sp_best:1904.2,  sp_gur:155.8},
+    {name:'MDS',        q:0.973, qbest:0.849, sp_best:1626.8,  sp_gur:443.0},
+    {name:'Packing LP', q:0.994, qbest:0.677, sp_best:13483.7, sp_gur:2829.1},
+    {name:'MDKP',       q:0.973, qbest:0.964, sp_best:46.4,    sp_gur:33.8},
+    {name:'TSP',        q:0.993, qbest:1.000, sp_best:33.7,    sp_gur:117.5}
   ];
 
   function renderBars(mode){
@@ -715,15 +720,15 @@
         r1.innerHTML = '<div class="bar-label">'+t.name+'</div><div class="bar-track"><div class="bar-fill" style="width:'+w1+'%;background:var(--teal)"><span class="bar-value">'+t.q.toFixed(3)+'</span></div></div>';
         var r2 = document.createElement('div'); r2.className='bar-row'; r2.style.marginBottom='12px';
         var w2 = (t.qbest*100).toFixed(1);
-        r2.innerHTML = '<div class="bar-label" style="font-size:9.5px;color:var(--muted-lt);">best heuristic</div><div class="bar-track"><div class="bar-fill" style="width:'+w2+'%;background:var(--muted-lt);opacity:.5"><span class="bar-value">'+t.qbest.toFixed(3)+'</span></div></div>';
+        r2.innerHTML = '<div class="bar-label" style="font-size:9.5px;color:var(--muted-lt);">fast-hq heur.</div><div class="bar-track"><div class="bar-fill" style="width:'+w2+'%;background:var(--muted-lt);opacity:.5"><span class="bar-value">'+t.qbest.toFixed(3)+'</span></div></div>';
         c.appendChild(r1); c.appendChild(r2);
       });
     } else {
       var key = mode==='sp_gur' ? 'sp_gur' : 'sp_best';
       if(title) title.textContent = mode==='sp_gur'
         ? 'Runtime speedup vs Gurobi (log scale, higher is faster)'
-        : 'Runtime speedup vs best heuristic (log scale, higher is faster)';
-      var maxlog = 3.55; // log10(~3500)
+        : 'Runtime speedup vs fast high-quality heuristic (log scale, higher is faster)';
+      var maxlog = 4.2; // log10(~16000)
       fams.forEach(function(t){
         var v = t[key];
         var w = Math.max(4, 100*Math.log(v)/Math.LN10/maxlog);
