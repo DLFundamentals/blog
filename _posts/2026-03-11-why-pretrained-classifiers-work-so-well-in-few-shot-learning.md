@@ -395,7 +395,7 @@
   </div>
 
   <div class="finding">
-    <div class="finding-label">$\alpha_f B$ — complexity and scale</div>
+    <div class="finding-label">$\alpha_f\,B$ — complexity and scale</div>
     The representation cannot wiggle arbitrarily. The bound pays for the network norm and the input radius because concentration for composed neural features depends on the size of the function class.
   </div>
 
@@ -644,7 +644,7 @@
           for(var s=0;s<SHOT;s++){ctx.beginPath();ctx.arc(cx+tgtOff[c][s][0]*sig,cy+tgtOff[c][s][1]*sig,3.3,0,6.2832);ctx.stroke();}
           marker(cx,cy,tgtC[c],1.05);
           ctx.font='400 8.5px "IBM Plex Mono",monospace';ctx.fillStyle=rgba(tgtC[c],st.tgt);ctx.textAlign='left';
-          ctx.fillText('4-shot',cx+r*0.7+5,cy+3);
+          ctx.fillText('4-shot',cx+r*0.7+9,cy+3);
         }
       }
     }
