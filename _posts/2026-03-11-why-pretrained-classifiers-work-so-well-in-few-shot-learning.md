@@ -69,13 +69,19 @@
 
 /* ── Gen stepper ── */
 .ps .gen-stepper{margin:1.75rem 0;}
-.ps .gen-tabs{display:flex;border-radius:7px 7px 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:none;}
-.ps .gen-tab{flex:1;font-family:var(--mono);font-size:10.5px;font-weight:500;padding:8px 10px;border:none;border-right:1px solid var(--border);background:var(--surface);color:var(--muted-lt);cursor:pointer;transition:all .15s;text-align:center;letter-spacing:.02em;}
+.ps .gen-tabs{display:flex;border-radius:8px 8px 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:none;}
+.ps .gen-tab{flex:1;font-family:var(--mono);font-size:10.5px;font-weight:500;padding:9px 10px;border:none;border-right:1px solid var(--border);background:var(--surface);color:var(--muted-lt);cursor:pointer;transition:all .18s ease;text-align:center;letter-spacing:.02em;position:relative;}
 .ps .gen-tab:last-child{border-right:none;}
 .ps .gen-tab:hover:not(.active){background:var(--surface-2);color:var(--text-soft);}
-.ps .gen-tab.active{background:var(--bg);color:var(--accent);border-bottom:2px solid var(--gold);}
-.ps .gen-panel{background:var(--bg);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:1rem;min-height:280px;}
-.ps .gen-desc{font-family:var(--sans);font-size:13px;color:var(--text-soft);line-height:1.6;margin-top:10px;font-weight:300;}
+.ps .gen-tab.active{background:var(--bg);color:var(--accent);}
+.ps .gen-tab.active::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);}
+.ps .gen-tab .gen-tab-k{display:inline-block;width:15px;height:15px;line-height:15px;border-radius:50%;background:var(--border);color:var(--bg);font-size:9px;margin-right:6px;vertical-align:1px;transition:background .18s ease;}
+.ps .gen-tab.active .gen-tab-k{background:var(--accent);}
+.ps .gen-panel{background:var(--bg);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:1rem 1rem .9rem;}
+.ps .gen-canvas-shell{border-radius:7px;background:linear-gradient(180deg,#faf8f3,#f1ede5);border:1px solid var(--border-lt);overflow:hidden;}
+.ps #gen-canvas{display:block;width:100%;height:272px;}
+.ps .gen-desc{font-family:var(--sans);font-size:13px;color:var(--text-soft);line-height:1.62;margin-top:.85rem;font-weight:300;min-height:52px;}
+.ps .gen-desc strong{font-weight:500;color:var(--text);}
 
 /* ── Takeaway ── */
 .ps .takeaway{background:var(--text);color:#e8e2d8;padding:1.85rem 2rem;border-radius:12px;margin:2.75rem 0 1.5rem;position:relative;overflow:hidden;}
@@ -90,7 +96,8 @@
 .ps hr{border:none;border-top:1px solid var(--border);margin:0;}
 .ps .fade-in{opacity:0;transform:translateY(16px);transition:opacity .65s ease,transform .65s ease;}
 .ps .fade-in.visible{opacity:1;transform:translateY(0);}
-@media(max-width:700px){.ps .hero,.ps article,.ps .post-footer{padding-left:1.25rem;padding-right:1.25rem;}.ps .hero h1{font-size:1.8rem;}.ps .gen-tab{font-size:9px;padding:7px 6px;}}
+@media(max-width:700px){.ps .hero,.ps article,.ps .post-footer{padding-left:1.25rem;padding-right:1.25rem;}.ps .hero h1{font-size:1.8rem;}.ps .gen-tab{font-size:9px;padding:8px 5px;}.ps .gen-tab .gen-tab-k{margin-right:3px;}.ps #gen-canvas{height:248px;}}
+@media(prefers-reduced-motion:reduce){.ps .fade-in{transition:none;}}
 </style>
 
 <div class="ps">
@@ -327,12 +334,12 @@
 
   <div class="gen-stepper fade-in">
 <div class="gen-tabs">
-<button class="gen-tab active" onclick="showGen(0)">Step 1 — Empirical clustering</button>
-<button class="gen-tab" onclick="showGen(1)">Step 2 — Samples → distributions</button>
-<button class="gen-tab" onclick="showGen(2)">Step 3 — Source → target</button>
+<button class="gen-tab active" onclick="showGen(0)"><span class="gen-tab-k">1</span>Empirical clustering</button>
+<button class="gen-tab" onclick="showGen(1)"><span class="gen-tab-k">2</span>Samples &rarr; distributions</button>
+<button class="gen-tab" onclick="showGen(2)"><span class="gen-tab-k">3</span>Source &rarr; target</button>
 </div>
 <div class="gen-panel">
-<canvas id="gen-canvas" style="width:100%;height:250px;"></canvas>
+<div class="gen-canvas-shell"><canvas id="gen-canvas"></canvas></div>
 <div class="gen-desc" id="gen-desc"></div>
 </div>
 </div>
@@ -532,39 +539,145 @@
     window.addEventListener('resize',function(){if(!wrap.clientWidth)return;camera.aspect=wrap.clientWidth/wrap.clientHeight;camera.updateProjectionMatrix();renderer.setSize(wrap.clientWidth,wrap.clientHeight);});
   })();
 
-  /* ── Gen stepper ── */
+  /* ── Double-generalization illustration (Fig. 2) ── */
   (function(){
-    var genCanvas=document.getElementById('gen-canvas');if(!genCanvas)return;
-    var genCtx=genCanvas.getContext('2d'),currentStep=0,rng=[];
-    function gR(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(6.2832*v);}
-    for(var i=0;i<500;i++)rng.push([gR(),gR()]);
-    var descs=['Step 1 is what we can actually measure after pretraining: source training samples cluster around empirical class centers. This is the finite-sample geometry visible to the algorithm.','Step 2 is sample-level generalization: with enough examples per source class, empirical centers and variances reflect the underlying source class-conditionals. This is where the 1/√m term comes from.','Step 3 is class-level generalization: because classes are i.i.d. draws from the same population 𝒟, averages over many source classes predict the geometry of unseen target classes. This is where the 1/√ℓ term comes from.'];
-    var cls=['#5a4ab8','#1a7a5c','#c45028','#a06810','#d85a30'],clsF=['rgba(90,74,184,0.18)','rgba(26,122,92,0.18)','rgba(196,80,40,0.18)','rgba(160,104,16,0.18)','rgba(216,90,48,0.18)'];
-    window.showGen=function(step){currentStep=step;root.querySelectorAll('.gen-tab').forEach(function(t,i){t.classList.toggle('active',i===step);});document.getElementById('gen-desc').textContent=descs[step];drawStep(step);};
-    function drawStep(step){
-      var dpr=window.devicePixelRatio||1,W=genCanvas.clientWidth,H=genCanvas.clientHeight;
-      genCanvas.width=W*dpr;genCanvas.height=H*dpr;genCtx.setTransform(1,0,0,1,0,0);genCtx.scale(dpr,dpr);
-      genCtx.fillStyle='#f6f3ee';genCtx.fillRect(0,0,W,H);
-      var pad=28,srcW=(W-pad*3)*0.62,srcH=H-pad*2-16,srcX=pad,srcY=pad+16,sp=0.038,nP=13;
-      genCtx.font='500 9.5px "IBM Plex Mono"';genCtx.fillStyle='#a09880';genCtx.textAlign='left';genCtx.fillText('SOURCE CLASSES',srcX,pad+10);
-      var sCtr=[[0.2,0.25],[0.55,0.2],[0.85,0.25],[0.3,0.75],[0.7,0.78]];
-      for(var c=0;c<5;c++){
-        var cx=srcX+sCtr[c][0]*srcW,cy=srcY+sCtr[c][1]*srcH;
-        if(step>=1){genCtx.beginPath();genCtx.ellipse(cx,cy,sp*srcW*3.8,sp*srcH*3.8,0,0,Math.PI*2);genCtx.fillStyle=clsF[c];genCtx.fill();genCtx.strokeStyle=cls[c];genCtx.lineWidth=0.6;genCtx.setLineDash([3,3]);genCtx.stroke();genCtx.setLineDash([]);}
-        for(var s=0;s<nP;s++){var ri=(c*30+s)%rng.length;genCtx.beginPath();genCtx.arc(cx+rng[ri][0]*sp*srcW,cy+rng[ri][1]*sp*srcH,2,0,Math.PI*2);genCtx.fillStyle=step===0?cls[c]:clsF[c].replace(/[\d.]+\)$/,'0.5)');genCtx.fill();}
-        genCtx.strokeStyle=cls[c];genCtx.lineWidth=1.8;genCtx.beginPath();genCtx.moveTo(cx-5,cy);genCtx.lineTo(cx+5,cy);genCtx.moveTo(cx,cy-5);genCtx.lineTo(cx,cy+5);genCtx.stroke();
+    var cv=document.getElementById('gen-canvas');if(!cv)return;
+    var ctx=cv.getContext('2d');
+    var step=0, animating=false;
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function mkRng(seed){var s=seed>>>0;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+    function gauss(r){var u=0,v=0;while(u===0)u=r();while(v===0)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(6.2831853*v);}
+    function rgba(hex,a){var n=parseInt(hex.slice(1),16);return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+
+    /* source: 5 classes, layout chosen so clouds don't collide */
+    var srcC=['#7F77DD','#1D9E75','#D85A30','#378ADD','#9B5DB8'];
+    var srcCtr=[[0.16,0.27],[0.5,0.17],[0.84,0.27],[0.30,0.76],[0.70,0.77]];
+    var NS=srcC.length, SAMP=12, srcOff=[];
+    (function(){var r=mkRng(7);for(var c=0;c<NS;c++){var a=[];for(var s=0;s<SAMP;s++)a.push([gauss(r),gauss(r)]);srcOff.push(a);}})();
+
+    /* target: 3 unseen classes, 4-shot each (colors echo the 3D figure) */
+    var tgtC=['#D4537E','#BA7517','#639922'];
+    var tgtCtr=[[0.33,0.30],[0.70,0.46],[0.47,0.78]];
+    var NT=tgtC.length, SHOT=4, tgtOff=[];
+    (function(){var r=mkRng(101);for(var c=0;c<NT;c++){var a=[];for(var s=0;s<SHOT;s++)a.push([gauss(r)*0.62,gauss(r)*0.62]);tgtOff.push(a);}})();
+
+    /* animated scene state — one continuous morph between steps */
+    var st={ell:0,split:0,tgt:0,conn:1};
+    function goalFor(k){
+      if(k===0)return{ell:0,split:0,tgt:0,conn:1};
+      if(k===1)return{ell:1,split:0,tgt:0,conn:0};
+      return{ell:1,split:1,tgt:1,conn:0};
+    }
+    var goal=goalFor(0);
+
+    function marker(x,y,col,sc){
+      sc=sc||1;
+      ctx.beginPath();ctx.arc(x,y,6.5*sc,0,6.2832);ctx.fillStyle='rgba(250,248,243,0.95)';ctx.fill();
+      ctx.beginPath();ctx.arc(x,y,5*sc,0,6.2832);ctx.lineWidth=2*sc;ctx.strokeStyle=col;ctx.stroke();
+      ctx.beginPath();ctx.arc(x,y,1.7*sc,0,6.2832);ctx.fillStyle=col;ctx.fill();
+    }
+    function cloud(x,y,r,col,a){
+      var g=ctx.createRadialGradient(x,y,0,x,y,r);
+      g.addColorStop(0,rgba(col,0.26*a));g.addColorStop(0.65,rgba(col,0.11*a));g.addColorStop(1,rgba(col,0));
+      ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fillStyle=g;ctx.fill();
+      ctx.setLineDash([4,4]);ctx.lineWidth=1;ctx.strokeStyle=rgba(col,0.55*a);ctx.stroke();ctx.setLineDash([]);
+    }
+
+    function draw(){
+      var dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+      if(!W||!H)return;
+      if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=W*dpr;cv.height=H*dpr;}
+      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+
+      var pad=24, top=pad+16;
+      var fullW=W-pad*2, areaH=H-top-pad;
+      var srcW=fullW*(1-0.44*st.split);
+      var gap=fullW*0.045*st.split;
+      var tgtX=pad+srcW+gap, tgtW=fullW*0.40*st.split;
+      var sig=areaH*0.052;
+
+      ctx.textBaseline='alphabetic';
+      ctx.font='500 9.5px "IBM Plex Mono",monospace';ctx.textAlign='left';
+      ctx.fillStyle='#a09880';ctx.fillText('SOURCE  CLASSES',pad,pad+7);
+
+      /* ── source clusters ── */
+      for(var c=0;c<NS;c++){
+        var cx=pad+srcCtr[c][0]*srcW, cy=top+srcCtr[c][1]*areaH;
+        if(st.ell>0.01) cloud(cx,cy,sig*2.5,srcC[c],st.ell);
+        if(st.conn>0.01){
+          ctx.strokeStyle=rgba(srcC[c],0.16*st.conn);ctx.lineWidth=0.8;
+          for(var s=0;s<SAMP;s++){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+srcOff[c][s][0]*sig,cy+srcOff[c][s][1]*sig);ctx.stroke();}
+        }
+        ctx.fillStyle=rgba(srcC[c],1-0.45*st.ell);
+        for(var s=0;s<SAMP;s++){ctx.beginPath();ctx.arc(cx+srcOff[c][s][0]*sig,cy+srcOff[c][s][1]*sig,2.3,0,6.2832);ctx.fill();}
+        marker(cx,cy,srcC[c],1);
       }
-      if(step>=2){
-        var tX=srcX+srcW+pad*1.5,tW=(W-pad*3)*0.38;
-        genCtx.strokeStyle='#d8d2c6';genCtx.lineWidth=1;genCtx.setLineDash([4,4]);genCtx.beginPath();genCtx.moveTo(tX-pad*0.75,pad);genCtx.lineTo(tX-pad*0.75,H-pad+8);genCtx.stroke();genCtx.setLineDash([]);
-        genCtx.font='500 9.5px "IBM Plex Mono"';genCtx.fillStyle='#a09880';genCtx.textAlign='left';genCtx.fillText('TARGET CLASSES (unseen)',tX,pad+10);
-        var tCtr=[[0.3,0.28],[0.72,0.42],[0.45,0.78]],tCl=['#7f77dd','#5dcaa5','#f0997b'],tF=['rgba(127,119,221,0.18)','rgba(93,202,165,0.18)','rgba(240,153,123,0.18)'];
-        for(var c=0;c<3;c++){var cx=tX+tCtr[c][0]*tW,cy=srcY+tCtr[c][1]*srcH;genCtx.beginPath();genCtx.ellipse(cx,cy,sp*tW*3.5,sp*srcH*3.5,0,0,Math.PI*2);genCtx.fillStyle=tF[c];genCtx.fill();genCtx.strokeStyle=tCl[c];genCtx.lineWidth=0.6;genCtx.setLineDash([3,3]);genCtx.stroke();genCtx.setLineDash([]);for(var s=0;s<4;s++){var ri=(c*40+s+200)%rng.length;genCtx.beginPath();genCtx.arc(cx+rng[ri][0]*sp*tW*0.8,cy+rng[ri][1]*sp*srcH*0.8,3.5,0,Math.PI*2);genCtx.fillStyle=tCl[c];genCtx.fill();}genCtx.strokeStyle=tCl[c];genCtx.lineWidth=2;genCtx.beginPath();genCtx.moveTo(cx-6,cy);genCtx.lineTo(cx+6,cy);genCtx.moveTo(cx,cy-6);genCtx.lineTo(cx,cy+6);genCtx.stroke();genCtx.font='400 9px "IBM Plex Mono"';genCtx.fillStyle=tCl[c];genCtx.textAlign='left';genCtx.fillText('4-shot',cx+8,cy+4);}
-        var ay=H/2,ax1=srcX+srcW+pad*0.25,ax2=tX-pad*0.25;genCtx.strokeStyle='#a09880';genCtx.lineWidth=1;genCtx.beginPath();genCtx.moveTo(ax1,ay);genCtx.lineTo(ax2-6,ay);genCtx.stroke();genCtx.beginPath();genCtx.moveTo(ax2,ay);genCtx.lineTo(ax2-8,ay-4);genCtx.lineTo(ax2-8,ay+4);genCtx.fillStyle='#a09880';genCtx.fill();genCtx.font='400 9px "IBM Plex Mono"';genCtx.fillStyle='#a09880';genCtx.fillText('same 𝒟',ax1+3,ay-6);
+      /* a single quiet annotation, so step 2 reads as "cloud = true distribution" */
+      if(st.ell>0.55){
+        var ax=pad+srcCtr[1][0]*srcW, ay=top+srcCtr[1][1]*areaH, fa=(st.ell-0.55)/0.45;
+        ctx.font='italic 500 11px "Lora",serif';ctx.fillStyle=rgba(srcC[1],fa);ctx.textAlign='center';
+        ctx.fillText('P',ax,ay-sig*2.5-5);ctx.textAlign='left';
+      }
+
+      /* ── divider, arrow, target panel ── */
+      if(st.tgt>0.02){
+        var dx=pad+srcW+gap*0.5;
+        ctx.setLineDash([4,5]);ctx.lineWidth=1;ctx.strokeStyle=rgba('#cbc4b6',st.tgt);
+        ctx.beginPath();ctx.moveTo(dx,pad);ctx.lineTo(dx,H-pad);ctx.stroke();ctx.setLineDash([]);
+
+        var midY=top+areaH*0.5, x1=pad+srcW+5, x2=tgtX-5;
+        ctx.strokeStyle=rgba('#8a8070',0.85*st.tgt);ctx.lineWidth=1.5;
+        ctx.beginPath();ctx.moveTo(x1,midY);ctx.lineTo(x2-7,midY);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(x2,midY);ctx.lineTo(x2-8,midY-4.5);ctx.lineTo(x2-8,midY+4.5);ctx.closePath();
+        ctx.fillStyle=rgba('#8a8070',0.85*st.tgt);ctx.fill();
+        ctx.font='italic 500 11px "Lora",serif';ctx.fillStyle=rgba('#5d564a',st.tgt);ctx.textAlign='center';
+        ctx.fillText('same  𝒟',(x1+x2)/2,midY-8);ctx.textAlign='left';
+
+        ctx.font='500 9.5px "IBM Plex Mono",monospace';ctx.fillStyle=rgba('#a09880',st.tgt);
+        ctx.fillText('TARGET · UNSEEN',tgtX,pad+7);
+
+        for(var c=0;c<NT;c++){
+          var cx=tgtX+tgtCtr[c][0]*tgtW, cy=top+tgtCtr[c][1]*areaH, r=sig*2.0;
+          cloud(cx,cy,r,tgtC[c],st.tgt*0.85);
+          ctx.strokeStyle=rgba(tgtC[c],st.tgt);ctx.lineWidth=1.6;
+          for(var s=0;s<SHOT;s++){ctx.beginPath();ctx.arc(cx+tgtOff[c][s][0]*sig,cy+tgtOff[c][s][1]*sig,3.3,0,6.2832);ctx.stroke();}
+          marker(cx,cy,tgtC[c],1.05);
+          ctx.font='400 8.5px "IBM Plex Mono",monospace';ctx.fillStyle=rgba(tgtC[c],st.tgt);ctx.textAlign='left';
+          ctx.fillText('4-shot',cx+r*0.7+5,cy+3);
+        }
       }
     }
+
+    function tick(){
+      var done=true;
+      for(var k in goal){var d=goal[k]-st[k];if(Math.abs(d)>0.0015){st[k]+=d*0.14;done=false;}else st[k]=goal[k];}
+      draw();
+      if(!done)requestAnimationFrame(tick);else animating=false;
+    }
+    function go(k){
+      goal=goalFor(k);
+      if(reduce){for(var key in goal)st[key]=goal[key];draw();return;}
+      if(!animating){animating=true;requestAnimationFrame(tick);}
+    }
+
+    var descs=[
+      'Step 1 — what we can actually <strong>measure</strong> after pretraining: source training samples cluster around their empirical class centers. This is the finite-sample geometry the algorithm sees — fuzzy little clouds, each with a center pin.',
+      'Step 2 — <strong>sample-level</strong> generalization. With enough examples per source class (large m), each empirical center and variance becomes a reliable estimate of the underlying class-conditional — the dashed clouds. This is where the 1/√m term comes from.',
+      'Step 3 — <strong>class-level</strong> generalization. Because classes are i.i.d. draws from the same population 𝒟, average pairwise geometry over many source classes predicts the geometry of brand-new target classes — so a few shots per unseen class suffice to place its center. This is where the 1/√ℓ term comes from.'
+    ];
+
+    window.showGen=function(k){
+      step=k;
+      root.querySelectorAll('.gen-tab').forEach(function(t,i){t.classList.toggle('active',i===k);});
+      document.getElementById('gen-desc').innerHTML=descs[k];
+      go(k);
+    };
+
+    draw();
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
     showGen(0);
-    window.addEventListener('resize',function(){drawStep(currentStep);});
+    window.addEventListener('resize',draw);
   })();
 
   if('IntersectionObserver' in window){var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});root.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el);});}
